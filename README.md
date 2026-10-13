@@ -1,42 +1,45 @@
 # PoE 2 Flip Finder
 
-Поиск выгодных обменов валюты на бирже **Path of Exile 2** (у Альвы).
+**English** · [Русский](README.ru.md) · [中文](README.zh.md)
 
-Программа берёт официальные почасовые данные GGG о реальных сделках на бирже и ищет цепочки обменов,
-которые приносят прибыль — например, `Divine → Chaos → X → Divine`. Работает у вас на компьютере, в браузере.
+Finds profitable currency exchange paths on the **Path of Exile 2** currency exchange (Alva).
 
-## Скачать
+The program reads GGG's official hourly data on real exchange trades and looks for chains of trades
+that make a profit — for example `Divine → Chaos → X → Divine`. It runs on your computer, in your browser.
 
-**[⬇ Последняя версия — poe2-flip.zip](https://github.com/zhurauljou/poe2-flip-finder/releases/latest)**
+## Download
 
-Распакуйте архив и следуйте файлу `How to start.txt`. Коротко — запускать нужно один файл:
+**[⬇ Latest version — poe2-flip.zip](https://github.com/zhurauljou/poe2-flip-finder/releases/latest)**
 
-- **Windows:** нужен [Python 3.8+](https://www.python.org/downloads/) (при установке отметьте «Add python.exe to PATH»), затем запустите `Start (Windows).bat`
-  (после первого запуска рядом появится ярлык **PoE 2 Flip Finder** с иконкой Divine Orb — дальше можно им).
-- **Mac:** правый клик по `Start (Mac).command` → «Открыть».
+Unzip it and follow `How to start.txt`. In short — there's just one file to run:
 
-Обновления программа находит сама: когда выйдет новая версия, сверху появится кнопка «Обновить».
+- **Windows:** you need [Python 3.8+](https://www.python.org/downloads/) (tick “Add python.exe to PATH” during setup), then run `Start (Windows).bat`
+  (after the first start a **PoE 2 Flip Finder** shortcut with a Divine Orb icon appears next to it — use it from then on).
+- **Mac:** right-click `Start (Mac).command` → “Open”.
 
-## Что умеет
+The program finds updates on its own: when a new version is out, an “Update” button appears at the top.
+To check manually — “Check for updates” at the bottom of the filters panel.
 
-- **Циклы и пути обмена** с прибылью, ликвидностью, временем и комиссией в золоте.
-- **«Держится»** — сколько часов подряд путь уже даёт прибыль, и **рейтинг**, проверенный на истории:
-  наверху пути, которые чаще всего сохраняют прибыль и в следующем часу.
-- **Запас по шуму пары** — шумным парам закладывается больший запас, стабильным — меньший.
-- **Панель шагов**: что отдать и что получить, курс, тренды за сутки; можно вписать курс из игры и сколько реально пришло.
-- **Режим «у Альвы»** — крупно, по одному шагу на экран (удобно с телефона рядом с игрой).
-- **Журнал сделок** — ваш реальный спред по парам.
-- **Уведомления** на странице и в **Telegram** (свой бот; на него могут подписаться и другие — им программа не нужна).
-- **С телефона**: кнопка 📱 — включить доступ из домашней Wi-Fi и отсканировать QR-код.
-- Светлая/тёмная тема, русский / English / 中文.
+## Features
 
-## Данные и приватность
+- **Cycles and exchange paths** with profit, liquidity, time and gold fee.
+- **“Holds”** — how many hours in a row a path has already been profitable, and a **score** tested on history:
+  on top are the paths that most often stay profitable in the next hour too.
+- **Per-pair noise margin** — noisy pairs get a bigger margin, stable ones a smaller one.
+- **Steps panel**: what to give and what to get, rate, 24 h trends; you can enter the rate from the game and how much you actually got.
+- **“At Alva” mode** — big, one step per screen (handy on a phone next to the game).
+- **Trade journal** — your real spread per pair.
+- **Notifications** on the page and in **Telegram** (your own bot; others can subscribe to it too — they don't need the program).
+- **From a phone**: the 📱 button — turn on home Wi-Fi access and scan the QR code.
+- Light/dark theme, Русский / English / 中文.
 
-Всё работает локально. Курсы скачиваются с официального API GGG, названия и иконки — с poe.ninja и RePoE.
-Журнал сделок и токен Telegram-бота хранятся только у вас (`%APPDATA%\poe2-flip` на Windows,
-`~/.config/poe2-flip` на Mac) и никуда не отправляются.
+## Data and privacy
 
-## Важно
+Everything runs locally. Rates come from GGG's official API, names and icons from poe.ninja and RePoE.
+The trade journal and the Telegram bot token are stored only on your machine (`%APPDATA%\poe2-flip` on Windows,
+`~/.config/poe2-flip` on Mac) and are never sent anywhere.
 
-Это **средние курсы по сделкам за час**, а не живой стакан. Перед каждым обменом сверяйте курс в игре.
-Никаких гарантий прибыли. Проект не связан с Grinding Gear Games.
+## Important
+
+These are **average rates of real trades per hour**, not the live order book. Always check the rate in game before trading.
+No guarantee of profit. This project is not affiliated with Grinding Gear Games.
