@@ -298,6 +298,15 @@
   .fav.on { color: var(--gold); }
   .dhead .fav { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 17px; }
   .dhide { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 10px; font-size: 12.5px; }
+  /* ---- онлайн в Steam ---- */
+  .hplayers { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px;
+              color: var(--muted); font-size: 12.5px; text-decoration: none; white-space: nowrap; background: var(--panel); }
+  .hplayers:hover { border-color: var(--btn-line); color: var(--text); }
+  .hplayers[hidden] { display: none; }
+  .hplayers .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); align-self: center; box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 22%, transparent); }
+  .hplayers b { color: var(--text); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .hplayers .pk b { font-size: 12.5px; color: var(--gold); }
+  .hplayers .sep { opacity: .5; }
   /* ---- доступ с телефона ---- */
   #lanBtn.on { color: var(--gold); border-color: var(--btn-line); background: var(--panel2); }
   #lanPanel { position: fixed; right: 20px; top: 52px; z-index: 40; width: min(380px, calc(100vw - 24px));
@@ -455,6 +464,7 @@
     header h1 { font-size: 16px; }
     #status { order: 3; flex-basis: 100%; font-size: 12px; }
     .hctl { order: 1; }
+    .hplayers { order: 2; padding: 3px 9px; }
     .hleague { order: 2; flex-basis: 100%; max-width: none; }
     main { display: block; min-height: 0; }
     section { padding: 0 12px 24px; overflow: visible; }
@@ -501,6 +511,7 @@
 <body>
 <header>
   <h1><img src="/icon.png" alt="" class="logo">PoE 2 Flip Finder</h1>
+  <a id="players" class="hplayers" target="_blank" rel="noopener" hidden></a>
   <select id="league" class="hleague"></select>
   <span id="status"></span>
   <div class="hctl">
@@ -763,6 +774,28 @@ function qrSvg(text, px = 180) {
   return `<svg class="qr" viewBox="0 0 ${n} ${n}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR">` +
     `<rect width="${n}" height="${n}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
 }
+
+// ---------- онлайн PoE 2 в Steam ----------
+// Сервер берёт текущее число из Steam Web API, пик за сутки — со SteamCharts (или из своих замеров).
+let players = null;
+async function loadPlayers() {
+  try {
+    const r = await fetch("/api/players");
+    if (r.ok) players = await r.json();
+  } catch (e) {}
+  renderPlayers();
+}
+function renderPlayers() {
+  const a = $("#players");
+  if (!players?.now) { a.hidden = true; return; }
+  const n = x => x.toLocaleString(locale());
+  a.hidden = false;
+  a.href = players.url;
+  a.innerHTML = `<span class="dot"></span><b>${n(players.now)}</b><span>${esc(t("plNow"))}</span>` +
+    (players.peak24 ? `<span class="sep">·</span><span class="pk">${esc(t(players.peakFull ? "plPeak" : "plPeakPart"))} <b>${n(players.peak24)}</b></span>` : "");
+  a.title = t("hPlayers");
+}
+setInterval(loadPlayers, 5 * 60000);
 
 // ---------- доступ с телефона ----------
 // Кнопка 📱 в шапке: включить доступ из домашней Wi-Fi и показать адрес. Сервер переоткрывается сам, без перезапуска.
@@ -1096,6 +1129,8 @@ const I18N = {
     updAvail: "Доступна новая версия {v} (у тебя {cur}).", updNotes: "Что нового", updInstall: "Обновить", updBusy: "Скачиваю…",
     updDone: "Обновлено до версии {v}. Чтобы она заработала, закрой чёрное окно программы и запусти её снова.",
     updErr: "Не удалось обновить: {e}", updSkipTip: "Не напоминать об этой версии",
+    plNow: "в Steam", plPeak: "пик за 24 ч", plPeakPart: "пик",
+    hPlayers: "Сколько человек сейчас играет в Path of Exile 2 через Steam и максимум за последние 24 часа. Игроки отдельного клиента GGG сюда не входят. Клик — графики на SteamDB.",
     verLabel: "Версия {v}", clTitle: "Что нового", clLoading: "Загружаю описание…", clYours: "у тебя",
     clAll: "Все изменения на GitHub", clUpdateTo: "Обновить до {v}", clEmpty: "Описаний релизов пока нет.", clNoNotes: "Без описания.",
     tgPubText: "Получай новые выгодные пути в Telegram от бота @{bot}: открой его и нажми «Старт» — лига, капитал и прибыль настраиваются там кнопками.",
@@ -1242,6 +1277,8 @@ const I18N = {
     updAvail: "New version {v} is available (you have {cur}).", updNotes: "What's new", updInstall: "Update", updBusy: "Downloading…",
     updDone: "Updated to version {v}. To start using it, close the program's black window and run it again.",
     updErr: "Couldn't update: {e}", updSkipTip: "Don't remind me about this version",
+    plNow: "on Steam", plPeak: "24h peak", plPeakPart: "peak",
+    hPlayers: "How many people are playing Path of Exile 2 on Steam right now, and the highest count in the last 24 hours. Players on the standalone GGG client are not included. Click for charts on SteamDB.",
     verLabel: "Version {v}", clTitle: "What's new", clLoading: "Loading release notes…", clYours: "yours",
     clAll: "All changes on GitHub", clUpdateTo: "Update to {v}", clEmpty: "No release notes yet.", clNoNotes: "No description.",
     tgPubText: "Get new profitable paths in Telegram from the @{bot} bot: open it and press “Start” — league, capital and profit are set there with buttons.",
@@ -1388,6 +1425,8 @@ const I18N = {
     updAvail: "有新版本 {v}（当前为 {cur}）。", updNotes: "更新内容", updInstall: "更新", updBusy: "正在下载…",
     updDone: "已更新到 {v} 版本。关闭程序的黑色窗口并重新运行即可使用。",
     updErr: "更新失败：{e}", updSkipTip: "不再提醒此版本",
+    plNow: "Steam 在线", plPeak: "24 小时峰值", plPeakPart: "峰值",
+    hPlayers: "当前通过 Steam 游玩《流放之路 2》的人数，以及过去 24 小时的最高值。不包括 GGG 独立客户端的玩家。点击查看 SteamDB 图表。",
     verLabel: "版本 {v}", clTitle: "更新内容", clLoading: "正在加载更新说明…", clYours: "当前版本",
     clAll: "在 GitHub 查看全部更新", clUpdateTo: "更新到 {v}", clEmpty: "暂无版本说明。", clNoNotes: "无说明。",
     tgPubText: "通过机器人 @{bot} 在 Telegram 中接收新的盈利路径：打开它并点击“开始”——赛季、本金和利润都在那里用按钮设置。",
@@ -1497,7 +1536,7 @@ $("#theme").onclick = () => {
 };
 $("#lang").onchange = () => {
   lang = $("#lang").value; ui.lang = lang; saveUi();
-  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan();
+  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan(); renderPlayers();
 };
 
 // ---------- подсказки ----------
@@ -3388,6 +3427,7 @@ async function init() {
   loadJournal();
   loadUpdate();
   loadLan();
+  loadPlayers();
   loadTg();
   const m = await loadMarket();
   if (isGGG() || !m || Date.now() / 1000 - m.fetchedAt > 30 * 60) refresh();

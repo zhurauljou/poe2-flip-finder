@@ -80,6 +80,12 @@ def status(current):
     return s
 
 
+def _app_file(rel):
+    """Новые файлы программы (app/имя.py и т.п.) ставим, даже если их нет в списке у текущей версии."""
+    name = rel[4:] if rel.startswith("app/") else ""
+    return bool(name) and "/" not in name and not name.startswith(".") and name.rsplit(".", 1)[-1] in ("py", "html", "png", "ico")
+
+
 def install(root, files, current, ua):
     """Скачивает архив релиза и заменяет файлы программы. files — пути относительно корня программы
     («app/server.py», «Start (Windows).bat»). Возвращает, что изменилось."""
@@ -97,7 +103,7 @@ def install(root, files, current, ua):
     new = {}
     for info in z.infolist():
         rel = info.filename.replace(chr(92), "/").split("/", 1)[-1]
-        if rel in files and not info.is_dir():
+        if (rel in files or _app_file(rel)) and not info.is_dir():
             new[rel] = (z.read(info), info.external_attr >> 16)
     if not any(r.endswith("server.py") for r in new) or not any(r.endswith("index.html") for r in new):
         raise RuntimeError("в архиве нет файлов программы")

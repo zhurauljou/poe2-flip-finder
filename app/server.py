@@ -8,6 +8,7 @@
 """
 import json
 import os
+import re
 import sys
 import threading
 import time
@@ -354,6 +355,78 @@ class Server(ThreadingHTTPServer):
     allow_reuse_address = os.name != "nt"
 
 
+# --- Онлайн PoE 2 в Steam: сейчас (Steam Web API) и пик за 24 часа (SteamCharts, иначе наши замеры).
+# Игроки отдельного клиента GGG сюда не попадают.
+STEAM_APPID = 2694490
+PL_CURRENT_URL = "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=%d" % STEAM_APPID
+PL_CHARTS_URL = "https://steamcharts.com/app/%d" % STEAM_APPID
+PL_CURRENT_TTL = 300
+PL_PEAK_TTL = 1800
+PL_DAY = 86400
+
+_pl_lock = threading.Lock()
+_pl_s = {"now": None, "now_t": 0, "peak": None, "peak_t": 0, "samples": None, "error": None}
+
+
+def _pl_get(url, ua):
+    req = urllib.request.Request(url, headers={"User-Agent": ua})
+    with urllib.request.urlopen(req, timeout=15) as r:
+        return r.read().decode("utf-8", "replace")
+
+
+def _pl_load(cache_dir):
+    if _pl_s["samples"] is None:
+        try:
+            with open(os.path.join(cache_dir, "players.json"), encoding="utf-8") as f:
+                _pl_s["samples"] = [(int(t), int(n)) for t, n in json.load(f)]
+        except (OSError, ValueError, TypeError):
+            _pl_s["samples"] = []
+
+
+def _pl_save(cache_dir):
+    try:
+        os.makedirs(cache_dir, exist_ok=True)
+        tmp = os.path.join(cache_dir, "players.json.tmp")
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(_pl_s["samples"], f)
+        os.replace(tmp, os.path.join(cache_dir, "players.json"))
+    except OSError:
+        pass
+
+
+def _pl_charts_peak(html):
+    # <span class="num">27078</span><br>24-hour peak
+    m = re.search(r'class="num">\s*([\d,]+)\s*</span>\s*<br>\s*24-hour peak', html)
+    return int(m.group(1).replace(",", "")) if m else None
+
+
+def players_status(cache_dir, ua):
+    with _pl_lock:
+        _pl_load(cache_dir)
+        now = time.time()
+        if now - _pl_s["now_t"] > PL_CURRENT_TTL:
+            _pl_s["now_t"] = now
+            try:
+                n = json.loads(_pl_get(PL_CURRENT_URL, ua))["response"]["player_count"]
+                _pl_s.update(now=int(n), error=None)
+                _pl_s["samples"] = [x for x in _pl_s["samples"] if now - x[0] < PL_DAY] + [(int(now), int(n))]
+                _pl_save(cache_dir)
+            except Exception as e:
+                _pl_s["error"] = "нет связи со Steam (%s)" % e.__class__.__name__
+        if now - _pl_s["peak_t"] > PL_PEAK_TTL:
+            _pl_s["peak_t"] = now
+            try:
+                _pl_s["peak"] = _pl_charts_peak(_pl_get(PL_CHARTS_URL, "Mozilla/5.0 (" + ua + ")"))
+            except Exception:
+                _pl_s["peak"] = None
+        own = [n for t, n in _pl_s["samples"] if now - t < PL_DAY]
+        peak = max([p for p in [_pl_s["peak"], _pl_s["now"]] + own if p is not None], default=None)
+        # «за сутки» честно, только если пик из SteamCharts или наших замеров хватает почти на сутки
+        full = _pl_s["peak"] is not None or (bool(_pl_s["samples"]) and now - _pl_s["samples"][0][0] > PL_DAY - 3600)
+        return {"now": _pl_s["now"], "peak24": peak, "peakFull": full, "error": _pl_s["error"],
+                "url": "https://steamdb.info/app/%d/charts/" % STEAM_APPID}
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
@@ -414,6 +487,8 @@ class Handler(BaseHTTPRequestHandler):
         elif url.path == "/api/journal":
             with journal_lock:
                 self.send_json(journal_read())
+        elif url.path == "/api/players":
+            self.send_json(players_status(CACHE_DIR, UA))
         elif url.path == "/api/releases":
             self.send_json(update.releases(UA))
         elif url.path == "/api/update":
