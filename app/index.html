@@ -1419,6 +1419,11 @@
   /* лига: только стрелка, без фона-поля */
   .ggg.ggg .hleague, .ggg.ggg .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
   .ggg.ggg .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(241, 228, 194, .06); }
+  /* карточка сделки: путь — наверху рядом с корзиной, «Когда» — внизу */
+  .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child { order: 10; grid-column: 1 / -1; padding-right: 0; }
+  .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td.wide { order: -1; padding-right: 44px; }
+  .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child .muted { display: inline; margin-left: 6px; }
+  .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child { grid-column: span 2; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2023,6 +2028,10 @@
   }
   .ggg.ggg[data-theme=light] .hleague, .ggg.ggg[data-theme=light] .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
   .ggg.ggg[data-theme=light] .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(112, 88, 26, 0.06); }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td:first-child { order: 10; grid-column: 1 / -1; padding-right: 0; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td.wide { order: -1; padding-right: 44px; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td:first-child .muted { display: inline; margin-left: 6px; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td:first-child { grid-column: span 2; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
