@@ -1,0 +1,2998 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PoE 2 Flip Finder</title>
+<script>
+  // Тему и ширину панели ставим до отрисовки, чтобы не мигало.
+  try {
+    const ui = JSON.parse(localStorage.getItem("poe2flip_ui")) || {};
+    if (ui.theme) document.documentElement.dataset.theme = ui.theme;
+    if (ui.asideW) document.documentElement.style.setProperty("--aside-w", ui.asideW + "px");
+    if (ui.drawerW) document.documentElement.style.setProperty("--drawer-w", ui.drawerW + "px");
+    if (ui.filtersHidden) document.documentElement.classList.add("filters-hidden");
+    // Карточки: на телефоне всегда, на компьютере — по выбору.
+    if (ui.view === "cards" || matchMedia("(max-width: 800px)").matches) document.documentElement.classList.add("view-cards");
+  } catch (e) {}
+</script>
+<style>
+  :root, [data-theme=dark] {
+    color-scheme: dark;
+    --bg: #14110e; --panel: #1e1a16; --panel2: #262019; --line: #3a3128; --line2: #2a231c; --hover: #1f1a15;
+    --text: #e8dcc8; --muted: #9a8c78; --gold: #d8a24a; --good: #6fcf7a; --bad: #e0675a; --warn: #e0b35a;
+    --btn: #3b2c17; --btn-hover: #4a3720; --btn-line: #6b4f24; --btn-text: #f3d9a6;
+    --shadow: 0 6px 24px rgba(0, 0, 0, .5);
+    --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a8c78' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  [data-theme=light] {
+    color-scheme: light;
+    --bg: #f7f3ec; --panel: #fffcf6; --panel2: #f1e9dc; --line: #dccfba; --line2: #ebe2d3; --hover: #f4ede1;
+    --text: #2b2218; --muted: #7a6a55; --gold: #9a6514; --good: #2c8a3a; --bad: #c0392b; --warn: #a66d0a;
+    --btn: #f3e2c2; --btn-hover: #ecd4a6; --btn-line: #c9a46a; --btn-text: #5a3c0e;
+    --shadow: 0 6px 24px rgba(60, 40, 10, .18);
+    --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237a6a55' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif; }
+  header { padding: 10px 20px; border-bottom: 1px solid var(--line); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 18px; color: var(--gold); letter-spacing: .3px; }
+  #status { color: var(--muted); font-size: 13px; flex: 1; min-width: 0; }
+  .hleague { width: auto; max-width: 240px; margin: 0; padding: 5px 30px 5px 8px; font-weight: 600; }
+  .hctl { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+  .hctl select, .hctl button { width: auto; margin: 0; }
+  .hctl button { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 32px; padding: 0;
+                 background: var(--panel2); border-color: var(--line); color: var(--text); }
+  .hctl button:hover { background: var(--hover); }
+  .hctl svg { width: 17px; height: 17px; }
+  main { display: grid; grid-template-columns: var(--aside-w, 290px) minmax(0, 1fr); min-height: calc(100vh - 53px); }
+  aside { position: relative; border-right: 1px solid var(--line); padding: 16px; background: var(--panel); }
+  #resizer { position: absolute; top: 0; right: -5px; width: 10px; height: 100%; cursor: col-resize; z-index: 5; touch-action: none; }
+  #resizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; transition: background .15s; }
+  #resizer:hover::after, body.resizing #resizer::after { background: var(--gold); }
+  body.resizing { cursor: col-resize; user-select: none; }
+  section { padding: 16px 20px; overflow: auto; min-width: 0; }
+  label, .lbl { display: block; margin: 0 0 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  input, select, button { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100%; margin-top: 4px; }
+  input[type=checkbox] { width: auto; margin: 0 6px 0 0; accent-color: var(--gold); }
+  /* Стрелка браузера прилипает к правому краю — рисуем свою, с отступом. */
+  select { appearance: none; -webkit-appearance: none; padding-right: 30px; text-overflow: ellipsis;
+           background: var(--panel2) var(--chev) no-repeat right 11px center / 11px 8px; }
+  .row { display: flex; gap: 8px; align-items: flex-end; }
+  .row > * { flex: 1; min-width: 0; }
+  /* Узкая левая панель — пары полей встают друг под друга, а не сжимаются. */
+  aside { container-type: inline-size; }
+  @container (max-width: 250px) {
+    .row { flex-direction: column; align-items: stretch; gap: 0; }
+  }
+  button { cursor: pointer; background: var(--btn); border-color: var(--btn-line); color: var(--btn-text); font-weight: 600; }
+  button:hover { background: var(--btn-hover); }
+  button:disabled { opacity: .5; cursor: default; }
+  :lang(zh) label { text-transform: none; letter-spacing: 0; }
+  .check { display: flex; align-items: center; text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); }
+  .tip { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 5px; vertical-align: -2px;
+         border: 1px solid var(--muted); border-radius: 50%; color: var(--muted); font: 600 10px/1 -apple-system, "Segoe UI", sans-serif;
+         text-transform: none; cursor: help; user-select: none; }
+  .tip::before { content: "?"; }
+  .lh { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+  .lh .tip { flex: none; margin: 1px 0 0; }
+  .tip:hover, .tip:focus-visible, .tip.on { color: var(--gold); border-color: var(--gold); outline: none; }
+  #tooltip { position: fixed; z-index: 100; max-width: min(320px, calc(100vw - 16px)); padding: 9px 11px; background: var(--panel2);
+             border: 1px solid var(--btn-line); border-radius: 7px; box-shadow: var(--shadow); color: var(--text); font-size: 12.5px; line-height: 1.5; }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 8px; display: none; }
+  .bar > div { height: 100%; background: var(--gold); width: 0; transition: width .2s; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tabs button { width: auto; padding: 6px 14px; background: transparent; border-color: var(--line); color: var(--muted); font-weight: 500; }
+  .tabs button.on { background: var(--panel2); color: var(--gold); border-color: var(--btn-line); }
+  .tabs .ts { display: none; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--line); cursor: pointer; white-space: nowrap; }
+  td { padding: 8px; border-bottom: 1px solid var(--line2); vertical-align: top; }
+  tr.cyc:hover { background: var(--hover); cursor: pointer; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .good { color: var(--good); font-weight: 600; }
+  .muted { color: var(--muted); }
+  .path { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+  .cur { display: inline-flex; align-items: center; gap: 4px; background: var(--panel2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px 1px 2px; font-size: 13px; }
+  .cur img { width: 20px; height: 20px; }
+  .arrow { color: var(--muted); }
+  .steps { margin: 4px 0 6px; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+  .steps ol { margin: 0; padding-left: 20px; }
+  .steps li { margin: 4px 0; }
+  .warn { color: var(--warn); font-size: 12.5px; margin-top: 6px; }
+  .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+  [hidden] { display: none !important; }
+  .chg { display: inline-flex; align-items: center; gap: 8px; }
+  .chg > span { min-width: 34px; text-align: right; }
+  .spark { flex: none; overflow: visible; }
+  .spark polyline { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+  .spark circle { fill: currentColor; }
+  .spark.up { color: var(--good); } .spark.down { color: var(--bad); } .spark.flat { color: var(--muted); }
+  .bad { color: var(--bad); font-weight: 600; }
+  tr.cyc.sel { background: var(--hover); box-shadow: inset 3px 0 var(--gold); }
+  /* ---- правая панель с шагами ---- */
+  #drawer { position: fixed; top: 0; right: 0; bottom: 0; width: var(--drawer-w, 480px); max-width: 100vw; z-index: 50;
+            display: flex; flex-direction: column; background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow); }
+  #dresizer { position: absolute; top: 0; left: -5px; width: 10px; height: 100%; cursor: col-resize; z-index: 5; touch-action: none; }
+  #dresizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; transition: background .15s; }
+  #dresizer:hover::after, body.resizing #dresizer::after { background: var(--gold); }
+  .dhead { display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .dhead .path { flex: 1; }
+  .dhead button { flex: none; width: 32px; height: 32px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 18px; line-height: 1; }
+  .dhead button:hover { background: var(--hover); color: var(--text); }
+  #dBody { flex: 1; overflow: auto; padding: 14px 16px 20px; }
+  .dsum { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); container-type: inline-size; }
+  .dprofit { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; margin-top: 12px; padding-top: 10px;
+             border-top: 1px solid var(--line2); font-variant-numeric: tabular-nums; }
+  .dprofit .mk { flex-basis: 100%; }
+  /* Узкая карточка (телефон): график — отдельной строкой под суммами, подпись рядом с ним. */
+  @container (max-width: 400px) {
+    #dBody .dtrend { flex-basis: 100%; flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; margin-left: 0; }
+    #dBody .dhd .dtrend { padding-left: 34px; }
+    #dBody .dprofit .dtrend { margin-top: 6px; }
+  }
+  #dGain { font-size: 24px; font-weight: 700; line-height: 1.25; }
+  #dPct { font-size: 16px; }
+  .dsteps { list-style: none; margin: 12px 0 0; padding: 0; }
+  .dstep { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; background: var(--bg); container-type: inline-size; }
+  .dstep.now { border-color: var(--btn-line); }
+  .dstep.done .dnum { background: var(--good); border-color: var(--good); color: var(--bg); }
+  /* Шапка шага: «Отдай / Получи» двумя ровными строками, суммы в одной колонке. */
+  .dhd { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; padding-bottom: 10px; }
+  .dtrend { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: none;
+            font-size: 11.5px; font-variant-numeric: tabular-nums; cursor: help; }
+  .dtrend .up { color: var(--good); } .dtrend .down { color: var(--bad); } .dtrend .flat { color: var(--muted); }
+  .dprofit .dtrend { align-self: center; margin-left: auto; }
+  .spark line.z { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 2 2; opacity: .6; }
+  .spark polyline.pos { stroke: var(--good); } .spark polyline.neg { stroke: var(--bad); }
+  .spark circle.pos { fill: var(--good); } .spark circle.neg { fill: var(--bad); }
+  .dnum { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border-radius: 12px;
+          border: 1px solid var(--btn-line); color: var(--gold); font-size: 12px; font-weight: 700; margin-top: 1px; }
+  .dflow { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 5px 10px; align-items: center; min-width: 0; flex: 1; }
+  .dflow .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  :lang(zh) .dflow .k { text-transform: none; }
+  .dflow b { text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dflow .ch { min-width: 0; }
+  .dflow .cur { max-width: 100%; }
+  /* Поле: подпись слева, −/+ справа. */
+  .frow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line2); }
+  .frow.first { border-top: 0; padding-top: 0; }
+  .fl { min-width: 0; }
+  .fk { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; }
+  :lang(zh) .fk { text-transform: none; }
+  .fl .tip { margin-left: 6px; }
+  .fc { margin-top: 2px; font-size: 12.5px; color: var(--text); opacity: .85; overflow-wrap: anywhere; }
+  .frow .stepper input { width: 104px; }
+  .fm { display: block; color: var(--muted); }
+  /* Узкая карточка (телефон) — поле под подписью на всю ширину. */
+  @container (max-width: 360px) {
+    .frow { grid-template-columns: 1fr; gap: 6px; }
+    .frow .stepper { display: flex; }
+    .frow .stepper input { flex: 1; width: auto; min-width: 0; }
+  }
+  /* Справка по шагу: сетка «подпись — значение». */
+  .dmeta { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px 14px; padding-top: 10px; border-top: 1px solid var(--line2); }
+  .dsum .dmeta { margin-top: 10px; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); }
+  .mi { min-width: 0; }
+  .mi[hidden] { display: none; }
+  .mk { display: block; color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; line-height: 1.3; }
+  :lang(zh) .mk { text-transform: none; }
+  .mv { display: block; font-size: 13px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .mv small { display: block; color: var(--muted); font-size: 11.5px; }
+  .mi.warn .mv { color: var(--warn); }
+  .mi.warn { margin: 0; font-size: inherit; }
+  /* Итоги и предупреждения под шагами. */
+  .dnotes { display: grid; gap: 6px; margin-top: 4px; color: var(--muted); font-size: 13px; }
+  .dnotes:empty { display: none; }
+  .dnote { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+           background: color-mix(in srgb, var(--warn) 8%, transparent); font-size: 13px; }
+  .stepper { display: inline-flex; align-items: stretch; }
+  .stepper input { width: 100px; margin: 0; border-radius: 0; text-align: center; -moz-appearance: textfield; }
+  .stepper input::-webkit-inner-spin-button, .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .stepper input.ov { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; position: relative; z-index: 1; }
+  .stepper button { width: 32px; margin: 0; padding: 0; background: var(--panel2); border-color: var(--line); color: var(--text);
+                    font-size: 17px; font-weight: 600; line-height: 1; user-select: none; touch-action: manipulation; }
+  .stepper button:hover { background: var(--hover); color: var(--gold); }
+  .stepper button:first-child { border-radius: 6px 0 0 6px; border-right: 0; }
+  .stepper button:last-child { border-radius: 0 6px 6px 0; border-left: 0; }
+  .dmk { text-transform: none; letter-spacing: 0; }
+  .seg { display: flex; margin-top: 4px; }
+  .seg button { min-height: 33px; }
+  .seg button { flex: 1 1 0; min-width: 0; margin: 0; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+                padding: 5px 6px; border-radius: 0; background: var(--panel2); border-color: var(--line); color: var(--text);
+                font-weight: 500; font-size: 13px; text-transform: none; letter-spacing: 0; }
+  .seg button + button { border-left: 0; }
+  .seg button:first-child { border-radius: 6px 0 0 6px; }
+  .seg button:last-child { border-radius: 0 6px 6px 0; }
+  .seg button:hover:not(:disabled) { background: var(--hover); }
+  .seg button.on { background: var(--btn); color: var(--btn-text); box-shadow: inset 0 0 0 1px var(--btn-line); font-weight: 600; }
+  .seg button:disabled { opacity: .35; }
+  .seg img { width: 20px; height: 20px; flex: none; }
+  .seg span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @container (max-width: 250px) { .seg span { display: none; } }
+  .seg.seg-text .ss { display: none; }
+  /* В узкой панели вместо слов — множители. */
+  @container (max-width: 250px) { .seg.seg-text .sl { display: none; } .seg.seg-text .ss { display: inline; } }
+  .stepper.full { display: flex; margin-top: 4px; }
+  .stepper.full input { flex: 1; width: auto; min-width: 0; }
+  .cap-prev { display: flex; justify-content: space-between; gap: 6px; min-height: 18px; margin-top: 4px;
+              text-transform: none; letter-spacing: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .cap-prev button { width: auto; margin: 0; padding: 0 2px; background: none; border: 0; color: var(--muted); font-weight: 400; }
+  .cap-prev button:hover { background: none; color: var(--text); text-decoration: underline; }
+  .cap-prev .up { color: var(--good); } .cap-prev .down { color: var(--bad); }
+  .cap-best { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; margin-top: 6px; text-transform: none; letter-spacing: 0; font-size: 12px; }
+  .cap-best:empty { display: none; }
+  .cap-best button { width: auto; margin: 0; padding: 2px 8px; border-radius: 12px; background: var(--panel2); border-color: var(--line);
+                     color: var(--text); font-weight: 500; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .cap-best button:hover { border-color: var(--btn-line); background: var(--hover); }
+  .cap-best button b { color: var(--good); font-weight: 600; }
+  #dReset { margin-top: 8px; }
+  button.ghost { background: transparent; border-color: var(--line); color: var(--muted); font-weight: 500; }
+  button.ghost:hover { background: var(--hover); color: var(--text); }
+  .dsave { margin-top: 14px; }
+  .dsave button { margin: 0; padding: 9px; }
+  #dSaveHint { margin-top: 6px; font-size: 12.5px; min-height: 1em; }
+  /* ---- режим «у Альвы» ---- */
+  .alva-btn { margin: 0 0 12px; padding: 9px; background: var(--btn); }
+  #alva { position: fixed; inset: 0; z-index: 70; overflow: auto; background: var(--bg);
+          padding: calc(14px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom)); }
+  .alva-open { overflow: hidden; }
+  /* minmax(0, 1fr): иначе длинная строка курса растягивает колонку шире экрана телефона */
+  .alva-in { max-width: 600px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .alva-in > * { min-width: 0; }
+  .arv, .abe, .alva-in .ak { overflow-wrap: anywhere; }
+  .ahead { display: flex; align-items: center; gap: 12px; }
+  .adots { display: flex; gap: 6px; }
+  .adots span { width: 12px; height: 12px; border-radius: 6px; background: var(--line); }
+  .adots .done { background: var(--good); } .adots .now { background: var(--gold); }
+  .ahead .muted { margin-left: auto; font-size: 14px; }
+  .ax { flex: none; }
+  .ax { width: 40px; height: 40px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 22px; }
+  .arow { display: grid; grid-template-columns: 96px auto minmax(0, 1fr); align-items: center; gap: 14px; }
+  .alva-in .ak { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .5px; }
+  :lang(zh) .alva-in .ak { text-transform: none; }
+  .av { font-size: 42px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .abig .cur { font-size: 18px; padding: 3px 10px 3px 4px; }
+  .abig .cur img { width: 32px; height: 32px; }
+  .arate { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); display: grid; gap: 4px; }
+  .arv { font-size: 22px; } .arv b { font-size: 28px; }
+  .abe { color: var(--warn); font-size: 16px; } .abe b { font-size: 19px; }
+  .agot { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .agot .stepper { min-width: 0; }
+  .agot .stepper { display: flex; }
+  .agot .stepper input { flex: 1; width: auto; min-width: 0; height: 60px; font-size: 30px; }
+  .agot .stepper button { width: 68px; font-size: 28px; }
+  .ahint { font-size: 13px; }
+  .anav { display: flex; gap: 10px; }
+  .anav button { margin: 0; padding: 15px; font-size: 18px; }
+  .anav .aback { width: auto; flex: none; }
+  .asum { padding: 18px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); display: grid; gap: 6px; }
+  .aprofit { font-size: 40px; font-weight: 700; }
+  .aclose { margin: 0; }
+  @media (max-width: 600px) {
+    .arow { grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; }
+    .arow .ak { grid-column: 1 / -1; }
+    .av { font-size: 36px; }
+    .arv { font-size: 18px; } .arv b { font-size: 24px; }
+  }
+  /* ---- исключения и избранное ---- */
+  .xchips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; text-transform: none; letter-spacing: 0; }
+  .xchip { width: auto; margin: 0; padding: 3px 9px; border-radius: 12px; background: var(--panel2); border-color: var(--line);
+           color: var(--text); font-weight: 500; font-size: 12px; }
+  .xchip:hover { border-color: var(--btn-line); background: var(--hover); }
+  .xchip.off { color: var(--muted); text-decoration: line-through; opacity: .6; background: transparent; }
+  .xchip.on { background: var(--btn); color: var(--btn-text); border-color: var(--btn-line); }
+  .xlbl { font-size: 12px; align-self: center; margin-right: 2px; }
+  .xitem { display: inline-flex; align-items: center; gap: 2px; }
+  .xitem button { width: 20px; height: 20px; margin: 0; padding: 0; border-radius: 10px; background: transparent; border-color: var(--line);
+                  color: var(--muted); font-size: 13px; line-height: 1; }
+  .xitem button:hover { color: var(--text); background: var(--hover); }
+  .fav { width: 24px; height: 24px; margin: 0 2px 0 0; padding: 0; flex: none; background: transparent; border: 0; color: var(--muted);
+         font-size: 16px; line-height: 1; font-weight: 400; }
+  .fav:hover { background: transparent; color: var(--gold); }
+  .fav.on { color: var(--gold); }
+  .dhead .fav { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 17px; }
+  .dhide { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 10px; font-size: 12.5px; }
+  /* ---- полоска обновления ---- */
+  #updBar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 20px; border-bottom: 1px solid var(--btn-line);
+            background: color-mix(in srgb, var(--gold) 10%, var(--bg)); font-size: 13.5px; }
+  #updBar[hidden] { display: none; }
+  #updBar button { width: auto; margin: 0; padding: 5px 12px; }
+  #updBar #updSkip { padding: 3px 9px; font-size: 16px; line-height: 1; }
+  #updBar details { font-size: 12.5px; }
+  #updBar summary { cursor: pointer; color: var(--muted); }
+  .updnotes { white-space: pre-wrap; margin-top: 6px; padding: 8px 10px; border-radius: 6px; background: var(--panel); max-height: 40vh; overflow: auto; }
+  @media (max-width: 800px) { #updBar { padding: 8px 12px; } }
+  /* ---- уведомления ---- */
+  .tg { margin-top: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 6px;
+        text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--text); }
+  .tg .check { margin: 0; }
+  .tgh { font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .tgrow { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tgrow input { flex: 1; min-width: 0; margin: 0; }
+  .tgrow button { width: auto; margin: 0; padding: 5px 10px; font-size: 12.5px; }
+  .tgst { font-size: 12px; line-height: 1.5; }
+  .tgmsg { font-size: 12px; font-weight: 500; }
+  .tgcode { display: flex; align-items: center; gap: 6px; }
+  .tgcode code { flex: 1; min-width: 0; padding: 5px 8px; border-radius: 6px; background: var(--panel2); border: 1px solid var(--line);
+                 font: 600 13px/1.3 ui-monospace, Consolas, monospace; color: var(--gold); overflow-wrap: anywhere; user-select: all; }
+  .tgcode button { width: auto; margin: 0; padding: 4px 10px; font-size: 12px; }
+  .tgsub { display: grid; gap: 6px; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line2); }
+  .nsec { margin: 4px 0 12px; }
+  .nsec .row { margin-top: 2px; }
+  .nhint { font-size: 12px; margin: -4px 0 4px; text-transform: none; letter-spacing: 0; }
+  .nhint.warn { margin-top: -4px; }
+  #toasts { position: fixed; right: 16px; bottom: 16px; z-index: 90; display: flex; flex-direction: column; gap: 8px; width: min(360px, calc(100vw - 32px)); }
+  .toast { padding: 10px 12px; border: 1px solid var(--btn-line); border-radius: 10px; background: var(--panel); box-shadow: var(--shadow);
+           display: grid; gap: 6px; font-size: 13px; animation: tin .2s ease-out; transition: opacity .25s, transform .25s; }
+  .toast.out { opacity: 0; transform: translateY(8px); }
+  @keyframes tin { from { opacity: 0; transform: translateY(8px); } }
+  .toast .tt { display: flex; align-items: center; gap: 8px; }
+  .toast .tt .good { font-size: 15px; }
+  .toast .tx { margin: 0 0 0 auto; width: 26px; height: 26px; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 16px; line-height: 1; }
+  .toast .topen { margin: 0; padding: 6px; }
+  @media (max-width: 800px) { #toasts { right: 12px; left: 12px; width: auto; bottom: calc(12px + env(safe-area-inset-bottom)); } }
+  /* ---- журнал ---- */
+  .jsum { margin-bottom: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); border-top: 1px solid var(--line); }
+  .jsum .mv { font-size: 16px; }
+  .jh { margin: 18px 0 8px; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .jhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .jhead button { width: auto; margin: 10px 0 0; padding: 5px 12px; font-size: 12.5px; }
+  tr.jrow:hover { cursor: default; }
+  .jdel { width: 28px; height: 28px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 16px; line-height: 1; }
+  .jdel:hover { color: var(--bad); border-color: var(--bad); background: transparent; }
+  @media (min-width: 1100px) { body.drawer-open main { margin-right: var(--drawer-w, 480px); } }
+  /* ---- панель инструментов: кнопка фильтров + вкладки ---- */
+  .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .toolbar .tabs { margin: 0; }
+  #filtersBtn { display: inline-flex; align-items: center; gap: 7px; width: auto; margin: 0; padding: 6px 12px;
+                background: transparent; border-color: var(--line); color: var(--text); font-weight: 500; min-width: 0; }
+  #filtersBtn:hover { background: var(--hover); }
+  #filtersBtn svg { width: 16px; height: 16px; flex: none; color: var(--gold); }
+  #fsum { display: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; font-size: 12.5px; }
+  .filters-hidden #fsum { display: inline; }
+  .filters-hidden main { grid-template-columns: minmax(0, 1fr); }
+  .filters-hidden aside { display: none; }
+  .mhead, .mfoot, .msort { display: none; }
+  /* ---- карточки (на телефоне всегда, на компьютере — переключателем): путь сверху, цифры сеткой ---- */
+  .view-cards .msort { display: block; margin-bottom: 10px; max-width: 420px; }
+  .view-cards .msort label { margin: 0; }
+  .view-cards table.rt { display: block; }
+  .view-cards .rt tbody { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 10px; }
+  .view-cards .rt thead { display: none; }
+  .view-cards .rt tr.cyc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: start; gap: 10px 12px; padding: 12px;
+                           background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  .view-cards .rt tr.cyc:hover { background: var(--panel); border-color: var(--btn-line); }
+  .view-cards .rt tr.cyc.sel { border-color: var(--btn-line); box-shadow: inset 3px 0 var(--gold); }
+  .view-cards .rt td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; font-size: 14px; }
+  .view-cards .rt td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: var(--muted);
+                                           font-size: 11px; font-weight: 400; text-transform: uppercase; letter-spacing: .4px; }
+  :lang(zh) .view-cards .rt td[data-label]::before { text-transform: none; }
+  .view-cards .rt td.wide { grid-column: 1 / -1; }
+  .view-cards .rt td.big { font-size: 19px; }
+  .view-cards .rt td.c-score { display: none; }
+  .view-cards .rt .warn { margin-top: 2px; font-size: 12px; }
+  .view-cards .rt .chg > span { min-width: 0; }
+  /* переключатель вида */
+  .vtoggle { display: flex; }
+  .favtoggle { margin: 0 0 0 auto; width: auto; min-width: 34px; height: 32px; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px;
+               background: transparent; border-color: var(--line); color: var(--muted); font-size: 17px; font-weight: 400; line-height: 1; }
+  .favtoggle small { font-size: 12px; }
+  .favtoggle:hover { background: var(--hover); color: var(--gold); }
+  .favtoggle.on { background: var(--panel2); color: var(--gold); border-color: var(--btn-line); }
+  .vtoggle button { width: 34px; height: 32px; margin: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+                    background: transparent; border-color: var(--line); color: var(--muted); border-radius: 0; }
+  .vtoggle button:first-child { border-radius: 6px 0 0 6px; }
+  .vtoggle button:last-child { border-radius: 0 6px 6px 0; border-left: 0; }
+  .vtoggle button.on { background: var(--panel2); color: var(--gold); border-color: var(--btn-line); }
+  .vtoggle svg { width: 16px; height: 16px; }
+  @media (max-width: 800px) {
+    body { font-size: 15px; }
+    /* iOS увеличивает страницу при фокусе на поле со шрифтом меньше 16px */
+    input, select, button { font-size: 16px; }
+    header { padding: 8px 12px; gap: 6px 10px; }
+    header h1 { font-size: 16px; }
+    #status { order: 3; flex-basis: 100%; font-size: 12px; }
+    .hctl { order: 1; }
+    .hleague { order: 2; flex-basis: 100%; max-width: none; }
+    main { display: block; min-height: 0; }
+    section { padding: 0 12px 24px; overflow: visible; }
+    #resizer, #dresizer { display: none; }
+    /* Фильтры — полноэкранная панель поверх результатов. */
+    aside, .filters-hidden aside { display: none; }
+    .filters-open aside { display: block; position: fixed; inset: 0; z-index: 60; overflow-y: auto; border: 0;
+                          padding: 0 16px; overscroll-behavior: contain; }
+    .filters-open, .drawer-open { overflow: hidden; }
+    .mhead { display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 2;
+             margin: 0 -16px 12px; padding: 10px 16px; padding-top: calc(10px + env(safe-area-inset-top));
+             background: var(--panel); border-bottom: 1px solid var(--line); font-size: 17px; }
+    .mhead button { width: 36px; height: 36px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 20px; }
+    .mfoot { display: block; position: sticky; bottom: 0; margin: 12px -16px 0; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+             background: var(--panel); border-top: 1px solid var(--line); }
+    .mfoot button { margin: 0; padding: 11px; }
+    /* Кнопка фильтров и вкладки прилипают к верху при прокрутке. */
+    .toolbar { position: sticky; top: 0; z-index: 20; margin: 0 -12px 10px; padding: 8px 12px; background: var(--bg);
+               border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+    #filtersBtn { width: 100%; padding: 9px 12px; grid-column: 1; grid-row: 1; }
+    .favtoggle { grid-column: 2; grid-row: 1; align-self: stretch; height: auto; margin: 0; min-width: 52px; justify-content: center; font-size: 21px; }
+    .favtoggle small { font-size: 13px; }
+    .toolbar .tabs { grid-column: 1 / -1; grid-row: 2; }
+    #fsum, .filters-hidden #fsum { display: inline; margin-left: auto; }
+    .tabs { overflow-x: auto; scrollbar-width: none; gap: 6px; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs button { flex: 1 0 auto; white-space: nowrap; padding: 7px 8px; font-size: 14px; }
+    /* На телефоне — короткие подписи, чтобы все вкладки помещались. */
+    .tabs .tl { display: none; } .tabs .ts { display: inline; }
+    #search { max-width: none !important; }
+    .cur { font-size: 13.5px; }
+    .vtoggle { display: none !important; }
+    .empty { padding: 30px 0; }
+    /* Панель шагов — на весь экран. */
+    #drawer { width: 100vw; border-left: 0; padding-top: env(safe-area-inset-top); }
+    #dBody { padding-bottom: calc(20px + env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+    .dhead button, .dhead .fav { width: 40px; height: 40px; font-size: 20px; }
+    .stepper button { width: 40px; }
+    .stepper input { width: 96px; }
+    #tooltip { font-size: 13.5px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>PoE 2 Flip Finder</h1>
+  <select id="league" class="hleague"></select>
+  <span id="status"></span>
+  <div class="hctl">
+    <select id="lang" aria-label="Language">
+      <option value="ru">RU</option><option value="en">EN</option><option value="zh">中文</option>
+    </select>
+    <button id="theme" type="button"></button>
+  </div>
+</header>
+<div id="updBar" hidden></div>
+<main>
+  <aside id="filters">
+    <div id="resizer"></div>
+    <div class="mhead"><b data-i18n="filters"></b><button id="filtersClose" type="button">×</button></div>
+    <div class="row">
+      <label><span data-i18n="source"></span><select id="source">
+        <option value="ggg" selected data-i18n="srcGgg"></option>
+        <option value="ninja">poe.ninja</option>
+      </select></label>
+      <label><span class="lh"><span data-i18n="window"></span><span class="tip" data-tip="hWindow"></span></span><select id="window">
+        <option value="1" data-i18n="w1"></option><option value="3" selected data-i18n="w3"></option>
+        <option value="6" data-i18n="w6"></option><option value="24" data-i18n="w24"></option>
+      </select></label>
+    </div>
+    <div class="lbl"><span data-i18n="base"></span><div class="seg" id="baseSeg" role="group"></div></div>
+    <label class="check"><input id="same" type="checkbox" checked><span data-i18n="sameTarget"></span><span class="tip" data-tip="hTarget"></span></label>
+    <div class="lbl" id="targetBox" hidden><span data-i18n="target"></span><div class="seg" id="targetSeg" role="group"></div></div>
+    <!-- Сами значения живут в скрытых списках: их читают расчёты и сохранение настроек. -->
+    <select id="base" hidden></select><select id="target" hidden></select>
+    <div class="lbl"><span class="lh"><span data-i18n="capital"></span><span class="tip" data-tip="hCapital"></span></span>
+      <span class="stepper full" id="capitalStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="capital" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="10"><button type="button" tabindex="-1" data-d="1">+</button></span>
+      <div id="capPrev" class="cap-prev"></div>
+      <div id="capBest" class="cap-best"></div>
+    </div>
+    <label class="check"><input id="round" type="checkbox"><span data-i18n="round"></span><span class="tip" data-tip="hRound"></span></label>
+    <div class="row">
+      <div class="lbl"><span data-i18n="maxLen"></span>
+        <div class="seg" id="maxLenSeg" role="group"><button type="button" data-v="3">3</button><button type="button" data-v="4">4</button><button type="button" data-v="5">5</button></div>
+        <select id="maxLen" hidden><option selected>3</option><option>4</option><option>5</option></select>
+      </div>
+      <label><span class="lh"><span data-i18n="fee"></span><span class="tip" data-tip="hFee"></span></span><input id="fee" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="1"></label>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="adaptive"></span><span class="tip" data-tip="hAdaptive"></span></span>
+      <div class="seg seg-text" id="noiseSeg" role="group">
+        <button type="button" data-v="0"><span class="sl" data-i18n="nOff"></span><span class="ss">0</span></button>
+        <button type="button" data-v="0.5"><span class="sl" data-i18n="nSoft"></span><span class="ss">×0.5</span></button>
+        <button type="button" data-v="1"><span class="sl" data-i18n="nNorm"></span><span class="ss">×1</span></button>
+        <button type="button" data-v="1.5"><span class="sl" data-i18n="nStrict"></span><span class="ss">×1.5</span></button>
+      </div>
+      <!-- Значение живёт в скрытом списке: его читают расчёты и сохранение настроек. -->
+      <select id="noise" hidden><option value="0"></option><option value="0.5"></option><option value="1" selected></option><option value="1.5"></option></select>
+    </div>
+    <div class="row">
+      <label><span class="lh"><span data-i18n="goldBudget"></span><span class="tip" data-tip="hGoldBudget"></span></span><input id="goldBudget" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="noLimit"></label>
+      <label><span class="lh"><span data-i18n="goldEff"></span><span class="tip" data-tip="hGoldEff"></span></span><input id="goldEff" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="anyEff"></label>
+    </div>
+    <label><span class="lh"><span data-i18n="minVol"></span><span class="tip" data-tip="hMinVol"></span></span><input id="minVol" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="100"></label>
+    <div class="row">
+      <label><span data-i18n="minProfit"></span><input id="minProfit" type="text" inputmode="decimal" autocomplete="off" step="0.1" value="1"></label>
+      <label><span class="lh"><span data-i18n="maxProfit"></span><span class="tip" data-tip="hMaxProfit"></span></span><input id="maxProfit" type="text" inputmode="decimal" autocomplete="off" step="1" value="30"></label>
+    </div>
+    <div class="row">
+      <label><span class="lh"><span data-i18n="share"></span><span class="tip" data-tip="hShare"></span></span><input id="share" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="25"></label>
+      <label><span class="lh"><span data-i18n="overhead"></span><span class="tip" data-tip="hOverhead"></span></span><input id="overhead" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="2"></label>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="maxHours"></span><span class="tip" data-tip="hMaxHours"></span></span>
+      <span class="stepper full" id="maxHoursStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="maxHours" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="" data-i18n-ph="noLimit"><button type="button" tabindex="-1" data-d="1">+</button></span>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="minStreak"></span><span class="tip" data-tip="hMinStreak"></span></span>
+      <span class="stepper full" id="minStreakStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="minStreak" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" value="" data-i18n-ph="anyStreak"><button type="button" tabindex="-1" data-d="1">+</button></span>
+    </div>
+    <div class="lbl xsec"><span class="lh"><span data-i18n="exclude"></span><span class="tip" data-tip="hExclude"></span></span>
+      <div id="exCats" class="xchips"></div>
+      <div id="exItems" class="xchips"></div>
+    </div>
+    <label class="check"><input id="auto" type="checkbox"><span data-i18n="auto"></span><span class="tip" data-tip="hAuto"></span></label>
+    <div class="nsec">
+      <label class="check"><input id="notifyOn" type="checkbox"><span data-i18n="notifyOn"></span><span class="tip" data-tip="hNotify"></span></label>
+      <div id="notifyOpts" hidden>
+        <div class="row">
+          <label><span data-i18n="notifyPct"></span><input id="notifyPct" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="5"></label>
+          <label><span data-i18n="notifyStreak"></span><input id="notifyStreak" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" value="2"></label>
+        </div>
+        <label class="check"><input id="notifySound" type="checkbox" checked><span data-i18n="notifySound"></span></label>
+        <div id="notifyHint" class="nhint"></div>
+        <div class="tg" id="tgBox"></div>
+      </div>
+    </div>
+    <button id="refresh" data-i18n="refresh"></button>
+    <div class="bar" id="bar"><div></div></div>
+    <div class="mfoot"><button id="filtersDone" type="button"></button></div>
+  </aside>
+  <section>
+    <div class="toolbar">
+      <button id="filtersBtn" type="button" aria-controls="filters">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+        <span data-i18n="filters"></span><span id="fsum" class="muted"></span>
+      </button>
+      <div class="tabs">
+        <button data-tab="cycles" class="on"><span class="tl" data-i18n="tabCycles"></span><span class="ts" data-i18n="tabCyclesS"></span></button>
+        <button data-tab="flips"><span class="tl" data-i18n="tabFlips"></span><span class="ts" data-i18n="tabFlips"></span></button>
+        <button data-tab="rates"><span class="tl" data-i18n="tabRates"></span><span class="ts" data-i18n="tabRatesS"></span></button>
+        <button data-tab="journal"><span class="tl" data-i18n="tabJournal"></span><span class="ts" data-i18n="tabJournal"></span></button>
+      </div>
+      <button type="button" id="favOnlyBtn" class="favtoggle"></button>
+      <div class="vtoggle" role="group">
+        <button type="button" data-view="table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+        <button type="button" data-view="cards"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
+      </div>
+    </div>
+    <div id="tab-cycles"></div>
+    <div id="tab-flips" hidden></div>
+    <div id="tab-journal" hidden></div>
+    <div id="tab-rates" hidden>
+      <input id="search" data-i18n-ph="searchPh" style="max-width:420px">
+      <div id="rates" style="margin-top:12px"></div>
+    </div>
+  </section>
+</main>
+<div id="drawer" hidden>
+  <div id="dresizer"></div>
+  <div class="dhead"><div class="path" id="dPath"></div><button id="dFav" type="button" class="fav"></button><button id="dClose" type="button">×</button></div>
+  <div id="dBody"></div>
+</div>
+<div id="alva" role="dialog" aria-modal="true" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+<div id="tooltip" role="tooltip" hidden></div>
+<script>
+const $ = s => document.querySelector(s);
+const IMG = "https://web.poecdn.com";
+const SETTINGS = ["league", "source", "window", "base", "target", "round", "capital", "goldBudget", "goldEff", "maxLen", "fee", "minVol", "minProfit", "maxProfit",
+                  "share", "overhead", "maxHours", "minStreak", "noise", "auto", "notifyOn", "notifyPct", "notifyStreak", "notifySound"];
+let typingTimer = null;
+let market = null, sortKey = "score", flipSort = "volume", autoTimer = null;
+
+// ---------- обновления ----------
+// Сервер раз в 6 часов спрашивает GitHub о новой версии; здесь — полоска «Доступна версия» и установка в один клик.
+let upd = null, updBusy = false, updMsg = null;
+async function loadUpdate() {
+  try {
+    const r = await fetch("/api/update");
+    upd = r.ok ? await r.json() : null;
+  } catch (e) { upd = null; }
+  renderUpdate();
+}
+function renderUpdate() {
+  const bar = $("#updBar");
+  if (!upd) { bar.hidden = true; return; }
+  let html = "";
+  if (upd.installed) {
+    html = `<span>✅ ${t("updDone", { v: esc(upd.installed) })}</span>`;
+  } else if (upd.available && ui.updSkip !== upd.latest) {
+    html = `<span>🔔 ${t("updAvail", { v: esc(upd.latest), cur: esc(upd.current) })}</span>
+      ${upd.notes ? `<details><summary>${t("updNotes")}</summary><div class="updnotes">${esc(upd.notes)}</div></details>` : ""}
+      <button type="button" id="updGo"${updBusy ? " disabled" : ""}>${updBusy ? t("updBusy") : t("updInstall")}</button>
+      <button type="button" id="updSkip" class="ghost" title="${esc(t("updSkipTip"))}">×</button>`;
+  }
+  if (updMsg) html += `<span class="bad">${esc(updMsg)}</span>`;
+  bar.innerHTML = html;
+  bar.hidden = !html;
+  $("#updGo")?.addEventListener("click", async () => {
+    updBusy = true; updMsg = null; renderUpdate();
+    try {
+      const r = await fetch("/api/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ op: "install" }) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || "HTTP " + r.status);
+      upd.installed = d.version;
+    } catch (e) { updMsg = t("updErr", { e: e.message }); }
+    updBusy = false; renderUpdate();
+  });
+  $("#updSkip")?.addEventListener("click", () => { ui.updSkip = upd.latest; saveUi(); renderUpdate(); });
+}
+setInterval(loadUpdate, 3600 * 1000);
+
+// ---------- числовые поля ----------
+// Поля — текстовые с цифровой клавиатурой (inputmode="decimal"): у type="number" Safari с русской раскладкой
+// считает «0,5» ошибкой и отдаёт пустое значение. Запятую сразу меняем на точку — раньше остальных обработчиков.
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (el.inputMode !== "decimal" || !el.value.includes(",")) return;
+  const pos = el.selectionStart;
+  el.value = el.value.replace(/,/g, ".");
+  try { el.setSelectionRange(pos, pos); } catch (err) {}
+}, true);
+// ↑/↓ в поле без своего шага — шаг из атрибута step (как было у числовых полей).
+document.addEventListener("keydown", e => {
+  const el = e.target;
+  if (e.defaultPrevented || el.inputMode !== "decimal" || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
+  e.preventDefault();
+  const step = +el.getAttribute("step") || 1, min = el.hasAttribute("min") ? +el.getAttribute("min") : -Infinity;
+  const v = Math.max(min, +((+el.value || 0) + (e.key === "ArrowUp" ? step : -step)).toFixed(6));
+  el.value = v;
+  el.dispatchEvent(new Event("input"));
+});
+
+// ---------- переводы ----------
+const I18N = {
+  ru: {
+    loading: "Загрузка…", langTitle: "Язык", toLight: "Светлая тема", toDark: "Тёмная тема",
+    league: "Лига", source: "Источник", srcGgg: "GGG, по часам", window: "Окно курса",
+    w1: "1 час", w3: "3 часа", w6: "6 часов", w24: "24 часа",
+    hWindow: "Курсы — средние по реальным сделкам за выбранное окно (официальные почасовые сводки GGG; новый час появляется примерно в :05), а не живой стакан.<br>Короткое окно свежее, но шумнее на редких парах. Перед обменом сверяй курс в игре у Альвы.",
+    base: "Стартовая", target: "Конечная", sameAsStart: "= стартовая",
+    hTarget: "Ищутся циклы: начинаешь и заканчиваешь в одной валюте. Сними галочку и выбери другую конечную — тогда ищутся пути выгоднее прямого обмена стартовой на конечную.",
+    sameTarget: "Конечная = стартовая",
+    capital: "Капитал, в стартовой валюте",
+    hCapital: "− и + меняют капитал на 1. Под полем — сколько результатов будет на шаг меньше и больше, а ниже — ближайшие суммы (±20%), где вариантов больше всего; нажми, чтобы перейти.<br>С «Целыми числами» капитал — это предел: для каждого пути подбирается своя целая сумма не больше него, при которой прибыль в штуках максимальна. Поэтому выдача меняется скачками.",
+    capPrevTitle: "Сколько будет результатов при капитале {c}", capBest: "Больше вариантов:", round: "Целые числа, как в игре",
+    hRound: "Каждый обмен в целых штуках. Стартовая сумма подбирается в пределах капитала так, чтобы округления съели меньше всего.",
+    maxLen: "Обменов (макс.)", fee: "Запас, % за шаг",
+    hFee: "Вычитается на каждом шаге, чтобы покрыть разницу между средним курсом и ценой в стакане. С «Запасом по шуму пары» — это минимум.",
+    adaptive: "Запас по шуму пары", dMargin: "Запас", noiseOff: "выключен — один для всех", noiseSoft: "мягко (×0.5)", noiseNorm: "обычно (×1)", noiseStrict: "строго (×1.5)", nOff: "выкл", nSoft: "мягко", nNorm: "обычно", nStrict: "строго",
+    hAdaptive: "Запас каждого шага — не меньше того, насколько курс этой пары обычно скачет от часа к часу (по последним 24 ч). Шумным парам запас больше, стабильным — «Запас» из настроек. Пары почти без истории — 3%.<br>Проверка на 2 сутках истории — доля путей, сохранивших прибыль ≥1% в следующем часу: один запас 1% — 71%, 2% — 76%; по шуму мягко — 77% (хороших путей столько же, как при 1%), обычно — 83%, строго — 87% (путей меньше).<br>Работает с источником GGG; в панели шагов виден запас каждого шага.",
+    goldBudget: "Бюджет золота", noLimit: "без лимита",
+    hGoldBudget: "Комиссия биржи считается сама: за каждую <b>полученную</b> штуку — её цена в золоте из файлов игры (Divine 800, Chaos 160, Exalted 120…). Поэтому набирать дешёвую валюту дорого: Exalted на 1 div ≈ 90 тыс золота.<br>Бюджет — сколько золота готов потратить: сумма уменьшится, чтобы в него уложиться.",
+    goldEff: "div на 100к золота, от", anyEff: "любая",
+    hGoldEff: "Сколько div прибыли приносят каждые 100 тыс потраченного золота. Пути ниже порога скрываются.",
+    minVol: "Мин. объём пары, div/сутки",
+    hMinVol: "Отсекает неликвид: на каждом шаге пара должна торговаться хотя бы на столько.",
+    minProfit: "Прибыль от, %", maxProfit: "Прибыль до, %",
+    hMaxProfit: "Слишком большая прибыль обычно означает спред или устаревший курс — такие пути отсекаются.",
+    share: "Доля потока, %", hShare: "Какую часть встречных сделок ты реально заберёшь. Влияет на оценку времени.",
+    overhead: "Мин. на шаг", hOverhead: "Ручная работа на каждый обмен, в минутах.",
+    maxHours: "Макс. время цикла, ч",
+    hMaxHours: "Время ≈ капитал ÷ (суточный объём пары × доля потока) + ручная работа на каждый шаг.<br>Можно дробное: 0.5 — полчаса, 1.5 — полтора часа. − и + (и стрелки ↑/↓) шагают по 0.5 ч; «−» от 0.5 снимает ограничение.",
+    auto: "Обновлять автоматически",
+    notifyOn: "Уведомлять о новых путях", notifyPct: "Прибыль от, %", notifyStreak: "Держится от, ч", notifySound: "Со звуком",
+    hNotify: "После каждого автообновления проверяю выдачу: если появился путь с прибылью и «Держится» не меньше заданных, покажу карточку на странице, сыграю звук, а если вкладка в фоне — пришлю уведомление браузера и поставлю счётчик в заголовок.<br>Учитываются и фильтры из панели. Пути, которые уже были в выдаче, не повторяю; пропавший больше чем на 2 ч путь при возвращении считается новым.",
+    nHintAuto: "Включи «Обновлять автоматически» — без него новые данные не придут.",
+    nHintDenied: "Браузер запретил уведомления — сигналы будут только на этой странице и звуком.",
+    nHintNoApi: "Системные уведомления здесь недоступны — сигналы будут только на этой странице и звуком.",
+    nHintOk: "Включено: сообщу о новых путях при следующих обновлениях данных.",
+    toastTitle: "Новый путь",
+    hTg: "Уведомления приходят в Telegram, даже когда браузер закрыт: сервер программы сам раз в 5 минут обновляет данные и ищет пути по фильтрам этой страницы (они отправляются серверу автоматически). Условия — «Прибыль от» и «Держится от» выше.<br>Нужно, чтобы программа (чёрное окно) была запущена. Без «Целых чисел» и фильтров по золоту — проценты могут немного отличаться от таблицы.",
+    tgStep1: "1. В Telegram открой @BotFather → /newbot → придумай имя → скопируй токен. 2. Вставь его сюда:",
+    tgConnect: "Подключить", tgStep2: "Отправь своему боту @{bot} это сообщение — так он узнает, что владелец ты:",
+    tgCopy: "Копировать", tgWaiting: "Жду сообщение…", tgOthers: "Для других",
+    tgOpen: "Разрешить подписываться другим", tgSubs: "Подписчики — активных: {n}, всего: {total}. Ссылка для них:",
+    hTgOthers: "Другие люди пишут твоему боту /start и настраивают свои условия кнопками прямо в Telegram (лига, стартовая, капитал, прибыль от, держится от). Каждому приходят свои пути. Им не нужны ни программа, ни токен.<br>Работает, пока запущена программа на этом компьютере. Сними галочку — новые люди подписаться не смогут (уже подписанные остаются).",
+    tgCheck: "Проверить", tgDisconnect: "Отключить", tgDisconnectQ: "Отключить Telegram? Токен бота будет удалён из программы.",
+    tgSend: "Присылать в Telegram (@{bot})", tgTest: "Тест", tgTestSent: "Отправлено — проверь Telegram.",
+    tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
+    tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
+    tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (качается только недостающий час), poe.ninja — каждые 30 минут.",
+    refresh: "Обновить данные",
+    tabCycles: "Циклы флипа", tabRates: "Курсы валюты", searchPh: "Название валюты, напр. Chaos Orb или Greater Rune",
+    noData: "Нет данных. Нажми «Обновить данные».",
+    whatCycles: "циклов", whatPaths: "путей",
+    empty: "Выгодных {what} с такими фильтрами нет. Попробуй снизить «Мин. объём», «Прибыль от»{extra} или увеличить «Макс. время».",
+    emptyEff: ", уменьшить «div на 100к золота»", emptyBudget: ", увеличить бюджет золота",
+    emptyWhole: ", увеличить капитал (в целых числах округления съедают прибыль на малых суммах)",
+    found: "Найдено {what}: {n}{more} · {ms} мс · клик по строке — шаги и пересчёт под курсы в игре.", foundMore: " (показаны первые 300)",
+    vs: " Прибыль считается относительно прямого обмена {b} → {t} (1 {b} ≈ {r} {t} с учётом запаса).",
+    thPath: "Путь", thProfit: "Прибыль", thTime: "Время", thGold: "Золото", thPerHour: "Прибыль/час", thVol: "Ликвидность", thScore: "Рейтинг",
+    thAmtTitle: "Целая стартовая сумма в пределах капитала, при которой прибыль в штуках максимальна",
+    thTimeTitle: "Оценка времени, чтобы прогнать сумму через все шаги",
+    thGoldTitle: "Комиссия биржи в золоте за весь путь и сколько div прибыли даёт каждые 100 тыс золота",
+    thPerHourTitle: "Прибыль за час, в {t}", thSeen: "Найден", thStreak: "Держится", streakVal: "{n} ч",
+    thStreakTitle: "Сколько последних часов подряд курсы реальных сделок давали прибыль не меньше «Прибыль от». Чем дольше, тем надёжнее: по истории за 2 суток в следующем часу прибыль сохраняли 49% путей с 0 ч и 92% — с 12+ ч",
+    minStreak: "Держится от, ч", anyStreak: "не важно",
+    hMinStreak: "Показывать только пути, которые давали прибыль не меньше «Прибыль от» столько последних часов подряд (по курсам реальных сделок каждого часа).<br>По истории за 2 суток прибыль ≥1% в следующем часу сохраняли: 0 ч — 49%, 1–2 ч — ~67%, 3–5 ч — 76%, 6–11 ч — 83%, 12+ ч — 92% путей.<br>Работает только с источником GGG.", thSeenTitle: "Когда путь впервые появился в выдаче на этом устройстве. Если путь не появлялся больше суток, отсчёт начинается заново", thVolTitle: "Минимальный суточный объём среди пар пути, в Divine", thScoreTitle: "Прибыль × шанс продержаться ещё час (по «Держится») × log(ликвидность). Проверено на истории: в топ-10 прибыль в следующем часу сохраняли 89% путей против 82% у прежнего рейтинга «прибыль × ликвидность»", holdChance: "Шанс на час", holdChanceTip: "Насколько часто путь с таким «Держится» сохранял прибыль ≥1% в следующем часу (по истории за 2 суток)",
+    volatile: "⚠ курс скачет", volatileTitle: "Курс одной из пар сильно изменился за сутки — цена могла уже уйти",
+    direct: "напрямую", capped: "урезано под бюджет", cappedTitle: "Сумма меньше капитала, чтобы уложиться в бюджет золота",
+    perGold: "div / 100к", perGoldTitle: "div прибыли на каждые 100 тыс потраченного золота",
+    justNow: "только что", minAgo: "{n} мин назад", hAgo: "{n} ч назад", hmAgo: "{h} ч {m} мин назад",
+    durMin: "мин", durH: "ч", durD: "дн", goldM: "млн", goldK: "тыс",
+    give: "Отдай", get: "получи", rate: "курс", vol: "объём", perDay: "div/сут",
+    vol7Day: "за сутки", vol7Week: "за неделю в среднем", chgAvg: "к среднему за сутки", chgDay: "за сутки",
+    stock: "в заявках", feeUnknown: "комиссия неизвестна", feeGold: "комиссия ~{g} золота",
+    batch: "Самая выгодная порция: <b>{a}</b> → <b>{b}</b> (+{p}%) — её можно прогонять повторно.",
+    warnLowVol: "Низкий объём на одном из шагов — большой капитал может не пройти по этому курсу.",
+    warnThin: "На одном из шагов в заявках выставлено меньше, чем тебе нужно купить — сразу всё не возьмёшь.",
+    warnSlow: "Медленный путь: пока будешь продавать, курс может уйти. Попробуй уменьшить капитал или разбить на части.",
+    warnHigh: "Прибыль больше 15% — скорее всего, это спред или устаревший курс. Обязательно сверь первый шаг в игре.",
+    goldTotal: "Золото на комиссии за весь путь: <b>~{g}</b>{unk} — <b>{eff} div</b> прибыли на каждые 100 тыс золота.{capped}",
+    goldUnk: " (без шагов с неизвестной комиссией)", goldCapped: " Сумма уменьшена, чтобы уложиться в бюджет золота.",
+    ratesMin: "Введи хотя бы 2 буквы.", ratesNoPairs: "Пар нет (объём ниже порога загрузки).", ratesNone: "Ничего не найдено.",
+    error: "Ошибка: {e}", statusLine: "{n} валют · {p} пар · {period}",
+    periodGgg: "курс за {a}–{b}", periodNinja: "данные {ago}", noLeagueData: "Для этой лиги данных ещё нет — загружаю…",
+    srvCats: "Загружаю списки категорий…", srvPairs: "Загружаю пары обмена…", srvItems: "Загружаю справочник предметов…",
+    srvGold: "Загружаю комиссии в золоте…", srvHours: "Загружаю часовые сводки GGG…", srvErr: "Ошибка загрузки",
+    srvDoneNinja: "Готово: {a} валют, {b} пар", srvDoneGgg: "Готово: сводок за {n} ч",
+    tabFlips: "Туда-обратно", tabJournal: "Журнал",
+    updAvail: "Доступна новая версия {v} (у тебя {cur}).", updNotes: "Что нового", updInstall: "Обновить", updBusy: "Скачиваю…",
+    updDone: "Обновлено до версии {v}. Чтобы она заработала, закрой чёрное окно программы и запусти её снова.",
+    updErr: "Не удалось обновить: {e}", updSkipTip: "Не напоминать об этой версии",
+    viewTable: "Таблицей", viewCards: "Карточками",
+    exclude: "Исключить", exNone: "Скрытых валют нет — скрыть валюту можно в панели шагов.", exHidden: "Скрыто:", exShow: "Снова показывать",
+    exCatOff: "Скрыть пути через эту категорию", exCatOn: "Снова показывать эту категорию",
+    hExclude: "Нажми на категорию, чтобы скрыть пути через её валюты (например, Неогранённые камни), — нажми ещё раз, чтобы вернуть. Отдельные валюты скрываются в панели шагов («Не показывать»).<br>Стартовая и конечная валюта и Chaos/Divine/Exalted не исключаются.",
+    hideCur: "Не показывать:", hideCurTip: "Скрыть все пути через эту валюту (вернуть — в «Исключить» в фильтрах)",
+    favOn: "В избранное", favOff: "Убрать из избранного", favOnly: "Только избранные", favOnlyTip: "Показывать только пути со звёздочкой", favOnlyOn: "включено, нажми, чтобы показать все",
+    favNone: "Избранных путей в выдаче нет — отметь путь звёздочкой ☆ или выключи «Только избранные».", tabCyclesS: "Циклы", tabRatesS: "Курсы",
+    dSave: "Записать сделку в журнал",
+    alvaBtn: "Режим «у Альвы»", alvaBtnTip: "Крупно, по одному шагу на экран — для телефона или второго монитора рядом с игрой",
+    alvaStep: "Шаг {k} из {n}", alvaDone: "Путь пройден", alvaGet: "Получишь", alvaRate: "Курс по рынку",
+    alvaBe: "Не хуже, чем", alvaBeTip: "Если курс у Альвы хуже этого, весь путь перестаёт давать прибыль (с учётом остальных шагов как сейчас)",
+    alvaGotHint: "Впиши, сколько реально пришло. Пусто — возьму расчётное.", alvaNext: "Готово, дальше", alvaFinish: "Готово, итог",
+    alvaBack: "Назад", alvaClose: "Закрыть", dSaveNeed: "Чтобы записать сделку, впиши «Получил фактически» во всех шагах.",
+    dSaved: "Записано в журнал ✓", dSaveErr: "Не удалось записать: {e}",
+    jEmpty: "Пока нет записанных сделок. Открой путь, пройди его в игре, впиши в шагах «Получил фактически» и нажми «Записать сделку в журнал».",
+    jNoServer: "Журнал хранится на сервере программы — перезапусти программу (закрой окно и снова запусти «Запустить (Windows).bat»).",
+    jTrades: "Сделок", jTotal: "Прибыль всего", jAvg: "Средняя прибыль", jVsPred: "Отличие от прогноза",
+    jVsPredTip: "Насколько в среднем реальная прибыль отличалась от того, что обещала программа по рыночным курсам с запасом. Минус — на деле выходит меньше.",
+    jPairsTitle: "Мои пары: реальный курс против среднего рыночного",
+    hJPairs: "Насколько курс, по которому ты реально обменял, отличался от среднего курса сделок (медиана по твоим сделкам). Минус — ты получал меньше, чем по среднему: это и есть твой реальный спред.<br>«Запас программы» — сколько программа закладывала на этот шаг. Если реальный курс хуже запаса (⚠), прогнозы по этой паре слишком оптимистичны.",
+    jPair: "Шаг", jSteps: "Раз", jSlip: "Реальный к среднему", jMargin: "Запас программы",
+    jMarginLow: "Реальный курс хуже, чем закладывает запас, — прогноз по этой паре слишком оптимистичен",
+    jList: "Сделки", jWhen: "Когда", jForecast: "Прогноз", jDiff: "Разница", jDel: "Удалить", jDelConfirm: "Удалить эту сделку из журнала?", jExport: "Скачать CSV", filters: "Фильтры", showResults: "Показать результаты ({n})", done: "Готово",
+    sortBy: "Сортировка", thAmt: "Сумма",
+    flipsIntro: "Простой флип {b} → X → {b}: купить дешевле, продать дороже. Пар: {n}. Клик — вписать курсы из игры.",
+    hFlips: "В данных GGG и poe.ninja один <b>средний</b> курс на пару, без спреда, поэтому по рынку обмен туда-обратно всегда даёт ноль минус запас — в «Циклах» такие пути не показываются.<br>Прибыль флипа — разница между ценой покупки и продажи в стакане. Открой пару и впиши оба курса, которые видишь у Альвы: панель посчитает прибыль, золото и время. Пары отсортированы по ликвидности — на них флип быстрее проходит.",
+    flipsNone: "Пар с такими фильтрами нет. Попробуй снизить «Мин. объём» или увеличить «Макс. время».",
+    thPair: "Пара", thRate: "Курс", thStock: "В заявках", thChg: "Динамика",
+    flipVolTitle: "Суточный объём пары, в Divine", flipStockTitle: "Выставлено в заявках: вторая валюта / стартовая",
+    flipChgTitle: "График — курс из колонки «Курс» по часам за последние 12 ч; процент — текущий курс к среднему за сутки. На скачущих парах спред шире, но и риск выше",
+    sparkTitle: "Курс за {n} ч: {a} → {b} ({p}), мин. {lo}, макс. {hi}",
+    flipGoldTitle: "Комиссия биржи в золоте за круг туда-обратно",
+    dStart: "Отдаю на старте", ratePer: "{b} за 1 {a}", dOutLbl: "На выходе", trendH: "{n} ч",
+    stepTrendTip: "Курс «{pair}» по часам за {n} ч: {a} → {b} ({p}). Для этого шага это {verdict}. График и процент — с точки зрения шага: вверх — выгоднее. Важно, если выставляешь заявку надолго.",
+    trendBetter: "выгоднее: за ту же сумму получаешь больше", trendWorse: "хуже: за ту же сумму получаешь меньше", trendFlat: "почти без изменений",
+    pathTrendTip: "Прибыль всего пути по часам за {n} ч (по курсам сделок каждого часа, с запасом): было {a}, сейчас {b}; мин. {lo}, макс. {hi}. Пунктир — ноль.", hStart: "С включёнными «Целыми числами» кнопки + и − перескакивают к следующей сумме, где прибыль вырастает (или уменьшается) ровно на 1 штуку конечной валюты. Суммы, которые из-за округлений ничего не добавляют, пропускаются.", dRate: "Курс в игре", dMarket: "по рынку {r}", dActual: "Получил фактически",
+    hRateOv: "Впиши курс, который видишь у Альвы, — шаг пересчитается по нему. Для введённого курса запас не вычитается: считается, что это реальная цена.",
+    hActual: "Сколько реально пришло после обмена. Следующие шаги пересчитаются от этого количества, а шаг отметится выполненным.",
+    dReset: "Сбросить правки", dClose: "Закрыть", dGone: "При текущих фильтрах этот путь уже не проходит — показан расчёт по последним данным.",
+    dLoss: "С такими значениями путь не выгоднее прямого обмена.",
+  },
+  en: {
+    loading: "Loading…", langTitle: "Language", toLight: "Light theme", toDark: "Dark theme",
+    league: "League", source: "Source", srcGgg: "GGG, hourly", window: "Rate window",
+    w1: "1 hour", w3: "3 hours", w6: "6 hours", w24: "24 hours",
+    hWindow: "Rates are averages of real trades over the chosen window (official GGG hourly digests; a new hour appears around :05), not the live order book.<br>A short window is fresher but noisier on rare pairs. Check the rate with Alva in game before trading.",
+    base: "Start", target: "End", sameAsStart: "= start",
+    hTarget: "Looks for cycles: you start and end in the same currency. Uncheck it and pick another end currency — then it looks for paths that beat a direct trade of start for end.",
+    sameTarget: "End = start",
+    capital: "Capital, in start currency",
+    hCapital: "− and + change capital by 1. Below the field — how many results there would be one step lower and higher, and further down the nearby amounts (±20%) with the most options; click to jump there.<br>With “Whole numbers” capital is a limit: each path gets its own whole amount up to it that maximizes profit in units. That's why results change in jumps.",
+    capPrevTitle: "Number of results with capital {c}", capBest: "More options:", round: "Whole numbers, like in game",
+    hRound: "Every trade uses whole units. The starting amount is picked within your capital so rounding eats as little as possible.",
+    maxLen: "Trades (max)", fee: "Margin, % per step",
+    hFee: "Deducted on every step to cover the gap between the average rate and the order book price. With “Margin by pair noise” this is the minimum.",
+    adaptive: "Margin by pair noise", dMargin: "Margin", noiseOff: "off — same for all", noiseSoft: "soft (×0.5)", noiseNorm: "normal (×1)", noiseStrict: "strict (×1.5)", nOff: "off", nSoft: "soft", nNorm: "normal", nStrict: "strict",
+    hAdaptive: "Each step's margin is at least how much this pair's rate usually moves from hour to hour (over the last 24 h). Noisy pairs get a bigger margin, stable ones — the “Margin” from settings. Pairs with almost no history — 3%.<br>Tested on 2 days of history — share of paths that kept ≥1% profit the next hour: flat 1% — 71%, 2% — 76%; by noise soft — 77% (as many good paths as with 1%), normal — 83%, strict — 87% (fewer paths).<br>GGG source only; the steps panel shows each step's margin.",
+    goldBudget: "Gold budget", noLimit: "no limit",
+    hGoldBudget: "The exchange fee is calculated automatically: for every unit you <b>receive</b> you pay its gold price from the game files (Divine 800, Chaos 160, Exalted 120…). So collecting cheap currency is expensive: 1 div worth of Exalted ≈ 90k gold.<br>Budget is how much gold you are willing to spend: the amount is reduced to fit.",
+    goldEff: "div per 100k gold, min", anyEff: "any",
+    hGoldEff: "How many div of profit every 100k of spent gold brings. Paths below the threshold are hidden.",
+    minVol: "Min. pair volume, div/day",
+    hMinVol: "Filters out illiquid pairs: every step must trade at least this much per day.",
+    minProfit: "Profit from, %", maxProfit: "Profit up to, %",
+    hMaxProfit: "Very high profit usually means a spread or a stale rate — such paths are filtered out.",
+    share: "Flow share, %", hShare: "What share of the counter-trades you will actually take. Affects the time estimate.",
+    overhead: "Min. per step", hOverhead: "Manual work per trade, in minutes.",
+    maxHours: "Max cycle time, h",
+    hMaxHours: "Time ≈ capital ÷ (daily pair volume × flow share) + manual work per step.<br>Fractions are fine: 0.5 is half an hour, 1.5 is an hour and a half. − and + (and ↑/↓ keys) step by 0.5 h; “−” from 0.5 removes the limit.",
+    auto: "Auto refresh",
+    notifyOn: "Notify about new paths", notifyPct: "Profit from, %", notifyStreak: "Holds at least, h", notifySound: "With sound",
+    hNotify: "After every auto refresh I check the results: if a path appears with profit and “Holds” not below these, I'll show a card on the page, play a sound and, if the tab is in the background, send a browser notification and put a counter in the title.<br>Panel filters apply too. Paths already in results aren't repeated; a path gone for over 2 h counts as new when it returns.",
+    nHintAuto: "Turn on “Auto refresh” — otherwise no new data arrives.",
+    nHintDenied: "The browser blocked notifications — alerts will only show on this page and with sound.",
+    nHintNoApi: "System notifications aren't available here — alerts will only show on this page and with sound.",
+    nHintOk: "On: I'll tell you about new paths on the next data updates.",
+    toastTitle: "New path",
+    hTg: "Notifications arrive in Telegram even when the browser is closed: the program's server refreshes data every 5 minutes and looks for paths using this page's filters (they're sent to the server automatically). Conditions are “Profit from” and “Holds at least” above.<br>The program (black window) must be running. Without “Whole numbers” and gold filters — percentages may differ slightly from the table.",
+    tgStep1: "1. In Telegram open @BotFather → /newbot → pick a name → copy the token. 2. Paste it here:",
+    tgConnect: "Connect", tgStep2: "Send your bot @{bot} this message — that's how it knows you're the owner:",
+    tgCopy: "Copy", tgWaiting: "Waiting for the message…", tgOthers: "For others",
+    tgOpen: "Allow others to subscribe", tgSubs: "Subscribers — active: {n}, total: {total}. Link for them:",
+    hTgOthers: "Other people send your bot /start and set their own conditions with buttons right in Telegram (league, start currency, capital, profit from, holds at least). Each gets their own paths. They need neither the program nor the token.<br>Works while the program runs on this computer. Uncheck it and new people can't subscribe (existing ones stay).",
+    tgCheck: "Check", tgDisconnect: "Disconnect", tgDisconnectQ: "Disconnect Telegram? The bot token will be removed from the program.",
+    tgSend: "Send to Telegram (@{bot})", tgTest: "Test", tgTestSent: "Sent — check Telegram.",
+    tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
+    tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
+    tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded), poe.ninja — every 30 minutes.",
+    refresh: "Refresh data",
+    tabCycles: "Flip cycles", tabRates: "Currency rates", searchPh: "Currency name, e.g. Chaos Orb or Greater Rune",
+    noData: "No data. Press “Refresh data”.",
+    whatCycles: "cycles", whatPaths: "paths",
+    empty: "No profitable {what} with these filters. Try lowering “Min. pair volume”, “Profit from”{extra} or raising “Max cycle time”.",
+    emptyEff: ", lowering “div per 100k gold”", emptyBudget: ", raising the gold budget",
+    emptyWhole: ", raising capital (with whole numbers rounding eats the profit on small amounts)",
+    found: "Found {what}: {n}{more} · {ms} ms · click a row for steps and recalculation with in-game rates.", foundMore: " (showing first 300)",
+    vs: " Profit is measured against a direct trade {b} → {t} (1 {b} ≈ {r} {t} after margin).",
+    thPath: "Path", thProfit: "Profit", thTime: "Time", thGold: "Gold", thPerHour: "Profit/hour", thVol: "Liquidity", thScore: "Score",
+    thAmtTitle: "Whole starting amount within capital that maximizes profit in units",
+    thTimeTitle: "Estimated time to push the amount through all steps",
+    thGoldTitle: "Exchange fee in gold for the whole path and div of profit per 100k gold",
+    thPerHourTitle: "Profit per hour, in {t}", thSeen: "Found", thStreak: "Holds", streakVal: "{n} h",
+    thStreakTitle: "How many recent hours in a row real trade rates gave at least “Profit from”. The longer, the more reliable: over 2 days of history 49% of paths with 0 h and 92% with 12+ h kept profit the next hour",
+    minStreak: "Holds at least, h", anyStreak: "any",
+    hMinStreak: "Show only paths that gave at least “Profit from” for this many recent hours in a row (using real trade rates of each hour).<br>Over 2 days of history, ≥1% profit held the next hour for: 0 h — 49%, 1–2 h — ~67%, 3–5 h — 76%, 6–11 h — 83%, 12+ h — 92% of paths.<br>GGG source only.", thSeenTitle: "When the path first appeared in results on this device. If it hasn't appeared for over a day, the timer starts over", thVolTitle: "Lowest daily volume among the path's pairs, in Divine", thScoreTitle: "Profit × chance to hold another hour (by “Holds”) × log(liquidity). Tested on history: in the top 10, 89% of paths kept profit the next hour vs 82% with the old “profit × liquidity” score", holdChance: "Hour chance", holdChanceTip: "How often a path with this “Holds” kept ≥1% profit the next hour (over 2 days of history)",
+    volatile: "⚠ volatile rate", volatileTitle: "One of the pairs moved a lot over the day — the price may be gone",
+    direct: "direct", capped: "capped by budget", cappedTitle: "Amount is below capital to fit the gold budget",
+    perGold: "div / 100k", perGoldTitle: "div of profit per 100k gold spent",
+    justNow: "just now", minAgo: "{n} min ago", hAgo: "{n} h ago", hmAgo: "{h} h {m} min ago",
+    durMin: "min", durH: "h", durD: "d", goldM: "M", goldK: "k",
+    give: "Give", get: "get", rate: "rate", vol: "volume", perDay: "div/day",
+    vol7Day: "daily", vol7Week: "weekly average", chgAvg: "vs. daily average", chgDay: "24h",
+    stock: "in orders", feeUnknown: "fee unknown", feeGold: "fee ~{g} gold",
+    batch: "Best batch: <b>{a}</b> → <b>{b}</b> (+{p}%) — you can repeat it.",
+    warnLowVol: "Low volume on one of the steps — large capital may not fill at this rate.",
+    warnThin: "On one of the steps there is less in orders than you need to buy — you won't get it all at once.",
+    warnSlow: "Slow path: the rate may move while you sell. Try lowering capital or splitting it up.",
+    warnHigh: "Profit above 15% — most likely a spread or a stale rate. Be sure to verify the first step in game.",
+    goldTotal: "Gold spent on fees for the whole path: <b>~{g}</b>{unk} — <b>{eff} div</b> of profit per 100k gold.{capped}",
+    goldUnk: " (excluding steps with unknown fee)", goldCapped: " The amount was reduced to fit the gold budget.",
+    ratesMin: "Type at least 2 letters.", ratesNoPairs: "No pairs (volume below load threshold).", ratesNone: "Nothing found.",
+    error: "Error: {e}", statusLine: "{n} currencies · {p} pairs · {period}",
+    periodGgg: "rates for {a}–{b}", periodNinja: "data {ago}", noLeagueData: "No data for this league yet — loading…",
+    srvCats: "Loading category lists…", srvPairs: "Loading exchange pairs…", srvItems: "Loading item database…",
+    srvGold: "Loading gold fees…", srvHours: "Loading GGG hourly digests…", srvErr: "Load error",
+    srvDoneNinja: "Done: {a} currencies, {b} pairs", srvDoneGgg: "Done: {n} h of digests",
+    tabFlips: "Round trips", tabJournal: "Journal",
+    updAvail: "New version {v} is available (you have {cur}).", updNotes: "What's new", updInstall: "Update", updBusy: "Downloading…",
+    updDone: "Updated to version {v}. To start using it, close the program's black window and run it again.",
+    updErr: "Couldn't update: {e}", updSkipTip: "Don't remind me about this version",
+    viewTable: "Table", viewCards: "Cards",
+    exclude: "Exclude", exNone: "No hidden currencies — you can hide one in the steps panel.", exHidden: "Hidden:", exShow: "Show again",
+    exCatOff: "Hide paths through this category", exCatOn: "Show this category again",
+    hExclude: "Click a category to hide paths through its currencies (e.g. Uncut Gems), click again to bring it back. Single currencies are hidden in the steps panel (“Don't show”).<br>The start and end currency and Chaos/Divine/Exalted are never excluded.",
+    hideCur: "Don't show:", hideCurTip: "Hide all paths through this currency (bring it back under “Exclude” in filters)",
+    favOn: "Add to favourites", favOff: "Remove from favourites", favOnly: "Favourites only", favOnlyTip: "Show only starred paths", favOnlyOn: "on, click to show all",
+    favNone: "No favourite paths in results — star a path ☆ or turn off “Favourites only”.", tabCyclesS: "Cycles", tabRatesS: "Rates",
+    dSave: "Save trade to journal",
+    alvaBtn: "“At Alva” mode", alvaBtnTip: "Big, one step per screen — for a phone or second monitor next to the game",
+    alvaStep: "Step {k} of {n}", alvaDone: "Path done", alvaGet: "You'll get", alvaRate: "Market rate",
+    alvaBe: "No worse than", alvaBeTip: "If Alva's rate is worse than this, the whole path stops being profitable (other steps as they are now)",
+    alvaGotHint: "Enter how much you actually got. Empty — I'll use the expected amount.", alvaNext: "Done, next", alvaFinish: "Done, result",
+    alvaBack: "Back", alvaClose: "Close", dSaveNeed: "To save the trade, fill in “Actually received” on every step.",
+    dSaved: "Saved to journal ✓", dSaveErr: "Couldn't save: {e}",
+    jEmpty: "No trades yet. Open a path, do it in game, fill in “Actually received” on every step and press “Save trade to journal”.",
+    jNoServer: "The journal is stored by the program's server — restart the program (close the window and run “Запустить (Windows).bat” again).",
+    jTrades: "Trades", jTotal: "Total profit", jAvg: "Average profit", jVsPred: "Vs. forecast",
+    jVsPredTip: "How much real profit differed on average from what the program promised at market rates after margin. Negative — reality is worse.",
+    jPairsTitle: "My pairs: real rate vs. market average",
+    hJPairs: "How much the rate you actually traded at differed from the average trade rate (median over your trades). Negative — you got less than the average: that's your real spread.<br>“Program margin” — what the program deducted for this step. If the real rate is worse than the margin (⚠), forecasts for this pair are too optimistic.",
+    jPair: "Step", jSteps: "Times", jSlip: "Real vs. average", jMargin: "Program margin",
+    jMarginLow: "The real rate is worse than the margin covers — the forecast for this pair is too optimistic",
+    jList: "Trades", jWhen: "When", jForecast: "Forecast", jDiff: "Difference", jDel: "Delete", jDelConfirm: "Delete this trade from the journal?", jExport: "Download CSV", filters: "Filters", showResults: "Show results ({n})", done: "Done",
+    sortBy: "Sort by", thAmt: "Amount",
+    flipsIntro: "Simple flip {b} → X → {b}: buy low, sell high. Pairs: {n}. Click to enter in-game rates.",
+    hFlips: "GGG and poe.ninja data has a single <b>average</b> rate per pair with no spread, so at market rates a round trip always comes out at zero minus margin — that's why such paths don't appear in “Cycles”.<br>Flip profit is the gap between the buy and sell prices in the order book. Open a pair and enter both rates you see at Alva: the panel calculates profit, gold and time. Pairs are sorted by liquidity — flips go through faster on them.",
+    flipsNone: "No pairs with these filters. Try lowering “Min. pair volume” or raising “Max cycle time”.",
+    thPair: "Pair", thRate: "Rate", thStock: "In orders", thChg: "Trend",
+    flipVolTitle: "Daily pair volume, in Divine", flipStockTitle: "In orders: other currency / start currency",
+    flipChgTitle: "Chart — the number from the “Rate” column, hourly over the last 12 h; percent — current rate vs. the daily average. Volatile pairs have wider spreads but more risk",
+    sparkTitle: "Rate over {n} h: {a} → {b} ({p}), min {lo}, max {hi}",
+    flipGoldTitle: "Exchange fee in gold for the round trip",
+    dStart: "Starting amount", ratePer: "{b} per 1 {a}", dOutLbl: "You get", trendH: "{n} h",
+    stepTrendTip: "Rate “{pair}” hourly over {n} h: {a} → {b} ({p}). For this step that's {verdict}. The chart and percent are from the step's point of view: up is better. Matters if you leave an order for long.",
+    trendBetter: "better: you get more for the same amount", trendWorse: "worse: you get less for the same amount", trendFlat: "almost unchanged",
+    pathTrendTip: "Whole path profit hourly over {n} h (by each hour's trade rates, after margin): was {a}, now {b}; min {lo}, max {hi}. Dashed line is zero.", hStart: "With “Whole numbers” on, the + and − buttons jump to the next amount where profit grows (or drops) by exactly 1 unit of the end currency. Amounts that add nothing because of rounding are skipped.", dRate: "In-game rate", dMarket: "market {r}", dActual: "Actually received",
+    hRateOv: "Enter the rate you see at Alva — the step is recalculated with it. No margin is deducted for an entered rate: it is treated as the real price.",
+    hActual: "How much you actually got after the trade. Following steps are recalculated from this amount and the step is marked done.",
+    dReset: "Reset edits", dClose: "Close", dGone: "This path no longer passes the current filters — showing the calculation on the latest data.",
+    dLoss: "With these values the path is no better than a direct trade.",
+  },
+  zh: {
+    loading: "加载中…", langTitle: "语言", toLight: "浅色主题", toDark: "深色主题",
+    league: "赛季", source: "数据源", srcGgg: "GGG（按小时）", window: "汇率窗口",
+    w1: "1 小时", w3: "3 小时", w6: "6 小时", w24: "24 小时",
+    hWindow: "汇率为所选时间窗口内真实成交的平均值（GGG 官方每小时汇总，新的一小时约在 :05 出现），而非实时挂单。<br>窗口越短越新，但冷门交易对的波动越大。兑换前请在游戏中向阿尔瓦核对汇率。",
+    base: "起始货币", target: "目标货币", sameAsStart: "= 起始货币",
+    hTarget: "寻找循环：起始和结束为同一种货币。取消勾选并选择其他目标货币——则寻找比直接用起始货币兑换目标货币更划算的路径。",
+    sameTarget: "目标货币 = 起始货币",
+    capital: "本金（以起始货币计）",
+    hCapital: "− 和 + 将本金改变 1。字段下方显示本金减少或增加一步时的结果数量，再下方是附近（±20%）选项最多的金额；点击即可切换。<br>开启“整数”时本金是上限：每条路径会在其范围内选取使利润（件数）最大的整数数量，因此结果会跳跃式变化。",
+    capPrevTitle: "本金为 {c} 时的结果数量", capBest: "更多选项：", round: "整数（与游戏一致）",
+    hRound: "每次兑换都使用整数数量。会在本金范围内挑选起始数量，使取整损失最小。",
+    maxLen: "最多兑换次数", fee: "每步余量 %",
+    hFee: "每一步都会扣除，用于弥补平均汇率与挂单价格之间的差异。开启“按交易对波动设余量”时，此值为最小值。",
+    adaptive: "按交易对波动设余量", dMargin: "余量", noiseOff: "关闭——统一余量", noiseSoft: "宽松（×0.5）", noiseNorm: "标准（×1）", noiseStrict: "严格（×1.5）", nOff: "关闭", nSoft: "宽松", nNorm: "标准", nStrict: "严格",
+    hAdaptive: "每一步的余量至少等于该交易对汇率通常每小时的波动幅度（按最近 24 小时）。波动大的交易对余量更大，稳定的使用设置中的“余量”。几乎没有历史的交易对为 3%。<br>基于 2 天历史的检验——下一小时仍保持 ≥1% 利润的路径比例：统一 1% — 71%，2% — 76%；按波动 宽松 — 77%（好路径数量与 1% 相同），标准 — 83%，严格 — 87%（路径更少）。<br>仅适用于 GGG 数据源；步骤面板中可看到每一步的余量。",
+    goldBudget: "金币预算", noLimit: "不限",
+    hGoldBudget: "交易所手续费自动计算：每<b>获得</b>一件货币，需支付其在游戏文件中的金币价格（神圣石 800、混沌石 160、崇高石 120…）。因此收集廉价货币很贵：价值 1 div 的崇高石 ≈ 9 万金币。<br>预算即愿意花费的金币：数量会被缩减以符合预算。",
+    goldEff: "每 10 万金币 div，至少", anyEff: "任意",
+    hGoldEff: "每花费 10 万金币能带来多少 div 利润。低于阈值的路径会被隐藏。",
+    minVol: "交易对最低成交量，div/天",
+    hMinVol: "过滤流动性差的交易对：每一步的日成交量都至少要达到该值。",
+    minProfit: "最低利润 %", maxProfit: "最高利润 %",
+    hMaxProfit: "利润过高通常意味着价差或过时的汇率——这类路径会被过滤。",
+    share: "成交份额 %", hShare: "你实际能吃到的对手成交比例。影响时间估算。",
+    overhead: "每步分钟", hOverhead: "每次兑换的手动操作时间（分钟）。",
+    maxHours: "最长循环时间（小时）",
+    hMaxHours: "时间 ≈ 本金 ÷（交易对日成交量 × 成交份额）+ 每步手动操作时间。<br>可以填小数：0.5 为半小时，1.5 为一个半小时。− 和 +（以及 ↑/↓ 键）每次调整 0.5 小时；在 0.5 时按 “−” 取消限制。",
+    auto: "自动刷新",
+    notifyOn: "新路径提醒", notifyPct: "最低利润 %", notifyStreak: "至少持续（小时）", notifySound: "播放声音",
+    hNotify: "每次自动刷新后检查结果：如果出现利润和“持续”都不低于设定值的路径，会在页面上显示卡片并播放声音；若标签页在后台，还会发送浏览器通知并在标题中显示计数。<br>左侧面板的筛选条件同样适用。已出现过的路径不会重复提醒；消失超过 2 小时后再出现的路径视为新路径。",
+    nHintAuto: "请开启“自动刷新”——否则不会有新数据。",
+    nHintDenied: "浏览器禁止了通知——提醒只会显示在本页面并播放声音。",
+    nHintNoApi: "此处无法使用系统通知——提醒只会显示在本页面并播放声音。",
+    nHintOk: "已开启：下次数据更新时会提醒新路径。",
+    toastTitle: "新路径",
+    hTg: "即使浏览器关闭，通知也会发送到 Telegram：程序服务器每 5 分钟自动刷新数据，并按本页面的筛选条件查找路径（筛选条件会自动发送给服务器）。条件为上方的“最低利润”和“至少持续”。<br>程序（黑色窗口）需要保持运行。不考虑“整数”和金币筛选——百分比可能与表格略有不同。",
+    tgStep1: "1. 在 Telegram 中打开 @BotFather → /newbot → 取个名字 → 复制令牌。2. 粘贴到这里：",
+    tgConnect: "连接", tgStep2: "把这条消息发送给你的机器人 @{bot}——这样它就知道你是所有者：",
+    tgCopy: "复制", tgWaiting: "等待消息…", tgOthers: "给其他人",
+    tgOpen: "允许其他人订阅", tgSubs: "订阅者——活跃：{n}，共：{total}。发给他们的链接：",
+    hTgOthers: "其他人给你的机器人发送 /start，并直接在 Telegram 中用按钮设置自己的条件（赛季、起始货币、本金、最低利润、至少持续）。每个人收到各自的路径。他们既不需要程序也不需要令牌。<br>只要这台电脑上的程序在运行就能工作。取消勾选后新用户无法订阅（已订阅的保留）。",
+    tgCheck: "检查", tgDisconnect: "断开", tgDisconnectQ: "断开 Telegram？机器人令牌将从程序中删除。",
+    tgSend: "发送到 Telegram（@{bot}）", tgTest: "测试", tgTestSent: "已发送——请查看 Telegram。",
+    tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
+    tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
+    tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG 每 5 分钟检查一次（只下载缺少的小时），poe.ninja 每 30 分钟一次。",
+    refresh: "刷新数据",
+    tabCycles: "套利循环", tabRates: "货币汇率", searchPh: "货币名称，如 Chaos Orb 或 Greater Rune",
+    noData: "没有数据。请点击“刷新数据”。",
+    whatCycles: "循环", whatPaths: "路径",
+    empty: "当前筛选条件下没有盈利的{what}。可尝试降低“最低成交量”、“最低利润”{extra}，或提高“最长循环时间”。",
+    emptyEff: "、降低“每 10 万金币 div”", emptyBudget: "、提高金币预算",
+    emptyWhole: "、增加本金（整数模式下，小额兑换的利润会被取整吃掉）",
+    found: "找到{what}：{n}{more} · {ms} 毫秒 · 点击行查看步骤并按游戏内汇率重新计算。", foundMore: "（仅显示前 300 条）",
+    vs: " 利润相对于直接兑换 {b} → {t} 计算（1 {b} ≈ {r} {t}，已扣余量）。",
+    thPath: "路径", thProfit: "利润", thTime: "时间", thGold: "金币", thPerHour: "利润/小时", thVol: "流动性", thScore: "评分",
+    thAmtTitle: "本金范围内使利润（件数）最大的整数起始数量",
+    thTimeTitle: "将本金走完所有步骤的预计时间",
+    thGoldTitle: "整条路径的交易所金币手续费，以及每 10 万金币带来的 div 利润",
+    thPerHourTitle: "每小时利润，以 {t} 计", thSeen: "发现于", thStreak: "持续", streakVal: "{n} 小时",
+    thStreakTitle: "最近连续多少小时的真实成交汇率达到“最低利润”。持续越久越可靠：2 天历史中，持续 0 小时的路径有 49%、持续 12 小时以上的有 92% 在下一小时仍有利润",
+    minStreak: "至少持续（小时）", anyStreak: "不限",
+    hMinStreak: "只显示最近连续这么多小时都达到“最低利润”的路径（按每小时真实成交汇率）。<br>2 天历史中，下一小时仍保持 ≥1% 利润的比例：0 小时 — 49%，1–2 小时 — ~67%，3–5 小时 — 76%，6–11 小时 — 83%，12 小时以上 — 92%。<br>仅适用于 GGG 数据源。", thSeenTitle: "该路径首次出现在本设备结果中的时间。若超过一天未出现，则重新计时", thVolTitle: "路径中各交易对的最低日成交量（Divine）", thScoreTitle: "利润 × 再持续一小时的概率（按“持续”）× log(流动性)。历史检验：前 10 名中 89% 的路径在下一小时保持利润，旧评分“利润 × 流动性”为 82%", holdChance: "一小时概率", holdChanceTip: "具有此“持续”值的路径在下一小时保持 ≥1% 利润的频率（2 天历史）",
+    volatile: "⚠ 汇率波动", volatileTitle: "某个交易对的汇率一天内变化很大——价格可能已经变了",
+    direct: "直接兑换", capped: "受预算限制", cappedTitle: "为符合金币预算，数量低于本金",
+    perGold: "div / 10万", perGoldTitle: "每花费 10 万金币的 div 利润",
+    justNow: "刚刚", minAgo: "{n} 分钟前", hAgo: "{n} 小时前", hmAgo: "{h} 小时 {m} 分钟前",
+    durMin: "分钟", durH: "小时", durD: "天", goldM: "百万", goldK: "千",
+    give: "付出", get: "获得", rate: "汇率", vol: "成交量", perDay: "div/天",
+    vol7Day: "日均", vol7Week: "周平均", chgAvg: "较日均", chgDay: "24 小时",
+    stock: "挂单", feeUnknown: "手续费未知", feeGold: "手续费 ~{g} 金币",
+    batch: "最划算的批量：<b>{a}</b> → <b>{b}</b>（+{p}%）——可以重复执行。",
+    warnLowVol: "某一步成交量偏低——大额本金可能无法按此汇率成交。",
+    warnThin: "某一步的挂单量少于你需要购买的数量——无法一次买齐。",
+    warnSlow: "路径较慢：出售期间汇率可能变化。可尝试减少本金或分批进行。",
+    warnHigh: "利润超过 15%——很可能是价差或过时汇率。务必在游戏中核对第一步。",
+    goldTotal: "整条路径的金币手续费：<b>~{g}</b>{unk}——每 10 万金币带来 <b>{eff} div</b> 利润。{capped}",
+    goldUnk: "（不含手续费未知的步骤）", goldCapped: "数量已缩减以符合金币预算。",
+    ratesMin: "请至少输入 2 个字母。", ratesNoPairs: "没有交易对（成交量低于加载阈值）。", ratesNone: "未找到。",
+    error: "错误：{e}", statusLine: "{n} 种货币 · {p} 个交易对 · {period}",
+    periodGgg: "{a}–{b} 的汇率", periodNinja: "数据更新于{ago}", noLeagueData: "该赛季暂无数据——正在加载…",
+    srvCats: "正在加载分类列表…", srvPairs: "正在加载兑换交易对…", srvItems: "正在加载物品数据…",
+    srvGold: "正在加载金币手续费…", srvHours: "正在加载 GGG 每小时汇总…", srvErr: "加载出错",
+    srvDoneNinja: "完成：{a} 种货币，{b} 个交易对", srvDoneGgg: "完成：{n} 小时的汇总",
+    tabFlips: "往返倒卖", tabJournal: "交易记录",
+    updAvail: "有新版本 {v}（当前为 {cur}）。", updNotes: "更新内容", updInstall: "更新", updBusy: "正在下载…",
+    updDone: "已更新到 {v} 版本。关闭程序的黑色窗口并重新运行即可使用。",
+    updErr: "更新失败：{e}", updSkipTip: "不再提醒此版本",
+    viewTable: "表格", viewCards: "卡片",
+    exclude: "排除", exNone: "没有隐藏的货币——可在步骤面板中隐藏货币。", exHidden: "已隐藏：", exShow: "重新显示",
+    exCatOff: "隐藏经过此类别的路径", exCatOn: "重新显示此类别",
+    hExclude: "点击类别即可隐藏经过其货币的路径（例如未切割宝石），再次点击恢复。单个货币可在步骤面板中隐藏（“不显示”）。<br>起始和目标货币以及 Chaos/Divine/Exalted 不会被排除。",
+    hideCur: "不显示：", hideCurTip: "隐藏经过此货币的所有路径（可在筛选中的“排除”恢复）",
+    favOn: "加入收藏", favOff: "取消收藏", favOnly: "只看收藏", favOnlyTip: "只显示加星的路径", favOnlyOn: "已开启，点击显示全部",
+    favNone: "结果中没有收藏的路径——用 ☆ 标记路径，或关闭“只看收藏”。", tabCyclesS: "循环", tabRatesS: "汇率",
+    dSave: "将交易记入记录",
+    alvaBtn: "“阿尔瓦”模式", alvaBtnTip: "大字显示，每屏一步——适合在游戏旁的手机或第二显示器上使用",
+    alvaStep: "第 {k} 步，共 {n} 步", alvaDone: "路径已完成", alvaGet: "将获得", alvaRate: "市场汇率",
+    alvaBe: "不差于", alvaBeTip: "如果阿尔瓦处的汇率比这更差，整条路径将不再盈利（其他步骤按当前计算）",
+    alvaGotHint: "填写实际获得的数量。留空则使用预计数量。", alvaNext: "完成，下一步", alvaFinish: "完成，查看结果",
+    alvaBack: "返回", alvaClose: "关闭", dSaveNeed: "要记录交易，请在每一步填写“实际获得”。",
+    dSaved: "已记入记录 ✓", dSaveErr: "记录失败：{e}",
+    jEmpty: "还没有记录的交易。打开一条路径，在游戏中完成，在每一步填写“实际获得”，然后点击“将交易记入记录”。",
+    jNoServer: "交易记录保存在程序的服务器上——请重启程序（关闭窗口后重新运行 “Запустить (Windows).bat”）。",
+    jTrades: "交易数", jTotal: "总利润", jAvg: "平均利润", jVsPred: "与预测的差异",
+    jVsPredTip: "实际利润与程序按市场汇率（扣除余量后）预测的利润平均相差多少。负数表示实际更差。",
+    jPairsTitle: "我的交易对：实际汇率与市场平均",
+    hJPairs: "你实际兑换的汇率与平均成交汇率相差多少（按你的交易取中位数）。负数表示你得到的比平均少：这就是你的实际价差。<br>“程序余量”——程序为这一步预留的余量。如果实际汇率比余量更差（⚠），该交易对的预测过于乐观。",
+    jPair: "步骤", jSteps: "次数", jSlip: "实际与平均", jMargin: "程序余量",
+    jMarginLow: "实际汇率比余量覆盖的更差——该交易对的预测过于乐观",
+    jList: "交易", jWhen: "时间", jForecast: "预测", jDiff: "差异", jDel: "删除", jDelConfirm: "从记录中删除这笔交易？", jExport: "下载 CSV", filters: "筛选", showResults: "查看结果（{n}）", done: "完成",
+    sortBy: "排序", thAmt: "数量",
+    flipsIntro: "简单倒卖 {b} → X → {b}：低买高卖。交易对：{n}。点击填写游戏内汇率。",
+    hFlips: "GGG 和 poe.ninja 的数据中每个交易对只有一个<b>平均</b>汇率，没有买卖价差，因此按市场汇率往返兑换总是零收益再减去余量——所以“套利循环”中不显示这类路径。<br>倒卖的利润来自挂单中买价与卖价的差额。打开交易对并填写你在阿尔瓦处看到的两个汇率：面板会计算利润、金币和时间。交易对按流动性排序——流动性越高，倒卖越快完成。",
+    flipsNone: "当前筛选条件下没有交易对。可尝试降低“最低成交量”或提高“最长循环时间”。",
+    thPair: "交易对", thRate: "汇率", thStock: "挂单", thChg: "走势",
+    flipVolTitle: "交易对日成交量（Divine）", flipStockTitle: "挂单量：另一种货币 / 起始货币",
+    flipChgTitle: "图表——“汇率”列中的数值在过去 12 小时内的每小时走势；百分比——当前汇率相对日均值的变化。波动大的交易对价差更宽，但风险也更高",
+    sparkTitle: "{n} 小时汇率：{a} → {b}（{p}），最低 {lo}，最高 {hi}",
+    flipGoldTitle: "往返一次的交易所金币手续费",
+    dStart: "起始数量", ratePer: "每 1 {a} 兑 {b}", dOutLbl: "最终获得", trendH: "{n} 小时",
+    stepTrendTip: "“{pair}” 汇率在 {n} 小时内的每小时走势：{a} → {b}（{p}）。对这一步来说{verdict}。图表和百分比以这一步的角度显示：向上表示更有利。挂单时间较长时尤其重要。",
+    trendBetter: "更有利：同样数量能换到更多", trendWorse: "更不利：同样数量换到更少", trendFlat: "几乎没有变化",
+    pathTrendTip: "整条路径在 {n} 小时内的每小时利润（按每小时成交汇率，已扣余量）：之前 {a}，现在 {b}；最低 {lo}，最高 {hi}。虚线为零。", hStart: "开启“整数”时，+ 和 − 按钮会跳到利润恰好增加（或减少）1 个目标货币的下一个数量。因取整而不增加利润的数量会被跳过。", dRate: "游戏内汇率", dMarket: "市场 {r}", dActual: "实际获得",
+    hRateOv: "填写你在阿尔瓦处看到的汇率，该步骤将按此重新计算。填写的汇率不扣除余量，视为真实价格。",
+    hActual: "兑换后实际到手的数量。后续步骤将按此数量重新计算，并将该步骤标记为已完成。",
+    dReset: "重置修改", dClose: "关闭", dGone: "在当前筛选条件下该路径已不符合——显示的是基于最新数据的计算。",
+    dLoss: "按这些数值，该路径并不比直接兑换更划算。",
+  },
+};
+const LOCALES = { ru: "ru-RU", en: "en-US", zh: "zh-CN" };
+
+const ui = (() => { try { return JSON.parse(localStorage.getItem("poe2flip_ui")) || {}; } catch (e) { return {}; } })();
+function saveUi() { try { localStorage.setItem("poe2flip_ui", JSON.stringify(ui)); } catch (e) {} }
+let lang = I18N[ui.lang] ? ui.lang
+  : /^zh/i.test(navigator.language) ? "zh" : /^(ru|uk|be|kk)/i.test(navigator.language) ? "ru" : "en";
+
+function t(key, vars) {
+  const s = I18N[lang][key] ?? I18N.ru[key] ?? key;
+  return vars ? s.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m) : s;
+}
+const locale = () => LOCALES[lang];
+
+// Строка статуса хранится функцией, чтобы перерисоваться при смене языка.
+let statusFn = () => t("loading"), statusErr = false;
+function setStatus(fn, isErr = false) { statusFn = fn; statusErr = isErr; $("#status").textContent = fn(); }
+
+// Сообщения сервера приходят по-русски — переводим известные.
+const SRV = [
+  [/^Загружаю списки категорий/, "srvCats"], [/^Загружаю пары обмена/, "srvPairs"], [/^Загружаю справочник предметов/, "srvItems"],
+  [/^Загружаю комиссии в золоте/, "srvGold"], [/^Загружаю часовые сводки GGG/, "srvHours"], [/^Ошибка загрузки/, "srvErr"],
+  [/^Готово: (\d+) валют, (\d+) пар/, "srvDoneNinja", m => ({ a: m[1], b: m[2] })], [/^Готово: сводок за (\d+) ч/, "srvDoneGgg", m => ({ n: m[1] })],
+];
+function srvMsg(s) {
+  for (const [re, key, vars] of SRV) { const m = s.match(re); if (m) return t(key, vars && vars(m)); }
+  return s;
+}
+
+function applyStatic() {
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => el.placeholder = t(el.dataset.i18nPh));
+  prepTips(document);
+  if ($("#target").options.length) $("#target").options[0].textContent = t("sameAsStart");
+  $("#lang").value = lang;
+  $("#lang").title = t("langTitle");
+  $("#league").title = t("league");
+  $("#league").setAttribute("aria-label", t("league"));
+  themeIcon();
+  renderSegs();
+  $("#status").textContent = statusFn();
+}
+
+// ---------- тема ----------
+const SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`;
+const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>`;
+function themeIcon() {
+  const dark = document.documentElement.dataset.theme !== "light";
+  $("#theme").innerHTML = dark ? SUN : MOON;
+  $("#theme").title = t(dark ? "toLight" : "toDark");
+  $("#theme").setAttribute("aria-label", $("#theme").title);
+}
+$("#theme").onclick = () => {
+  ui.theme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = ui.theme;
+  saveUi(); themeIcon();
+};
+$("#lang").onchange = () => {
+  lang = $("#lang").value; ui.lang = lang; saveUi();
+  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate();
+};
+
+// ---------- подсказки ----------
+const tipBox = $("#tooltip");
+let tipEl = null, tipPinned = false;
+function showTip(el) {
+  tipEl?.classList.remove("on");
+  tipEl = el; el.classList.add("on");
+  tipBox.innerHTML = t(el.dataset.tip);
+  tipBox.hidden = false;
+  const r = el.getBoundingClientRect(), w = tipBox.offsetWidth, h = tipBox.offsetHeight;
+  let x = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), innerWidth - w - 8);
+  let y = r.bottom + 6;
+  if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
+  tipBox.style.left = x + "px"; tipBox.style.top = y + "px";
+}
+function hideTip() {
+  tipEl?.classList.remove("on");
+  tipEl = null; tipPinned = false; tipBox.hidden = true;
+}
+function prepTips(root) {
+  root.querySelectorAll(".tip").forEach(el => {
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.setAttribute("aria-label", t(el.dataset.tip).replace(/<[^>]+>/g, " "));
+  });
+}
+// Слушаем на документе — так работают и подсказки, которые появляются позже (в панели шагов).
+const tipOf = e => e.target.closest?.(".tip");
+document.addEventListener("mouseover", e => { const el = tipOf(e); if (el && !tipPinned && el !== tipEl) showTip(el); });
+document.addEventListener("mouseout", e => { const el = tipOf(e); if (el && !tipPinned && !el.contains(e.relatedTarget)) hideTip(); });
+document.addEventListener("focusin", e => { const el = tipOf(e); if (el) showTip(el); });
+document.addEventListener("focusout", e => { if (tipOf(e) && !tipPinned) hideTip(); });
+document.addEventListener("click", e => {
+  const el = tipOf(e);
+  if (!el) return hideTip();
+  // Иконка лежит внутри <label> — не даём клику переключить чекбокс или сфокусировать поле.
+  e.preventDefault();
+  if (tipPinned && tipEl === el) hideTip(); else { showTip(el); tipPinned = true; }
+});
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (tipEl) { hideTip(); document.activeElement?.blur(); }
+  else if (alva.open) closeAlva();
+  else if (drawer.id) closeDrawer();
+  else if (document.body.classList.contains("filters-open")) setFiltersOpen(false);
+});
+addEventListener("scroll", hideTip, true);
+addEventListener("resize", hideTip);
+
+// ---------- ширина панелей ----------
+// Левая панель тянется за правый край, панель шагов — за левый. Двойной клик — исходная ширина.
+function setPanelW(key, cssVar, w, min, max) {
+  ui[key] = Math.round(Math.min(Math.max(w, min), Math.max(min, max)));
+  document.documentElement.style.setProperty(cssVar, ui[key] + "px");
+}
+function makeResizer(el, key, cssVar, widthAt) {
+  el.addEventListener("pointerdown", e => {
+    el.setPointerCapture(e.pointerId);
+    document.body.classList.add("resizing");
+    hideTip();
+  });
+  el.addEventListener("pointermove", e => { if (el.hasPointerCapture(e.pointerId)) widthAt(e.clientX); });
+  el.addEventListener("lostpointercapture", () => { document.body.classList.remove("resizing"); saveUi(); });
+  el.addEventListener("dblclick", () => { delete ui[key]; document.documentElement.style.removeProperty(cssVar); saveUi(); });
+}
+makeResizer($("#resizer"), "asideW", "--aside-w",
+  x => setPanelW("asideW", "--aside-w", x - $("main").getBoundingClientRect().left, 230, Math.min(720, innerWidth - 360)));
+makeResizer($("#dresizer"), "drawerW", "--drawer-w",
+  x => setPanelW("drawerW", "--drawer-w", innerWidth - x, 340, Math.min(900, innerWidth - 300)));
+
+// ---------- настройки ----------
+function save() {
+  try {
+    const o = {};
+    for (const k of SETTINGS) { const el = $("#" + k); o[k] = el.type === "checkbox" ? el.checked : el.value; }
+    localStorage.setItem("poe2flip", JSON.stringify(o));
+  } catch (e) {}
+  scheduleTgSync();
+}
+function load() {
+  try { return JSON.parse(localStorage.getItem("poe2flip")) || {}; } catch (e) { return {}; }
+}
+const saved = load();
+
+function fmt(x) {
+  if (!isFinite(x)) return "—";
+  const a = Math.abs(x);
+  if (a >= 1000) return x.toLocaleString(locale(), { maximumFractionDigits: 0 });
+  if (a >= 100) return x.toFixed(1);
+  if (a >= 1) return x.toFixed(2);
+  if (a >= 0.01) return x.toFixed(4);
+  return x.toPrecision(3);
+}
+function ago(ts) {
+  const m = Math.round((Date.now() / 1000 - ts) / 60);
+  if (m < 1) return t("justNow");
+  if (m < 60) return t("minAgo", { n: m });
+  // До 6 часов — с минутами: «2 ч 25 мин назад» точнее, чем «2 ч назад».
+  if (m < 360 && m % 60) return t("hmAgo", { h: Math.floor(m / 60), m: m % 60 });
+  return t("hAgo", { n: Math.round(m / 60) });
+}
+function dur(h) {
+  if (!isFinite(h)) return "—";
+  if (h < 1) return "~" + Math.max(1, Math.round(h * 60)) + " " + t("durMin");
+  if (h < 48) return "~" + (h < 10 ? h.toFixed(1) : Math.round(h)) + " " + t("durH");
+  return "~" + Math.round(h / 24) + " " + t("durD");
+}
+// Сколько Divine стоит 1 единица валюты (по прямой паре с Divine).
+const divCache = new Map();
+function divValue(id) {
+  if (id === "divine") return 1;
+  if (divCache.has(id)) return divCache.get(id);
+  let v = NaN;
+  for (const p of market.pairs) {
+    if (p.from === id && p.to === "divine") { v = p.rate; break; }
+    if (p.to === id && p.from === "divine") { v = 1 / p.rate; break; }
+  }
+  divCache.set(id, v);
+  return v;
+}
+
+// ---------- золото ----------
+function goldCfg() {
+  return {
+    on: Object.values(market.items).some(it => it.gold > 0),
+    budget: +$("#goldBudget").value || Infinity,
+    minEff: +$("#goldEff").value || 0,
+  };
+}
+// Комиссия биржи на каждом шаге: цена в золоте за 1 штуку ПОЛУЧАЕМОЙ валюты × сколько штук получаешь
+// (поле GoldPurchaseFee игровой таблицы CurrencyExchange). null — комиссия для предмета неизвестна.
+function goldSteps(nodes, amounts) {
+  const out = [];
+  for (let k = 1; k < nodes.length; k++) {
+    const fee = market.items[nodes[k]]?.gold;
+    out.push(fee == null ? null : fee * amounts[k]);
+  }
+  return out;
+}
+const goldSum = steps => steps.reduce((x, y) => x + (y || 0), 0);
+// Сколько div прибыли приносят каждые 100 тыс потраченного золота.
+function goldEff(gainDiv, gold) {
+  return gold > 0 ? gainDiv / gold * 1e5 : Infinity;
+}
+function fmtGold(x) {
+  if (!isFinite(x)) return "—";
+  // По-китайски крупные числа считают в 万 (10 000).
+  if (lang === "zh" && x >= 1e4) return (x / 1e4).toFixed(x >= 1e5 ? 0 : 1) + "万";
+  if (x >= 1e6) return (x / 1e6).toFixed(x >= 1e7 ? 0 : 1) + " " + t("goldM");
+  if (x >= 1e3) return Math.round(x / 1e3) + " " + t("goldK");
+  return String(Math.round(x));
+}
+// Время одного шага: капитал в Divine / часовой поток пары, который удастся забрать.
+function stepHours(e, capDiv) {
+  const share = Math.min(100, Math.max(1, +$("#share").value || 25)) / 100;
+  const overhead = (+$("#overhead").value || 0) / 60;
+  return capDiv / (e.flow / 24 * share) + overhead;
+}
+function name(id) { return market.items[id]?.name || id; }
+function chip(id) {
+  const it = market.items[id] || {};
+  const img = it.image ? `<img src="${IMG}${it.image}" alt="" loading="lazy">` : "";
+  return `<span class="cur">${img}${esc(it.name || id)}</span>`;
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+// ---------- поиск циклов ----------
+const VOLATILE = 0.2; // курс пары изменился за сутки больше чем на 20%
+
+// Запас на шаге — доля, которую вычитаем из среднего курса, чтобы покрыть разницу с ценой в стакане.
+// «По шуму пары»: запас не меньше типичного часового скачка курса этой пары (медиана |изменения| от часа к часу
+// за последние 24 ч), умноженного на выбранную строгость. Пара почти без истории — NOISE.fallback. «Запас» из
+// настроек — минимум для любой пары. Без почасовой истории (poe.ninja) — просто «Запас».
+// Проверка на 2 сутках истории (точность — доля путей с прибылью ≥1% и в следующем часу):
+//   1% для всех — 71%, 2% для всех — 76%; по шуму ×0.5 — 77%, ×1 — 83%, ×1.5 — 87%.
+const NOISE = { fallback: 0.03 };
+function pairNoise(hist) {
+  if (!hist) return null;
+  const d = [];
+  for (let i = 1; i < hist.length; i++) if (hist[i] > 0 && hist[i - 1] > 0) d.push(Math.abs(Math.log(hist[i] / hist[i - 1])));
+  if (d.length < 4) return null;
+  d.sort((a, b) => a - b);
+  return d[d.length >> 1];
+}
+function pairKeep(hist) {
+  const base = (+$("#fee").value || 0) / 100;
+  const mult = +$("#noise").value || 0;
+  if (!mult || !hist) return 1 - base;
+  const n = pairNoise(hist);
+  return 1 - Math.min(0.5, Math.max(base, n == null ? NOISE.fallback : mult * n));
+}
+
+function buildGraph(minVol) {
+  const adj = new Map(), direct = new Map(), ex = excluder();
+  const add = (a, b, rate, vol, chg, vol7, stock, hist, keep) => {
+    // Для оценки скорости берём меньшее из текущего и среднего объёма — разовый всплеск не в счёт.
+    const e = { to: b, rate, vol, chg, vol7, stock, hist, keep, flow: vol7 ? Math.min(vol, vol7) : vol };
+    if (!adj.has(a)) adj.set(a, []);
+    adj.get(a).push(e);
+    direct.set(a + "|" + b, e);
+  };
+  for (const p of market.pairs) {
+    if (p.volume < minVol) continue;
+    if (ex(p.from) || ex(p.to)) continue;
+    const prev = p.prev > 0 ? p.prev : null;
+    // stock — сколько валюты, которую получаешь на этом шаге, выставлено в заявках (только у GGG).
+    // hist — почасовой курс за последние 12 ч (только у GGG).
+    const keep = pairKeep(p.hist);  // шум в обе стороны одинаковый
+    add(p.from, p.to, p.rate, p.volume, prev ? p.rate / prev - 1 : null, p.vol7, p.stockTo, p.hist, keep);
+    add(p.to, p.from, 1 / p.rate, p.volume, prev ? prev / p.rate - 1 : null, p.vol7, p.stockFrom,
+        p.hist && p.hist.map(x => x > 0 ? 1 / x : null), keep);
+  }
+  return { adj, direct };
+}
+
+// Путь лишний, если выкинуть какой-то промежуточный шаг (A→X→B заменить на A→B)
+// и результат не станет хуже — тогда достаточно короткого варианта.
+// Укороченный цикл должен остаться хотя бы из 3 обменов, путь — из 2 (иначе это просто прямой обмен).
+function redundant(c, direct, isCycle) {
+  const n = c.edges.length;
+  if (n < (isCycle ? 4 : 3)) return false;
+  for (let i = 1; i < n; i++) {
+    const a = c.nodes[i - 1], b = c.nodes[i + 1];
+    if (a === b) continue;
+    const e = direct.get(a + "|" + b);
+    if (!e) continue;
+    const viaX = c.edges[i - 1].rate * c.edges[i - 1].keep * c.edges[i].rate * c.edges[i].keep;
+    if (e.rate * e.keep >= viaX) return true;
+  }
+  return false;
+}
+
+// Сколько конечной валюты дал бы прямой обмен 1 стартовой — с этим сравниваем выгоду пути.
+// Для цикла (конечная = стартовая) это просто 1.
+function benchmark(base, target) {
+  if (base === target) return 1;
+  for (const p of market.pairs) {
+    if (p.from === base && p.to === target) return p.rate * pairKeep(p.hist);
+    if (p.to === base && p.from === target) return pairKeep(p.hist) / p.rate;
+  }
+  return divValue(base) / divValue(target) * pairKeep(null);
+}
+
+function findPaths() {
+  const base = $("#base").value;
+  const target = $("#target").value || base;
+  const isCycle = base === target;
+  const maxLen = +$("#maxLen").value;
+  const minVol = +$("#minVol").value || 0;
+  const bench = benchmark(base, target);
+  const lo = bench * (1 + (+$("#minProfit").value || 0) / 100);
+  const hi = bench * (1 + (+$("#maxProfit").value || 1e9) / 100);
+  const { adj, direct } = buildGraph(minVol);
+  const out = [];
+  const path = [base], edges = [], used = new Set([base]);
+  let steps = 0;
+
+  // depth — номер обмена, который делаем следующим ребром (1 = первый обмен).
+  // Граф звездообразный (почти всё торгуется только к Divine/Exalted/Chaos),
+  // поэтому полный перебор до 5 шагов занимает доли секунды.
+  function dfs(node, amt, depth) {
+    if (++steps > 5e6) return;
+    for (const e of adj.get(node) || []) {
+      const next = amt * e.rate * e.keep;
+      if (e.to === target) {
+        // Один обмен — это и есть прямой обмен, с ним и сравниваем; интересны пути от 2 шагов.
+        if (depth >= 2 && next >= lo && next <= hi) {
+          const all = [...edges, e];
+          const c = { nodes: [...path, target], edges: all, mult: next, bench,
+                      minVol: Math.min(...all.map(x => x.vol)),
+                      volatile: all.some(x => x.chg !== null && Math.abs(x.chg) > VOLATILE) };
+          if (!redundant(c, direct, isCycle)) out.push(c);
+        }
+        continue;
+      }
+      if (depth >= maxLen || used.has(e.to)) continue;
+      used.add(e.to); path.push(e.to); edges.push(e);
+      dfs(e.to, next, depth + 1);
+      used.delete(e.to); path.pop(); edges.pop();
+    }
+  }
+  dfs(base, 1, 1);
+  return out;
+}
+
+// Прогон суммы по шагам. В целом режиме на бирже отдаёшь и получаешь только целые штуки,
+// поэтому после каждого обмена дробная часть отбрасывается.
+function simulate(c, start, whole) {
+  const amounts = [start];
+  let amt = start;
+  for (const e of c.edges) {
+    amt = amt * e.rate * e.keep;
+    if (whole) amt = Math.floor(amt + 1e-9);
+    amounts.push(amt);
+  }
+  return amounts;
+}
+
+// Сколько штук дал бы прямой обмен n единиц (для цикла — сами n).
+function directWhole(n, bench) {
+  return bench === 1 ? n : Math.floor(n * bench + 1e-9);
+}
+
+// Подбирает целую стартовую сумму не больше капитала:
+//  best  — максимум прибыли в штуках (при равенстве — меньшая сумма);
+//  batch — лучший процент, т.е. «порция», которую выгодно повторять (4 div → 5 div).
+function wholePlan(c, cap, g) {
+  const nMax = Math.floor(cap + 1e-9);
+  if (nMax < 1) return null;
+  let best = null, batch = null;
+  for (let n = nMax; n >= Math.max(1, nMax - 3000); n--) {
+    const a = simulate(c, n, true);
+    if (goldSum(goldSteps(c.nodes, a)) > g.budget) continue;  // не влезает в бюджет золота
+    const outAmt = a[a.length - 1], gain = outAmt - directWhole(n, c.bench);
+    if (gain <= 1e-9) continue;
+    if (!best || gain >= best.gain - 1e-9) best = { amounts: a, gain };
+    const pct = outAmt / (n * c.bench);
+    if (!batch || pct >= batch.pct - 1e-12) batch = { amounts: a, pct };
+  }
+  return best ? { ...best, batch } : null;
+}
+
+// Пути с суммами, прибылью, золотом и временем для заданного капитала; отсеивает по фильтрам.
+// Пути копируются, чтобы предпросмотр капитала не портил объекты, показанные в таблице.
+// «Держится N ч»: сколько последних часов подряд курсы реальных сделок (по часу, без усреднения) давали
+// прибыль не меньше «Прибыль от». По истории за 2 суток это лучший признак, что путь сохранится в следующем
+// часу: 0 ч — 49%, 1–2 ч — ~67%, 3–5 ч — 76%, 6–11 ч — 83%, 12+ ч — 92%.
+// Час без сделок по одной из пар прерывает серию. null — истории нет (poe.ninja).
+function pathStreak(c, minPct, isCycle, dh, dk) {
+  const hist = pathProfitHist(c, isCycle, dh, dk);
+  if (!hist) return null;
+  let n = 0;
+  for (let h = hist.length - 1; h >= 0 && hist[h] != null && hist[h] >= minPct; h--) n++;
+  return n;
+}
+// Прибыль пути в каждом из последних часов по курсам сделок того часа, с запасом (старые первыми).
+// Для пути с другой конечной — относительно прямого обмена в том же часу. null — в этот час по одной из пар не было сделок.
+function pathProfitHist(c, isCycle, dh, dk) {
+  const H = c.edges[0].hist?.length;
+  if (!H || (!isCycle && !dh)) return null;
+  return Array.from({ length: H }, (_, h) => {
+    let x = 1;
+    for (const e of c.edges) {
+      const r = e.hist?.[h];
+      if (!(r > 0)) return null;
+      x *= r * e.keep;
+    }
+    const bench = isCycle ? 1 : dh[h] > 0 ? dh[h] * dk : null;
+    return bench ? x / bench - 1 : null;
+  });
+}
+// Почасовая история пары стартовая–конечная как есть (для запаса — он от направления не зависит).
+function directPairHist(base, target) {
+  return market.pairs.find(p => p.from === base && p.to === target || p.to === base && p.from === target)?.hist || null;
+}
+// Почасовой курс прямого обмена стартовой на конечную.
+function directHist(base, target) {
+  for (const p of market.pairs) {
+    if (p.from === base && p.to === target) return p.hist || null;
+    if (p.to === base && p.from === target) return p.hist ? p.hist.map(x => x > 0 ? 1 / x : null) : null;
+  }
+  return null;
+}
+function streakText(c) {
+  if (c.streak == null) return "—";
+  const H = c.edges[0].hist.length;
+  return t("streakVal", { n: c.streak >= H ? H + "+" : c.streak });
+}
+
+// Шанс, что путь продержится ещё час (прибыль ≥1% в следующем часу), по «держится» — измерено на истории
+// (2 суток, ~3900 путей): 0 ч — 43%, 1–2 ч — 63%, 3–5 ч — 73%, 6–11 ч — 80%, 12+ ч — 91%; без истории — 66%.
+function holdChance(streak) {
+  if (streak == null) return 0.66;
+  return streak === 0 ? 0.43 : streak <= 2 ? 0.63 : streak <= 5 ? 0.73 : streak <= 11 ? 0.80 : 0.91;
+}
+// Рейтинг = прибыль × шанс продержаться × log(ликвидность). На истории (вторая половина, вероятности — по первой)
+// в топ-10 прибыль ≥1% в следующем часу сохраняли 89% путей против 82% у прежнего «прибыль × log(ликвидность)».
+const rating = c => c.pct * holdChance(c.streak) * Math.log1p(c.minVol);
+
+function evalCycles(paths, cap) {
+  const base = $("#base").value;
+  const target = $("#target").value || base;
+  const whole = $("#round").checked;
+  const maxHours = +$("#maxHours").value || Infinity;
+  const minPct = (+$("#minProfit").value || 0) / 100;
+  const minStreak = +$("#minStreak").value || 0;
+  const dh = base === target ? null : directHist(base, target);
+  const dhRaw = base === target ? null : directPairHist(base, target);
+  const g = goldCfg();
+  const cyc = [];
+  for (const p of paths) {
+    const c = { ...p };
+    if (whole) {
+      const plan = wholePlan(c, cap, g);
+      if (!plan) continue;  // после округлений (или в пределах бюджета золота) прибыли не остаётся
+      c.amounts = plan.amounts;
+      c.batch = plan.batch;
+      c.capped = c.amounts[0] < Math.floor(cap + 1e-9) && goldSum(goldSteps(c.nodes, simulate(c, Math.floor(cap + 1e-9), true))) > g.budget;
+    } else {
+      c.amounts = simulate(c, cap, false);
+      // Золото растёт пропорционально сумме — если не влезает в бюджет, уменьшаем сумму.
+      const need = goldSum(goldSteps(c.nodes, c.amounts));
+      if (need > g.budget) {
+        c.amounts = simulate(c, cap * g.budget / need, false);
+        c.capped = true;
+      }
+      // Меньше одной штуки купить нельзя — с таким капиталом путь невыполним.
+      if (c.amounts.some(x => x < 1)) continue;
+    }
+    c.inAmt = c.amounts[0];
+    c.outAmt = c.amounts[c.amounts.length - 1];
+    c.direct = whole ? directWhole(c.inAmt, c.bench) : c.inAmt * c.bench;
+    c.gain = c.outAmt - c.direct;
+    c.pct = c.outAmt / (c.inAmt * c.bench) - 1;
+    c.goldSteps = goldSteps(c.nodes, c.amounts);
+    c.gold = goldSum(c.goldSteps);
+    c.goldUnknown = c.goldSteps.includes(null);
+    c.eff = goldEff(c.gain * divValue(target), c.gold);
+    c.hours = c.edges.reduce((s, e) => s + stepHours(e, c.inAmt * divValue(base)), 0);
+    c.perHour = c.gain / c.hours;
+    if (c.hours > maxHours) continue;
+    if (g.on && c.eff < g.minEff) continue;
+    c.streak = pathStreak(c, minPct, base === target, dh, dh && pairKeep(dhRaw));
+    if (minStreak && !(c.streak >= minStreak)) continue;
+    cyc.push(c);
+  }
+  return cyc;
+}
+
+function renderCycles() {
+  const box = $("#tab-cycles");
+  if (!market) { box.innerHTML = `<div class="empty">${t("noData")}</div>`; closeDrawer(); counts.cycles = 0; updateFilterUi(); return; }
+  const t0 = performance.now();
+  const base = $("#base").value;
+  const target = $("#target").value || base;
+  const isCycle = base === target;
+  const whole = $("#round").checked;
+  const g = goldCfg();
+  let cyc = evalCycles(findPaths(), +$("#capital").value || 1);
+  scheduleCapPreview();
+  const ms = Math.round(performance.now() - t0);
+  const score = rating;
+  markSeen(cyc);
+  const cmp = {
+    seen: (a, b) => b.seen - a.seen || score(b) - score(a),
+    streak: (a, b) => (b.streak ?? -1) - (a.streak ?? -1) || score(b) - score(a),
+    profit: (a, b) => b.pct - a.pct,
+    volume: (a, b) => b.minVol - a.minVol,
+    score: (a, b) => score(b) - score(a),
+    len: (a, b) => a.edges.length - b.edges.length || b.pct - a.pct,
+    time: (a, b) => a.hours - b.hours,
+    perHour: (a, b) => b.perHour - a.perHour,
+    gold: (a, b) => b.eff - a.eff,
+  }[sortKey] || ((a, b) => score(b) - score(a));
+  cyc.sort(cmp);
+  const byId = new Map([...cyc, ...flipCandidates()].map(c => [c.nodes.join(">"), c]));
+  if (pendingOpen) {
+    const c = byId.get(pendingOpen);
+    pendingOpen = null;
+    if (c) openDrawer(c);
+  }
+  syncDrawer(byId);
+  const nFav = cyc.filter(c => isFav(c.nodes.join(">"))).length;
+  favCount.cycles = nFav; updateFavBtn();
+  if (ui.favOnly) cyc = cyc.filter(c => isFav(c.nodes.join(">")));
+  const total = cyc.length;
+  counts.cycles = total; updateFilterUi();
+  cyc = cyc.slice(0, 300);
+  const what = t(isCycle ? "whatCycles" : "whatPaths");
+  if (!total) {
+    const extra = (g.minEff ? t("emptyEff") : "") + (isFinite(g.budget) ? t("emptyBudget") : "") + (whole ? t("emptyWhole") : "");
+    box.innerHTML = `<div class="empty">${ui.favOnly ? t("favNone") : t("empty", { what, extra })}</div>`;
+    wireFav(box);
+    return;
+  }
+  const tn = esc(name(target)), bn = esc(name(base));
+  const vs = isCycle ? "" : t("vs", { b: bn, t: tn, r: fmt(cyc[0].bench) });
+  const arrowTh = k => sortKey === k ? " ▾" : "";
+  const L = k => ` data-label="${esc(t(k))}"`;
+  const sorts = [["score", "thScore"], ["profit", "thProfit"], ["perHour", "thPerHour"], ["time", "thTime"],
+                 ["volume", "thVol"], ...(g.on ? [["gold", "thGold"]] : []), ["streak", "thStreak"], ["seen", "thSeen"], ["len", "thPath"]];
+  let html = `<div class="muted" style="margin-bottom:8px">${t("found", { what, n: total, more: total > 300 ? t("foundMore") : "", ms })}${vs}</div>
+  ${sortSelect("cycSort", sorts, sortKey)}
+  <table class="rt"><thead><tr>
+    <th data-sort="len">${t("thPath")}${arrowTh("len")}</th>
+    <th class="num" data-sort="profit">${t("thProfit")}${arrowTh("profit")}</th>
+    <th class="num" title="${whole ? t("thAmtTitle") : ""}">${bn} → ${tn}</th>
+    <th class="num" data-sort="time" title="${t("thTimeTitle")}">${t("thTime")}${arrowTh("time")}</th>
+    ${g.on ? `<th class="num" data-sort="gold" title="${t("thGoldTitle")}">${t("thGold")}${arrowTh("gold")}</th>` : ""}
+    <th class="num" data-sort="perHour" title="${t("thPerHourTitle", { t: tn })}">${t("thPerHour")}${arrowTh("perHour")}</th>
+    <th class="num" data-sort="volume" title="${t("thVolTitle")}">${t("thVol")}${arrowTh("volume")}</th>
+    <th class="num" data-sort="score" title="${t("thScoreTitle")}">${t("thScore")}${arrowTh("score")}</th>
+    <th class="num" data-sort="streak" title="${t("thStreakTitle")}">${t("thStreak")}${arrowTh("streak")}</th>
+    <th class="num" data-sort="seen" title="${t("thSeenTitle")}">${t("thSeen")}${arrowTh("seen")}</th>
+  </tr></thead><tbody>`;
+  cyc.forEach((c, i) => {
+    const pathHtml = c.nodes.map(chip).join(`<span class="arrow">→</span>`);
+    const id = c.nodes.join(">");
+    html += `<tr class="cyc${drawer.id === id ? " sel" : ""}" data-id="${esc(id)}" data-i="${i}">
+      <td class="wide"><div class="path">${favBtn(id)}${pathHtml}</div></td>
+      <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%${c.volatile
+        ? `<div class="warn" title="${t("volatileTitle")}">${t("volatile")}</div>` : ""}</td>
+      <td class="num"${L("thAmt")}>${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b><div class="muted">+${amt(c.gain)} ${tn}${
+        isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${c.capped
+        ? `<div class="warn" title="${t("cappedTitle")}">${t("capped")}</div>` : ""}</td>
+      <td class="num"${L("thTime")}>${dur(c.hours)}</td>
+      ${g.on ? `<td class="num"${L("thGold")}>${fmtGold(c.gold)}${c.goldUnknown ? "?" : ""}<div class="muted"
+        title="${t("perGoldTitle")}">${isFinite(c.eff) ? fmt(c.eff) : "∞"} ${t("perGold")}</div></td>` : ""}
+      <td class="num"${L("thPerHour")}>${c.perHour > 0 ? "+" : ""}${fmt(c.perHour)}</td>
+      <td class="num"${L("thVol")}>${fmt(c.minVol)} div</td>
+      <td class="num c-score"${L("thScore")}>${(score(c) * 100).toFixed(1)}</td>
+      <td class="num${c.streak ? "" : " muted"}"${L("thStreak")}>${streakText(c)}</td>
+      <td class="num"${L("thSeen")}>${seenBadge(c.seen)}</td></tr>`;
+  });
+  html += "</tbody></table>";
+  box.innerHTML = html;
+  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { sortKey = th.dataset.sort; renderCycles(); });
+  $("#cycSort").onchange = e => { sortKey = e.target.value; renderCycles(); };
+  wireFav(box);
+  const shown = new Map(cyc.map(c => [c.nodes.join(">"), c]));
+  box.querySelectorAll("tr.cyc").forEach(tr => tr.onclick = () => {
+    if (drawer.id === tr.dataset.id) closeDrawer(); else openDrawer(shown.get(tr.dataset.id));
+  });
+}
+
+// Целые суммы печатаем без копеек.
+function amt(x) {
+  return Number.isInteger(x) ? x.toLocaleString(locale()) : fmt(x);
+}
+
+// ---------- панель шагов ----------
+// Справа открывается выбранный путь. Курс каждого шага и фактически полученное количество можно
+// переписать — всё дальше пересчитывается локально. Правки живут до перезагрузки страницы.
+const drawer = { id: null, c: null, gone: false };
+const overrides = new Map();  // id пути -> { start, rate: [], got: [] }
+// Правки и открытая панель переживают перезагрузку страницы. Правки, которые не трогали больше суток,
+// забываются — курсы к тому времени всё равно устарели.
+const OV_KEY = "poe2flip_ov", OV_TTL = 86400;
+let pendingOpen = null, ovSaveTimer = null;
+(() => {
+  try {
+    const d = JSON.parse(localStorage.getItem(OV_KEY)) || {}, now = Date.now() / 1000;
+    for (const [id, o] of Object.entries(d.ovs || {})) {
+      if (now - (o.ts || 0) <= OV_TTL) overrides.set(id, { start: o.start ?? null, rate: o.rate || [], got: o.got || [] });
+    }
+    pendingOpen = d.open || null;
+    const h = location.hash.match(/^#open=(.+)$/);
+    if (h) { pendingOpen = decodeURIComponent(h[1]); history.replaceState(null, "", location.pathname); }
+  } catch (e) {}
+})();
+const ovEmpty = o => !(o.start > 0) && !o.rate.some(x => x > 0) && !o.got.some(x => x > 0);
+function saveOverrides() {
+  clearTimeout(ovSaveTimer);
+  ovSaveTimer = setTimeout(() => {
+    let prev = {};
+    try { prev = JSON.parse(localStorage.getItem(OV_KEY))?.ovs || {}; } catch (e) {}
+    const now = Math.floor(Date.now() / 1000), ovs = {};
+    for (const [id, o] of overrides) {
+      if (ovEmpty(o)) continue;
+      // Время обновляем только если правки изменились — иначе просто открытая панель продлевала бы их бесконечно.
+      const same = prev[id] && JSON.stringify([prev[id].start, prev[id].rate, prev[id].got]) === JSON.stringify([o.start, o.rate, o.got]);
+      ovs[id] = { start: o.start, rate: o.rate, got: o.got, ts: same ? prev[id].ts : now };
+    }
+    try { localStorage.setItem(OV_KEY, JSON.stringify({ ovs, open: drawer.id })); } catch (e) {}
+  }, 300);
+}
+function ovFor(id) {
+  if (!overrides.has(id)) overrides.set(id, { start: null, rate: [], got: [] });
+  return overrides.get(id);
+}
+function markSel() {
+  document.querySelectorAll("tr.cyc").forEach(tr => tr.classList.toggle("sel", tr.dataset.id === drawer.id));
+}
+function openDrawer(c) {
+  Object.assign(drawer, { id: c.nodes.join(">"), c, gone: false });
+  $("#drawer").hidden = false;
+  document.body.classList.add("drawer-open");
+  buildDrawer(); markSel(); saveOverrides();
+}
+function closeDrawer() {
+  if (!drawer.id) return;
+  Object.assign(drawer, { id: null, c: null, gone: false });
+  $("#drawer").hidden = true;
+  document.body.classList.remove("drawer-open");
+  markSel(); saveOverrides();
+}
+// После пересчёта таблицы подменяем путь свежим; если он выпал из фильтров — оставляем старый с пометкой.
+function syncDrawer(byId) {
+  if (!drawer.id) return;
+  const c = byId.get(drawer.id);
+  if (c) drawer.c = c;
+  drawer.gone = !c;
+  buildDrawer();
+}
+$("#dClose").onclick = closeDrawer;
+
+// Прибыль всего пути по часам — видно, растёт она или тает.
+function pathTrend(c) {
+  const base = c.nodes[0], target = c.nodes[c.nodes.length - 1], isCycle = base === target;
+  const hist = pathProfitHist(c, isCycle, isCycle ? null : directHist(base, target), isCycle ? 1 : pairKeep(directPairHist(base, target)));
+  const fl = firstLast(hist);
+  if (!fl) return "";
+  const v = hist.filter(x => x != null);
+  const cls = Math.abs(fl[1] - fl[0]) < 0.005 ? "flat" : fl[1] > fl[0] ? "up" : "down";
+  const title = t("pathTrendTip", { n: hist.length, a: pct1(fl[0]), b: pct1(fl[1]), lo: pct1(Math.min(...v)), hi: pct1(Math.max(...v)) });
+  return `<div class="dtrend" title="${esc(title)}">${trendSvg(hist, { w: 120, h: 30, cls, zero: true })}` +
+    `<span class="${cls}">${t("trendH", { n: hist.length })}: ${pct1(fl[0])} → ${pct1(fl[1])}</span></div>`;
+}
+
+// Курс в поле показываем так же, как в игре: «1 дорогая = N дешёвых».
+const rateFwd = e => e.rate >= 1;
+
+function buildDrawer() {
+  const c = drawer.c, o = ovFor(drawer.id), ggg = market.source === "ggg";
+  // Перестройка не должна сбивать ввод, если данные обновились, пока поле в фокусе.
+  const fa = document.activeElement;
+  const focus = $("#dBody").contains(fa) && fa.dataset.f ? fa.dataset.f + "|" + (fa.dataset.k ?? "") : null;
+  const base = c.nodes[0], target = c.nodes[c.nodes.length - 1];
+  $("#dPath").innerHTML = c.nodes.map(chip).join(`<span class="arrow">→</span>`);
+  $("#dClose").title = t("dClose");
+  $("#dFav").textContent = isFav(drawer.id) ? "★" : "☆";
+  $("#dFav").classList.toggle("on", isFav(drawer.id));
+  $("#dFav").title = t(isFav(drawer.id) ? "favOff" : "favOn");
+  $("#dFav").onclick = () => toggleFav(drawer.id);
+  const num = (f, k, v, ph) => `<span class="stepper"><button type="button" tabindex="-1" data-d="-1">−</button><input data-f="${f}"${
+    k == null ? "" : ` data-k="${k}"`} type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="${v ?? ""}" placeholder="${ph}"><button type="button" tabindex="-1" data-d="1">+</button></span>`;
+  // Строка поля: слева подпись и пояснение, справа −/+ фиксированной ширины — поля стоят ровно в каждой карточке.
+  const frow = (label, tip, caption, input, cls = "") => `<div class="frow ${cls}"><div class="fl"><span class="fk">${label}</span>${
+    tip ? `<span class="tip" data-tip="${tip}"></span>` : ""}<div class="fc">${caption}</div></div>${input}</div>`;
+  const mi = (k, v, cls = "") => `<div class="mi ${cls}"><span class="mk">${k}</span><span class="mv">${v}</span></div>`;
+  let html = drawer.gone ? `<div class="dnote warn">${t("dGone")}</div>` : "";
+  html += `<button id="dAlva" type="button" class="alva-btn" title="${esc(t("alvaBtnTip"))}">▶ ${t("alvaBtn")}</button>`;
+  // Промежуточные валюты пути, которые можно скрыть одним кликом.
+  const hideable = [...new Set(c.nodes.slice(1, -1))].filter(id => !market.core.includes(id));
+  if (hideable.length) html += `<div class="dhide"><span class="muted">${t("hideCur")}</span>${hideable.map(id =>
+    `<button type="button" class="xchip" data-hide="${esc(id)}" title="${esc(t("hideCurTip"))}">${esc(name(id))} ×</button>`).join("")}</div>`;
+  html += `<div class="dsum">
+    ${frow(t("dStart"), "hStart", esc(name(base)), num("start", null, o.start, c.inAmt), "first")}
+    <div class="dprofit"><span class="mk">${t("thProfit")}</span><span id="dGain"></span><span id="dPct"></span>${pathTrend(c)}</div>
+    <div class="dmeta" id="dMeta"></div>
+  </div><ol class="dsteps">`;
+  c.edges.forEach((e, k) => {
+    const from = c.nodes[k], to = e.to, fwd = rateFwd(e);
+    const [a, b] = fwd ? [from, to] : [to, from];
+    const mr = fwd ? e.rate : 1 / e.rate;
+    const chgCls = e.chg !== null && Math.abs(e.chg) > VOLATILE ? "warn" : "";
+    html += `<li class="dstep" data-k="${k}">
+      <div class="dhd"><span class="dnum">${k + 1}</span><div class="dflow">
+        <span class="k">${t("give")}</span><b data-give></b><span class="ch">${chip(from)}</span>
+        <span class="k">${t("get")}</span><b data-got></b><span class="ch">${chip(to)}</span>
+      </div>${stepTrend(e, fwd, t("ratePer", { a: esc(name(a)), b: esc(name(b)) }))}</div>
+      ${frow(t("dRate"), "hRateOv", `${t("ratePer", { a: esc(name(a)), b: esc(name(b)) })}<span class="fm">${t("dMarket", { r: fmt(mr) })}</span>`,
+             num("rate", k, o.rate[k], +mr.toPrecision(6)))}
+      ${frow(t("dActual"), "hActual", esc(name(to)), num("got", k, o.got[k], ""))}
+      <div class="dmeta">
+        ${mi(t("vol"), `${fmt(e.vol)} ${t("perDay")}${e.vol7 ? `<small>${t(ggg ? "vol7Day" : "vol7Week")} ${fmt(e.vol7)}</small>` : ""}`)}
+        ${e.stock == null ? "" : mi(t("stock"), amt(e.stock))}
+        ${e.chg === null ? "" : mi(t(ggg ? "chgAvg" : "chgDay"), pctStr(e.chg), chgCls)}
+        ${mi(t("dMargin"), `${((1 - e.keep) * 100).toFixed(1)}%`)}
+        ${mi(t("thTime"), "", "dyn-time")}${mi(t("thGold"), "", "dyn-fee")}
+      </div>
+    </li>`;
+  });
+  html += `</ol><div class="dnotes"><div id="dGold"></div>`;
+  if (c.batch && c.batch.amounts[0] < c.inAmt) {
+    const b = c.batch.amounts;
+    html += `<div>${t("batch", {
+      a: `${amt(b[0])} ${esc(name(base))}`, b: `${amt(b[b.length - 1])} ${esc(name(target))}`,
+      p: (c.batch.pct * 100 - 100).toFixed(2) })}</div>`;
+  }
+  html += `</div><div id="dWarn"></div>
+    <div class="dsave"><button id="dSave" type="button">${t("dSave")}</button><div id="dSaveHint" class="muted"></div></div>
+    <button id="dReset" type="button" class="ghost">${t("dReset")}</button>`;
+  const body = $("#dBody");
+  body.innerHTML = html;
+  prepTips(body);
+  body.querySelectorAll("[data-hide]").forEach(b => b.onclick = () => setExcluded("item", b.dataset.hide, true));
+  body.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const v = inp.value === "" ? null : +inp.value;
+      const val = v > 0 ? v : null;
+      if (inp.dataset.f === "start") o.start = val; else o[inp.dataset.f][+inp.dataset.k] = val;
+      calcDrawer();
+    });
+    // Стрелки ↑/↓ — тот же шаг, что у кнопок (у step="any" браузер шагал бы на 1 и для курса).
+    inp.addEventListener("keydown", e => {
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      e.preventDefault();
+      bump(inp, e.key === "ArrowUp" ? 1 : -1);
+    });
+  });
+  body.querySelectorAll(".stepper button").forEach(btn =>
+    holdRepeat(btn, () => bump(btn.parentElement.querySelector("input"), +btn.dataset.d)));
+  $("#dReset").onclick = () => { overrides.delete(drawer.id); buildDrawer(); };
+  $("#dSave").onclick = saveTrade;
+  $("#dAlva").onclick = openAlva;
+  if (focus) {
+    const [f, k] = focus.split("|");
+    body.querySelector(`input[data-f="${f}"]${k ? `[data-k="${k}"]` : ""}`)?.focus();
+  }
+  calcDrawer();
+}
+
+// Шаг курса — около 1% от величины (10.7 → 0.1, 1.29 → 0.01, 132 → 1); количества меняются по одной штуке.
+// Пустое поле начинает от подсказки — рыночного курса или расчётного количества.
+function bump(inp, dir) {
+  const cur = inp.value !== "" ? +inp.value : +inp.placeholder;
+  if (!(cur > 0)) return;
+  let v;
+  if (inp.dataset.f === "rate") {
+    const step = 10 ** (Math.floor(Math.log10(cur)) - 2);
+    v = (dir > 0 ? Math.floor(cur / step + 1e-9) + 1 : Math.ceil(cur / step - 1e-9) - 1) * step;
+    v = +v.toPrecision(10);
+  } else if (inp.dataset.f === "start" && $("#round").checked) {
+    v = nextProfitStep(Math.floor(cur + 1e-9), dir);
+  } else {
+    v = dir > 0 ? Math.floor(cur + 1e-9) + 1 : Math.ceil(cur - 1e-9) - 1;
+  }
+  if (!(v > 0)) return;
+  inp.value = v;
+  inp.dispatchEvent(new Event("input"));
+}
+
+// В целых числах стартовую сумму листаем по уровням прибыли: «+» — наименьшая сумма больше текущей,
+// где прибыль на 1 штуку конечной валюты больше; «−» — наименьшая сумма с прибылью на 1 меньше.
+// Промежуточные суммы, которые ничего не добавляют из-за округлений, пропускаются.
+function nextProfitStep(n0, dir) {
+  const g0 = drawerRun(n0).gain;
+  if (dir > 0) {
+    for (let n = n0 + 1; n <= n0 + 1e5; n++) if (drawerRun(n).gain >= g0 + 1 - 1e-9) return n;
+  } else {
+    const goal = Math.max(1, g0 - 1);
+    for (let n = 1; n < n0; n++) if (drawerRun(n).gain >= goal - 1e-9) return n;
+  }
+  // Прибыль от суммы не зависит (например, вписано фактически полученное) — обычный шаг.
+  return n0 + dir;
+}
+
+// Прогон пути с правками из панели для заданной стартовой суммы.
+// o — правки; без них (пустые) получается прогноз программы по рыночным курсам с запасом.
+function drawerRun(start, o = ovFor(drawer.id)) {
+  const c = drawer.c;
+  const whole = $("#round").checked;
+  const amounts = [start], calc = [];
+  let a = start;
+  c.edges.forEach((e, k) => {
+    // Свой курс — это реальная цена в игре, запас на него не вычитаем.
+    const r = o.rate[k];
+    const rate = r > 0 ? (rateFwd(e) ? r : 1 / r) : e.rate * e.keep;
+    let got = a * rate;
+    if (whole) got = Math.floor(got + 1e-9);
+    calc.push(got);
+    if (o.got[k] > 0) got = o.got[k];
+    amounts.push(got);
+    a = got;
+  });
+  const direct = whole ? directWhole(start, c.bench) : start * c.bench;
+  return { amounts, calc, out: a, direct, gain: a - direct };
+}
+
+function calcDrawer() {
+  saveOverrides();
+  const c = drawer.c, o = ovFor(drawer.id);
+  const whole = $("#round").checked;
+  const base = c.nodes[0], target = c.nodes[c.nodes.length - 1];
+  const start = o.start > 0 ? o.start : c.inAmt;
+  const { amounts, calc, out, direct, gain } = drawerRun(start);
+  const pct = out / (start * c.bench) - 1;
+  const gs = goldSteps(c.nodes, amounts), gold = goldSum(gs), eff = goldEff(gain * divValue(target), gold);
+  const capDiv = start * divValue(base);
+  const hours = c.edges.reduce((s, e) => s + stepHours(e, capDiv), 0);
+  const sign = x => x > 0 ? "+" : "";
+
+  $("#dGain").className = $("#dPct").className = gain > 0 ? "good" : "bad";
+  $("#dGain").textContent = `${sign(gain)}${amt(gain)} ${name(target)}`;
+  $("#dPct").textContent = `${sign(pct)}${(pct * 100).toFixed(2)}%`;
+  const mi = (k, v) => `<div class="mi"><span class="mk">${k}</span><span class="mv">${v}</span></div>`;
+  $("#dMeta").innerHTML = mi(t("dOutLbl"), `${amt(out)} ${esc(name(target))}`) +
+    (c.streak != null ? mi(t("thStreak"), streakText(c)) : "") +
+    (c.edges[0].hist ? mi(t("holdChance"), `<span title="${esc(t("holdChanceTip"))}">~${Math.round(holdChance(c.streak) * 100)}%</span>`) : "") +
+    (c.seen ? mi(t("thSeen"), seenBadge(c.seen)) : "") +
+    (base === target ? "" : mi(t("direct"), `${amt(direct)} ${esc(name(target))}`)) + mi(t("thTime"), dur(hours)) +
+    (gold > 0 ? mi(t("thGold"), fmtGold(gold)) + mi(t("perGold"), isFinite(eff) ? fmt(eff) : "∞") : "");
+
+  let thin = false, cur = -1;
+  c.edges.forEach((e, k) => {
+    const li = $(`#dBody .dstep[data-k="${k}"]`), got = amounts[k + 1];
+    li.querySelector("[data-give]").textContent = amt(amounts[k]);
+    li.querySelector("[data-got]").textContent = (Number.isInteger(got) ? "" : "≈") + amt(got);
+    li.querySelector('input[data-f="rate"]').classList.toggle("ov", o.rate[k] > 0);
+    const gotIn = li.querySelector('input[data-f="got"]');
+    gotIn.classList.toggle("ov", o.got[k] > 0);
+    gotIn.placeholder = whole ? calc[k] : +calc[k].toFixed(4);
+    const done = o.got[k] > 0;
+    li.classList.toggle("done", done);
+    if (!done && cur < 0) cur = k;
+    if (e.stock != null && got > e.stock) thin = true;
+    li.querySelector(".dyn-time .mv").textContent = dur(stepHours(e, capDiv));
+    li.querySelector(".dyn-fee").hidden = !(gs[k] == null || gs[k] > 0);
+    li.querySelector(".dyn-fee .mv").innerHTML = gs[k] == null ? `<span title="${esc(t("feeUnknown"))}">?</span>`
+      : `~${fmtGold(gs[k])}<small>${amt(market.items[e.to].gold)} × ${amt(Math.round(got))}</small>`;
+  });
+  $("#dBody").querySelectorAll(".dstep").forEach((li, k) => li.classList.toggle("now", k === cur));
+
+  $("#dGold").innerHTML = gold > 0 ? t("goldTotal", {
+    g: fmtGold(gold), unk: gs.includes(null) ? t("goldUnk") : "", eff: isFinite(eff) ? fmt(eff) : "∞", capped: "" }) : "";
+  let warn = "";
+  if (gain <= 0) warn += `<div class="dnote warn">${t("dLoss")}</div>`;
+  if (c.minVol < 50) warn += `<div class="dnote warn">${t("warnLowVol")}</div>`;
+  if (thin) warn += `<div class="dnote warn">${t("warnThin")}</div>`;
+  if (hours > 6) warn += `<div class="dnote warn">${t("warnSlow")}</div>`;
+  if (pct > 0.15) warn += `<div class="dnote warn">${t("warnHigh")}</div>`;
+  $("#dWarn").innerHTML = warn;
+  // Записать можно, когда во всех шагах вписано, сколько реально пришло.
+  const complete = c.edges.every((e, k) => o.got[k] > 0);
+  $("#dSave").disabled = !complete;
+  // «Записано» держится несколько секунд, даже если панель за это время перерисовалась (пришли новые данные).
+  const saved = drawer.savedId === drawer.id && Date.now() - drawer.savedAt < 4000;
+  $("#dSaveHint").className = saved ? "good" : "muted";
+  $("#dSaveHint").textContent = saved ? t("dSaved") : complete ? "" : t("dSaveNeed");
+}
+
+// Процент без «-0%»: сначала округляем, потом ставим знак.
+function pctStr(x) {
+  if (x === null || x === undefined || !isFinite(x)) return "—";
+  const r = Math.round(x * 100);
+  return (r > 0 ? "+" : "") + r + "%";
+}
+
+// График по часам: пропуски (часы без сделок) соединяются; zero — нарисовать линию нуля (для прибыли).
+function trendSvg(vals, { w = 64, h = 18, cls = "", title = "", zero = false } = {}) {
+  const pts = (vals || []).map((v, i) => [i, v]).filter(p => p[1] != null && isFinite(p[1]));
+  if (pts.length < 2) return "";
+  const P = 2, n = vals.length - 1;
+  let lo = Math.min(...pts.map(p => p[1])), hi = Math.max(...pts.map(p => p[1]));
+  if (zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  const x = i => (P + i / n * (w - 2 * P)).toFixed(1);
+  const y = v => (hi === lo ? h / 2 : P + (hi - v) / (hi - lo) * (h - 2 * P)).toFixed(1);
+  const line = pts.map(([i, v]) => x(i) + "," + y(v)).join(" ");
+  const [li, lv] = pts[pts.length - 1];
+  const head = `<svg class="spark ${cls}" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${title ? `<title>${esc(title)}</title>` : ""}`;
+  if (!zero) return head + `<polyline points="${line}"/><circle cx="${x(li)}" cy="${y(lv)}" r="1.8"/></svg>`;
+  // Прибыль: одна и та же линия дважды, обрезанная по нулю — выше нуля зелёная, ниже красная.
+  const id = "zc" + (++svgUid), yz = +y(0);
+  const zl = lo < 0 && hi > 0 ? `<line class="z" x1="0" x2="${w}" y1="${yz}" y2="${yz}"/>` : "";
+  return head + `<defs><clipPath id="${id}p"><rect x="0" y="-1" width="${w}" height="${yz + 1}"/></clipPath>` +
+    `<clipPath id="${id}n"><rect x="0" y="${yz}" width="${w}" height="${h - yz + 1}"/></clipPath></defs>${zl}` +
+    `<polyline class="pos" clip-path="url(#${id}p)" points="${line}"/><polyline class="neg" clip-path="url(#${id}n)" points="${line}"/>` +
+    `<circle class="${lv >= 0 ? "pos" : "neg"}" cx="${x(li)}" cy="${y(lv)}" r="1.8"/></svg>`;
+}
+let svgUid = 0;
+const firstLast = vals => { const v = (vals || []).filter(x => x != null && isFinite(x)); return v.length > 1 ? [v[0], v[v.length - 1]] : null; };
+const pct1 = x => (x > 0 ? "+" : "") + (x * 100).toFixed(1) + "%";
+
+// Мини-график курса за последние часы. Часы без сделок пропускаются; цвет — по итогу за период.
+function sparkline(hist) {
+  const fl = firstLast((hist || []).map(v => v > 0 ? v : null));
+  if (!fl) return "";
+  const vals = hist.filter(v => v > 0), d = fl[1] / fl[0] - 1;
+  const cls = Math.abs(d) < 0.005 ? "flat" : d > 0 ? "up" : "down";
+  const title = t("sparkTitle", { n: hist.length, a: fmt(fl[0]), b: fmt(fl[1]), p: pctStr(d), lo: fmt(Math.min(...vals)), hi: fmt(Math.max(...vals)) });
+  return trendSvg(hist.map(v => v > 0 ? v : null), { cls, title });
+}
+
+// Тренд курса шага за последние часы — с точки зрения шага: сколько получаемой валюты дают за 1 отдаваемую.
+// Вверх / плюс / зелёный — за ту же сумму получаешь больше; вниз / минус / красный — меньше.
+// Точные числа «Курса в игре» (он может быть записан в обратную сторону) — в подсказке.
+function stepTrend(e, fwd, pairText) {
+  if (!e.hist) return "";
+  const fav = firstLast(e.hist.map(v => v > 0 ? v : null));
+  if (!fav) return "";
+  const d = fav[1] / fav[0] - 1;                                   // для шага: + выгоднее
+  const disp = fwd ? e.hist : e.hist.map(v => v > 0 ? 1 / v : null); // как в поле «Курс в игре»
+  const [a, b] = firstLast(disp.map(v => v > 0 ? v : null));
+  const cls = Math.abs(d) < 0.005 ? "flat" : d > 0 ? "up" : "down";
+  const title = t("stepTrendTip", { pair: pairText.replace(/<[^>]+>/g, ""), n: e.hist.length, a: fmt(a), b: fmt(b), p: pct1(b / a - 1),
+    verdict: t(cls === "flat" ? "trendFlat" : cls === "up" ? "trendBetter" : "trendWorse") });
+  return `<div class="dtrend" title="${esc(title)}">${trendSvg(e.hist.map(v => v > 0 ? v : null), { w: 96, h: 26, cls })}` +
+    `<span class="${cls}">${t("trendH", { n: e.hist.length })} ${pct1(d)}</span></div>`;
+}
+
+// ---------- фильтры: скрыть / открыть ----------
+// На компьютере кнопка прячет левую панель, на телефоне открывает фильтры на весь экран.
+const counts = { cycles: 0, flips: 0 };
+const mobile = () => matchMedia("(max-width: 800px)").matches;
+const activeTab = () => $(".tabs button.on")?.dataset.tab || "cycles";
+function updateFilterUi() {
+  if (!market) { $("#fsum").textContent = ""; }
+  else {
+    const base = $("#base").value, target = $("#target").value;
+    $("#fsum").textContent = `${name(base)}${target && target !== base ? " → " + name(target) : ""} · ${$("#capital").value || 1}`;
+  }
+  const n = activeTab() === "flips" ? counts.flips : counts.cycles;
+  $("#filtersDone").textContent = ["rates", "journal"].includes(activeTab()) ? t("done") : t("showResults", { n });
+  $("#filtersBtn").setAttribute("aria-expanded", String(mobile() ? document.body.classList.contains("filters-open")
+                                                                 : !document.documentElement.classList.contains("filters-hidden")));
+}
+function setFiltersOpen(open) {
+  document.body.classList.toggle("filters-open", open);
+  hideTip(); updateFilterUi();
+}
+$("#filtersBtn").onclick = () => {
+  if (mobile()) return setFiltersOpen(true);
+  ui.filtersHidden = !document.documentElement.classList.toggle("filters-hidden") ? undefined : true;
+  saveUi(); updateFilterUi();
+};
+$("#filtersClose").onclick = $("#filtersDone").onclick = () => { setFiltersOpen(false); scrollTo(0, 0); };
+matchMedia("(max-width: 800px)").addEventListener("change", () => { setFiltersOpen(false); });
+
+// Выпадающий список сортировки — на телефоне вместо кликабельных заголовков.
+function sortSelect(id, sorts, cur) {
+  return `<div class="msort"><label>${t("sortBy")}<select id="${id}">${
+    sorts.map(([k, lbl]) => `<option value="${k}"${k === cur ? " selected" : ""}>${t(lbl)}</option>`).join("")}</select></label></div>`;
+}
+
+// − / +: клик — один шаг, удержание — повтор.
+function holdRepeat(btn, fn) {
+  let timer = null;
+  const stop = () => { clearTimeout(timer); timer = null; };
+  btn.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    fn();
+    const again = delay => { timer = setTimeout(() => { fn(); again(70); }, delay); };
+    again(400);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => btn.addEventListener(ev, stop));
+}
+
+// ---------- стартовая и конечная валюта: кнопки ----------
+// Торгуемых базовых валют всегда три (Chaos / Divine / Exalted), поэтому вместо списков — кнопки.
+let lastTarget = "";  // конечная, выбранная до того, как включили «Конечная = стартовая»
+function renderCurSeg() {
+  if (!market) return;
+  const base = $("#base").value, target = $("#target").value;
+  if (target) lastTarget = target;
+  const btn = (id, on, off) => {
+    const it = market.items[id] || {};
+    const img = it.image ? `<img src="${IMG}${it.image}" alt="">` : "";
+    return `<button type="button" data-id="${esc(id)}" class="${on ? "on" : ""}" aria-pressed="${on}"${off ? " disabled" : ""} title="${esc(name(id))}">${img}<span>${
+      esc(name(id).replace(/ Orb$/, ""))}</span></button>`;
+  };
+  $("#baseSeg").innerHTML = market.core.map(id => btn(id, id === base)).join("");
+  // Конечная не может совпадать со стартовой — для этого есть галочка.
+  $("#targetSeg").innerHTML = market.core.map(id => btn(id, id === target, id === base)).join("");
+  $("#same").checked = !target;
+  $("#targetBox").hidden = !target;
+}
+function setCur(sel, v) {
+  $(sel).value = v;
+  $(sel).dispatchEvent(new Event("input"));
+  renderCurSeg();
+}
+$("#baseSeg").onclick = e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  // Новая стартовая совпала с конечной — это уже цикл.
+  if ($("#target").value === b.dataset.id) $("#target").value = "";
+  setCur("#base", b.dataset.id);
+};
+$("#targetSeg").onclick = e => {
+  const b = e.target.closest("button");
+  if (b && !b.disabled) setCur("#target", b.dataset.id);
+};
+$("#same").onchange = () => {
+  const base = $("#base").value;
+  const other = lastTarget && lastTarget !== base ? lastTarget : market?.core.find(id => id !== base) || "";
+  setCur("#target", $("#same").checked ? "" : other);
+};
+
+// ---------- кнопки вместо коротких списков ----------
+// Значение живёт в скрытом <select> (его читают расчёты и сохранение настроек), кнопки только его меняют.
+const segRenders = [];
+function bindSeg(seg, sel, titleKeys) {
+  const render = () => document.querySelectorAll(seg + " button").forEach((b, i) => {
+    const on = b.dataset.v === $(sel).value;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on);
+    if (titleKeys) b.title = t(titleKeys[i]);
+  });
+  $(seg).onclick = e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    $(sel).value = b.dataset.v;
+    $(sel).dispatchEvent(new Event("input"));
+    render();
+  };
+  segRenders.push(render);
+}
+function renderSegs() { segRenders.forEach(f => f()); }
+bindSeg("#noiseSeg", "#noise", ["noiseOff", "noiseSoft", "noiseNorm", "noiseStrict"]);
+bindSeg("#maxLenSeg", "#maxLen");
+
+// ---------- капитал: − / + и предпросмотр ----------
+// Шаг — 1 штука; меньше единицы (без «Целых чисел») — 0.1.
+function capStep(cap, dir) {
+  const whole = $("#round").checked;
+  if (!whole && (cap < 1 || cap === 1 && dir < 0)) return Math.max(0.1, +(cap + dir * 0.1).toFixed(1));
+  const v = dir > 0 ? Math.floor(cap + 1e-9) + 1 : Math.ceil(cap - 1e-9) - 1;
+  return Math.max(whole ? 1 : 0.1, v);
+}
+function setCapital(v) {
+  $("#capital").value = v;
+  $("#capital").dispatchEvent(new Event("input"));
+}
+document.querySelectorAll("#capitalStep button").forEach(btn =>
+  holdRepeat(btn, () => setCapital(capStep(+$("#capital").value || 1, +btn.dataset.d))));
+$("#capital").addEventListener("keydown", e => {
+  if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+  e.preventDefault();
+  setCapital(capStep(+$("#capital").value || 1, e.key === "ArrowUp" ? 1 : -1));
+});
+
+// Макс. время цикла: шаг 0.5 ч; «−» от 0.5 очищает поле — без ограничения.
+function hoursStep(dir) {
+  const el = $("#maxHours"), cur = +el.value || 0;
+  const v = dir > 0 ? Math.floor(cur * 2 + 1e-9) / 2 + 0.5 : Math.ceil(cur * 2 - 1e-9) / 2 - 0.5;
+  el.value = v > 0 ? v : "";
+  el.dispatchEvent(new Event("input"));
+}
+document.querySelectorAll("#maxHoursStep button").forEach(btn => holdRepeat(btn, () => hoursStep(+btn.dataset.d)));
+$("#maxHours").addEventListener("keydown", e => {
+  if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+  e.preventDefault();
+  hoursStep(e.key === "ArrowUp" ? 1 : -1);
+});
+
+// «Держится от, ч»: шаг 1 ч; «−» от 1 очищает поле — фильтр выключен.
+function streakStep(dir) {
+  const el = $("#minStreak"), v = Math.round(+el.value || 0) + dir;
+  el.value = v > 0 ? v : "";
+  el.dispatchEvent(new Event("input"));
+}
+document.querySelectorAll("#minStreakStep button").forEach(btn => holdRepeat(btn, () => streakStep(+btn.dataset.d)));
+$("#minStreak").addEventListener("keydown", e => {
+  if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+  e.preventDefault();
+  streakStep(e.key === "ArrowUp" ? 1 : -1);
+});
+
+// Сколько результатов будет при капитале на шаг меньше и больше. Считается в фоне после отрисовки:
+// в «Целых числах» у каждого пути своя целая сумма ≤ капитала, поэтому выдача меняется скачками.
+let capPrevTimer = null;
+function scheduleCapPreview() {
+  clearTimeout(capPrevTimer);
+  capScanToken++;
+  $("#capBest").innerHTML = "";
+  capPrevTimer = setTimeout(capPreview, 120);
+}
+function capPreview() {
+  const box = $("#capPrev"), tab = activeTab();
+  const token = ++capScanToken;
+  $("#capBest").innerHTML = "";
+  if (!market || tab === "rates" || tab === "journal") { box.innerHTML = ""; return; }
+  const cap = +$("#capital").value || 1;
+  const countAt = tab === "flips" ? c => flipCandidates(c).length : (() => {
+    const paths = findPaths();
+    return c => evalCycles(paths, c).length;
+  })();
+  const now = countAt(cap);
+  const cell = dir => {
+    const c = capStep(cap, dir);
+    if (c === cap) return "<span></span>";
+    const n = countAt(c), d = n - now;
+    const cls = d > 0 ? "up" : d < 0 ? "down" : "";
+    return `<button type="button" data-cap="${c}" title="${esc(t("capPrevTitle", { c: amt(c) }))}">${dir < 0 ? "← " : ""}${amt(c)}: ${n}${
+      d ? ` <span class="${cls}">(${d > 0 ? "+" : ""}${d})</span>` : ""}${dir > 0 ? " →" : ""}</button>`;
+  };
+  box.innerHTML = cell(-1) + cell(1);
+  box.querySelectorAll("button").forEach(b => b.onclick = () => setCapital(+b.dataset.cap));
+  scanBestCaps(cap, now, countAt, token);
+}
+
+// Ближайшие значения капитала, где результатов больше, чем сейчас: перебираем окрестность ±20%
+// (не меньше ±10 штук) порциями в фоне, чтобы не тормозить ввод. Новый ввод отменяет старый перебор.
+let capScanToken = 0;
+function scanBestCaps(cap, now, countAt, token) {
+  const whole = $("#round").checked;
+  const unit = !whole && cap < 2 ? 0.1 : 1;
+  const r = Math.max(10 * unit, Math.ceil(cap * 0.2 / unit) * unit);
+  const step = Math.max(unit, Math.ceil(2 * r / 40 / unit) * unit);  // не больше ~40 прогонов
+  const cands = [];
+  for (let c = Math.max(unit, cap - r); c <= cap + r + 1e-9; c += step) {
+    const v = +c.toFixed(1);
+    if (Math.abs(v - cap) > 1e-9) cands.push(v);
+  }
+  const res = [];
+  const chunk = () => {
+    if (token !== capScanToken) return;
+    for (let i = 0; i < 4 && cands.length; i++) { const c = cands.shift(); res.push({ c, n: countAt(c) }); }
+    if (cands.length) return setTimeout(chunk, 0);
+    // Подряд идущие суммы с одинаковой выдачей — одно «плато»: оставляем самую дешёвую из них.
+    res.sort((a, b) => a.c - b.c);
+    const plateaus = res.filter((x, i) => !(i && res[i - 1].n === x.n && x.c - res[i - 1].c <= step + 1e-9));
+    // Лучшие по количеству; при равенстве — ближе к текущему капиталу. Показываем по возрастанию суммы.
+    const best = plateaus.filter(x => x.n > now)
+      .sort((a, b) => b.n - a.n || Math.abs(a.c - cap) - Math.abs(b.c - cap)).slice(0, 4)
+      .sort((a, b) => a.c - b.c);
+    $("#capBest").innerHTML = best.length ? `<span class="muted">${t("capBest")}</span>` + best.map(x =>
+      `<button type="button" data-cap="${x.c}" title="${esc(t("capPrevTitle", { c: amt(x.c) }))}">${amt(x.c)} · ${x.n} <b>+${x.n - now}</b></button>`).join("") : "";
+    $("#capBest").querySelectorAll("button").forEach(b => b.onclick = () => setCapital(+b.dataset.cap));
+  };
+  setTimeout(chunk, 0);
+}
+
+// ---------- когда путь впервые появился в выдаче ----------
+// Хранится в браузере по лиге и источнику. Пока путь хотя бы иногда попадает в выдачу, время не сбрасывается
+// (например, при смене фильтров туда-обратно); не появлялся больше суток — считается найденным заново.
+const SEEN_KEY = "poe2flip_seen", SEEN_TTL = 86400;
+let seenDb = (() => { try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || {}; } catch (e) { return {}; } })();
+function markSeen(list) {
+  const now = Math.floor(Date.now() / 1000), pre = market.league + "|" + market.source + "|";
+  for (const c of list) {
+    const k = pre + c.nodes.join(">");
+    const r = seenDb[k] && now - seenDb[k][1] <= SEEN_TTL ? seenDb[k] : [now, now];
+    r[1] = now;
+    seenDb[k] = r;
+    c.seen = r[0];
+  }
+  for (const k in seenDb) if (now - seenDb[k][1] > SEEN_TTL) delete seenDb[k];
+  try { localStorage.setItem(SEEN_KEY, JSON.stringify(seenDb)); } catch (e) {}
+}
+// «Найден» — обычный серый текст; «N мин назад» обновляется сам, без перерисовки таблицы.
+const seenBadge = ts => `<span class="muted" data-ts="${ts}">${ago(ts)}</span>`;
+setInterval(() => document.querySelectorAll("[data-ts]").forEach(el => el.textContent = ago(+el.dataset.ts)), 30000);
+
+// ---------- вид: таблица / карточки ----------
+function applyView() {
+  document.documentElement.classList.toggle("view-cards", mobile() || ui.view === "cards");
+  document.querySelectorAll(".vtoggle button").forEach(b => {
+    const on = b.dataset.view === (ui.view === "cards" ? "cards" : "table");
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on);
+    b.title = t(b.dataset.view === "cards" ? "viewCards" : "viewTable");
+  });
+}
+document.querySelectorAll(".vtoggle button").forEach(b => b.onclick = () => {
+  ui.view = b.dataset.view === "cards" ? "cards" : undefined;
+  saveUi(); applyView();
+});
+matchMedia("(max-width: 800px)").addEventListener("change", applyView);
+
+// ---------- исключённые валюты и категории ----------
+// Хранятся в настройках браузера; стартовая/конечная и базовые валюты (Chaos/Divine/Exalted) не исключаются.
+const CATS = {
+  Currency: ["Валюта", "Currency", "通货"], Fragments: ["Фрагменты", "Fragments", "碎片"], Runes: ["Руны", "Runes", "符文"],
+  Essences: ["Эссенции", "Essences", "精华"], Ritual: ["Ритуал (знамения)", "Ritual (omens)", "仪式（预兆）"],
+  Expedition: ["Экспедиция", "Expedition", "探险"], Delirium: ["Делириум", "Delirium", "谵妄"], Breach: ["Разлом", "Breach", "裂隙"],
+  Abyss: ["Бездна", "Abyss", "深渊"], SoulCores: ["Ядра душ", "Soul Cores", "灵魂核心"], UncutGems: ["Неогранённые камни", "Uncut Gems", "未切割宝石"],
+  LineageSupportGems: ["Камни поддержки рода", "Lineage Supports", "传承辅助宝石"], Idols: ["Идолы", "Idols", "神像"], Verisium: ["Верисиум", "Verisium", "Verisium"],
+};
+const catName = id => (CATS[id] || [])[["ru", "en", "zh"].indexOf(lang)] || String(id).replace(/([a-z])([A-Z])/g, "$1 $2");
+const exItems = () => new Set(ui.exItems || []);
+const exCats = () => new Set(ui.exCats || []);
+// Проверка «исключён ли»; списки собираются один раз — граф строится часто (подсказки капитала и т.п.).
+function excluder() {
+  const items = exItems(), cats = exCats();
+  if (!market || (!items.size && !cats.size)) return () => false;
+  const keep = new Set([...market.core, $("#base").value, $("#target").value]);
+  return id => !keep.has(id) && (items.has(id) || cats.has(market.items[id]?.category));
+}
+function setExcluded(kind, id, on) {
+  setTimeout(scheduleTgSync);
+  const set = kind === "cat" ? exCats() : exItems();
+  if (on) set.add(id); else set.delete(id);
+  ui[kind === "cat" ? "exCats" : "exItems"] = [...set];
+  saveUi();
+  renderExclude();
+  renderCycles(); renderFlips(); scheduleNotifyBaseline();
+}
+function renderExclude() {
+  if (!market) return;
+  const used = new Set();
+  for (const p of market.pairs) for (const id of [p.from, p.to]) if (!market.core.includes(id)) used.add(market.items[id]?.category);
+  used.delete(undefined);
+  const cats = [...used].sort((a, b) => catName(a).localeCompare(catName(b)));
+  const xc = exCats();
+  $("#exCats").innerHTML = cats.map(c => `<button type="button" class="xchip${xc.has(c) ? " off" : ""}" data-cat="${esc(c)}"
+      title="${esc(t(xc.has(c) ? "exCatOn" : "exCatOff"))}">${esc(catName(c))}</button>`).join("");
+  const xi = [...exItems()];
+  $("#exItems").innerHTML = xi.length
+    ? `<span class="muted xlbl">${t("exHidden")}</span>` + xi.map(id => `<span class="xitem">${market.items[id] ? chip(id) : `<span class="cur">${esc(id)}</span>`}
+        <button type="button" data-item="${esc(id)}" title="${esc(t("exShow"))}">×</button></span>`).join("")
+    : `<span class="muted xlbl">${t("exNone")}</span>`;
+  $("#exCats").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("cat", b.dataset.cat, !b.classList.contains("off")));
+  $("#exItems").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("item", b.dataset.item, false));
+}
+
+// ---------- избранные пути ----------
+// Хранятся в настройках браузера. Звезда — в начале строки и в шапке панели шагов.
+const isFav = id => (ui.favs || []).includes(id);
+function toggleFav(id) {
+  const favs = new Set(ui.favs || []);
+  if (favs.has(id)) favs.delete(id); else favs.add(id);
+  ui.favs = [...favs];
+  saveUi();
+  renderCycles(); renderFlips();
+  if (drawer.id) buildDrawer();
+}
+const favBtn = id => `<button type="button" class="fav${isFav(id) ? " on" : ""}" data-fav="${esc(id)}" title="${esc(t(isFav(id) ? "favOff" : "favOn"))}">${isFav(id) ? "★" : "☆"}</button>`;
+// «Только избранные» — переключатель-звезда справа в панели вкладок; число — сколько избранных в текущей выдаче.
+const favCount = { cycles: 0, flips: 0 };
+function updateFavBtn() {
+  const b = $("#favOnlyBtn"), tab = activeTab(), n = favCount[tab] ?? 0;
+  b.hidden = !(tab in favCount);
+  b.classList.toggle("on", !!ui.favOnly);
+  b.setAttribute("aria-pressed", !!ui.favOnly);
+  b.innerHTML = `${ui.favOnly ? "★" : "☆"}${n ? `<small>${n}</small>` : ""}`;
+  b.title = `${t("favOnly")} — ${t(ui.favOnly ? "favOnlyOn" : "favOnlyTip")}${n ? ` (${n})` : ""}`;
+}
+$("#favOnlyBtn").onclick = () => { ui.favOnly = !ui.favOnly || undefined; saveUi(); renderCycles(); renderFlips(); updateFavBtn(); };
+function wireFav(box, rerender) {
+  box.querySelectorAll(".fav").forEach(b => b.onclick = e => { e.stopPropagation(); toggleFav(b.dataset.fav); });
+}
+
+// ---------- уведомления о новых путях ----------
+// Проверяются только после загрузки свежих данных. Первая проверка (после открытия страницы, включения или
+// смены лиги/источника/окна/валют) лишь запоминает текущие пути. Смена фильтров тоже запоминает выдачу молча,
+// чтобы не сыпать уведомлениями. Путь, пропавший больше чем на 2 ч, при возвращении считается новым.
+const notifyKnown = new Map();  // id пути -> когда последний раз проходил условия
+let notifyKey = null, notifyTimer = null, unseen = 0, audioCtx = null;
+const notifyApi = () => "Notification" in window && window.isSecureContext;
+
+function notifyMatches() {
+  const minPct = (+$("#notifyPct").value || 0) / 100, minStreak = +$("#notifyStreak").value || 0;
+  return evalCycles(findPaths(), +$("#capital").value || 1)
+    .filter(c => c.pct >= minPct && (!minStreak || c.streak >= minStreak));
+}
+function checkNotify(silent = false) {
+  if (!market || !$("#notifyOn").checked) return;
+  const key = [market.league, market.source, $("#window").value, $("#base").value, $("#target").value].join("|");
+  if (key !== notifyKey) { notifyKey = key; notifyKnown.clear(); silent = true; }
+  const now = Date.now() / 1000, fresh = [];
+  for (const c of notifyMatches()) {
+    const id = c.nodes.join(">"), last = notifyKnown.get(id);
+    if (!silent && (last == null || now - last > 7200)) fresh.push(c);
+    notifyKnown.set(id, now);
+  }
+  if (fresh.length) announce(fresh.sort((a, b) => b.pct - a.pct));
+}
+function scheduleNotifyBaseline() {
+  clearTimeout(notifyTimer);
+  notifyTimer = setTimeout(() => checkNotify(true), 600);
+}
+
+function notifyEnable() {
+  if ($("#notifyOn").checked) {
+    // Разрешение и звук можно запросить только из действия пользователя — то есть сейчас, по клику.
+    if (notifyApi() && Notification.permission === "default") Notification.requestPermission().then(notifyUi);
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+    notifyKey = null;
+    checkNotify(true);
+  }
+  notifyUi();
+}
+// ---------- Telegram ----------
+// Сервер сам раз в 5 минут обновляет данные и ищет пути по фильтрам этой страницы — уведомления приходят,
+// даже когда вкладка закрыта. Фильтры отправляются серверу автоматически при каждом изменении.
+let tg = null, tgSyncTimer = null, tgBusy = false, tgMsg = null, tgPollTimer = null;
+async function loadTg() {
+  try {
+    const r = await fetch("/api/notify");
+    tg = r.ok ? await r.json() : null;
+  } catch (e) { tg = null; }
+  renderTg();
+}
+async function tgOp(body) {
+  tgBusy = true; tgMsg = null; renderTg();
+  try {
+    const r = await fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || (r.status === 404 || r.status === 501 ? t("tgOldServer") : "HTTP " + r.status));
+    tg = d;
+    return true;
+  } catch (e) {
+    tgMsg = { bad: true, text: e.message };
+    return false;
+  } finally { tgBusy = false; renderTg(); }
+}
+// Настройки, по которым ищет сервер, — те же, что на странице (без «Целых чисел» и фильтров по золоту).
+function notifySnapshot() {
+  const v = id => $("#" + id).value;
+  return { league: v("league"), window: v("window"), base: v("base"), target: v("target"), capital: v("capital"), maxLen: v("maxLen"),
+    fee: v("fee"), noise: v("noise"), minVol: v("minVol"), minProfit: v("minProfit"), maxProfit: v("maxProfit"), maxHours: v("maxHours"),
+    share: v("share"), overhead: v("overhead"), minStreak: v("minStreak"), exItems: ui.exItems || [], exCats: ui.exCats || [],
+    notifyPct: v("notifyPct"), notifyStreak: v("notifyStreak"), lang };
+}
+const tgWanted = () => $("#notifyOn").checked && $("#tgOn")?.checked;
+function scheduleTgSync() {
+  if (!tg?.linked) return;
+  clearTimeout(tgSyncTimer);
+  tgSyncTimer = setTimeout(() => tgOp({ op: "settings", settings: notifySnapshot(), enabled: tgWanted() }), 1500);
+}
+function renderTg() {
+  const box = $("#tgBox");
+  if (!box) return;
+  const ago2 = ts => ts ? ago(ts) : "—";
+  let html = `<div class="tgh">Telegram<span class="tip" data-tip="hTg"></span></div>`;
+  if (tg === null) html += `<div class="muted">${t("tgOldServer")}</div>`;
+  else if (!tg.configured) html += `<div class="muted">${t("tgStep1")}</div>
+    <div class="tgrow"><input id="tgToken" type="password" autocomplete="off" placeholder="123456:ABC-DEF…"><button type="button" id="tgSave">${t("tgConnect")}</button></div>`;
+  else if (!tg.linked) html += `<div class="muted">${t("tgStep2", { bot: esc(tg.bot || "") })}</div>
+    <div class="tgcode"><code>/link ${esc(tg.link_code || "")}</code><button type="button" id="tgCopy" class="ghost">${t("tgCopy")}</button></div>
+    <div class="muted">${t("tgWaiting")}</div>
+    <div class="tgrow"><button type="button" id="tgOff" class="ghost">${t("tgDisconnect")}</button></div>`;
+  else html += `<label class="check"><input id="tgOn" type="checkbox"${tg.enabled ? " checked" : ""}><span>${t("tgSend", { bot: esc(tg.bot || "") })}</span></label>
+    <div class="muted tgst">${$("#source").value !== "ggg" ? `<span class="warn">${t("tgGggOnly")}</span><br>` : ""}${t("tgStatus", {
+      chk: ago2(tg.last_check), sent: ago2(tg.last_sent), n: tg.found ?? "—" })}${tg.last_error ? `<br><span class="bad">${esc(tg.last_error)}</span>` : ""}</div>
+    <div class="tgrow"><button type="button" id="tgTest" class="ghost">${t("tgTest")}</button><button type="button" id="tgOff" class="ghost">${t("tgDisconnect")}</button></div>
+    <div class="tgsub"><div class="tgh">${t("tgOthers")}<span class="tip" data-tip="hTgOthers"></span></div>
+      <label class="check"><input id="tgOpen" type="checkbox"${tg.open ? " checked" : ""}><span>${t("tgOpen")}</span></label>
+      <div class="muted">${t("tgSubs", { n: tg.subscribers, total: tg.subscribers_total })}</div>
+      ${tg.open ? `<div class="tgcode"><code>t.me/${esc(tg.bot || "")}</code><button type="button" id="tgCopyLink" class="ghost">${t("tgCopy")}</button></div>` : ""}
+    </div>`;
+  if (tgMsg) html += `<div class="${tgMsg.bad ? "bad" : "good"} tgmsg">${esc(tgMsg.text)}</div>`;
+  box.innerHTML = html;
+  prepTips(box);
+  box.querySelectorAll("button").forEach(b => b.disabled = tgBusy);
+  $("#tgSave")?.addEventListener("click", async () => {
+    const token = $("#tgToken").value.trim();
+    if (token && await tgOp({ op: "token", token })) tgMsg = { text: t("tgTokenOk", { bot: tg.bot }) }, renderTg();
+  });
+  const copy = (text, btn) => navigator.clipboard?.writeText(text).then(() => { btn.textContent = "✓"; setTimeout(() => btn.textContent = t("tgCopy"), 1500); });
+  $("#tgCopy")?.addEventListener("click", e => copy("/link " + tg.link_code, e.target));
+  $("#tgCopyLink")?.addEventListener("click", e => copy("https://t.me/" + tg.bot, e.target));
+  $("#tgOpen")?.addEventListener("change", e => tgOp({ op: "open", open: e.target.checked }));
+  // Ждём, пока владелец отправит боту /link — проверяем каждые 3 секунды.
+  clearTimeout(tgPollTimer);
+  if (tg?.configured && !tg.linked) tgPollTimer = setTimeout(async () => {
+    await loadTg();
+    if (tg?.linked) { tgMsg = { text: t("tgLinked") }; tgOp({ op: "settings", settings: notifySnapshot(), enabled: true }); }
+  }, 3000);
+  $("#tgTest")?.addEventListener("click", async () => { if (await tgOp({ op: "test" })) { tgMsg = { text: t("tgTestSent") }; renderTg(); } });
+  $("#tgOff")?.addEventListener("click", async () => { if (confirm(t("tgDisconnectQ"))) await tgOp({ op: "disconnect" }); });
+  $("#tgOn")?.addEventListener("change", () => tgOp({ op: "settings", settings: notifySnapshot(), enabled: tgWanted() }));
+}
+setInterval(() => { if ($("#notifyOn").checked) loadTg(); }, 60000);
+// Ссылка «Открыть в программе» из Telegram, если страница уже открыта: меняется только #open=…
+addEventListener("hashchange", () => {
+  const h = location.hash.match(/^#open=(.+)$/);
+  if (!h) return;
+  pendingOpen = decodeURIComponent(h[1]);
+  history.replaceState(null, "", location.pathname);
+  document.querySelector('.tabs button[data-tab="cycles"]').click();
+  renderCycles();
+});
+
+function notifyUi() {
+  const on = $("#notifyOn").checked;
+  $("#notifyOpts").hidden = !on;
+  if (!on) return;
+  const hint = $("#notifyHint");
+  const warn = !$("#auto").checked ? "nHintAuto" : !notifyApi() ? "nHintNoApi" : Notification.permission === "denied" ? "nHintDenied" : null;
+  hint.className = "nhint " + (warn && warn !== "nHintNoApi" ? "warn" : "muted");
+  hint.textContent = t(warn || "nHintOk");
+}
+
+const pathName = c => c.nodes.map(id => name(id).replace(/ Orb$/, "")).join(" → ");
+function announce(list) {
+  if ($("#notifySound").checked) beep();
+  if (document.hidden) {
+    unseen += list.length;
+    document.title = `(${unseen}) PoE 2 Flip Finder`;
+    if (notifyApi() && Notification.permission === "granted") {
+      const c = list[0];
+      const n = new Notification(`${t("toastTitle")}: +${(c.pct * 100).toFixed(1)}%`, {
+        body: t("notifBody", { path: pathName(c), s: streakText(c) }) + (list.length > 1 ? " · " + t("toastMore", { n: list.length - 1 }) : ""),
+        tag: "poe2flip", renotify: true });
+      n.onclick = () => { window.focus(); openFromToast(c); n.close(); };
+    }
+  }
+  list.slice(0, 3).forEach((c, i) => toast(c, i === 2 && list.length > 3 ? list.length - 3 : 0));
+}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && unseen) { unseen = 0; document.title = "PoE 2 Flip Finder"; }
+});
+function beep() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.18].forEach((d, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t0 = audioCtx.currentTime + d;
+      o.frequency.value = i ? 1175 : 880;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.15, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.15);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t0); o.stop(t0 + 0.16);
+    });
+  } catch (e) {}
+}
+function toast(c, more) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = `<div class="tt"><b>${t("toastTitle")}</b><span class="good">+${(c.pct * 100).toFixed(1)}%</span>
+      <button type="button" class="tx" title="${esc(t("dClose"))}">×</button></div>
+    <div class="path">${c.nodes.map(chip).join(`<span class="arrow">→</span>`)}</div>
+    <div class="muted">${t("thStreak")}: ${streakText(c)} · ${t("thVol")}: ${fmt(c.minVol)} div${more ? " · " + t("toastMore", { n: more }) : ""}</div>
+    <button type="button" class="topen">${t("toastOpen")}</button>`;
+  const close = () => { el.classList.add("out"); setTimeout(() => el.remove(), 250); };
+  el.querySelector(".tx").onclick = close;
+  el.querySelector(".topen").onclick = () => { openFromToast(c); close(); };
+  $("#toasts").prepend(el);
+  while ($("#toasts").children.length > 4) $("#toasts").lastElementChild.remove();
+  setTimeout(close, 30000);
+}
+function openFromToast(c) {
+  document.querySelector('.tabs button[data-tab="cycles"]').click();
+  if (document.body.classList.contains("filters-open")) setFiltersOpen(false);
+  openDrawer(c);
+}
+
+// ---------- журнал сделок ----------
+// Хранится на сервере (cache/journal.json): общий для компьютера и телефона. null — сервер старый, без журнала.
+let journal = [];
+async function loadJournal() {
+  try {
+    const r = await fetch("/api/journal");
+    journal = r.ok ? await r.json() : null;
+  } catch (e) { journal = null; }
+  renderJournal();
+}
+async function journalOp(body) {
+  const r = await fetch("/api/journal", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(r.status === 404 || r.status === 501 ? t("jNoServer") : "HTTP " + r.status);
+  journal = await r.json();
+  renderJournal();
+}
+
+// Запись: что обещала программа (рыночные курсы с запасом) и что вышло на деле, плюс реальный курс каждого шага.
+function tradeRecord() {
+  const c = drawer.c, o = ovFor(drawer.id);
+  const start = o.start > 0 ? o.start : c.inAmt;
+  const act = drawerRun(start), pred = drawerRun(start, { start: null, rate: [], got: [] });
+  const pct = r => r.out / (start * c.bench) - 1;
+  return {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    ts: Math.floor(Date.now() / 1000), league: market.league, source: market.source,
+    nodes: c.nodes, names: c.nodes.map(name), start, out: act.out, gain: act.gain, pct: pct(act),
+    pred: { out: pred.out, gain: pred.gain, pct: pct(pred) },
+    steps: c.edges.map((e, k) => ({ from: c.nodes[k], to: e.to, give: act.amounts[k], got: act.amounts[k + 1], market: e.rate, keep: e.keep })),
+  };
+}
+// ---------- режим «у Альвы» ----------
+// Один шаг на весь экран крупно — для телефона или второго монитора рядом с игрой.
+// Правки («Получил») общие с панелью шагов: что вписано здесь, видно и там.
+const alva = { open: false, k: 0 };
+let wakeLock = null;
+async function keepAwake(on) {
+  try {
+    if (on && "wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen");
+    else if (!on && wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch (e) {}  // не поддерживается или не https — экран может гаснуть
+}
+function openAlva() {
+  const c = drawer.c, o = ovFor(drawer.id);
+  const k = c.edges.findIndex((e, j) => !(o.got[j] > 0));
+  alva.k = k < 0 ? c.edges.length : k;  // с первого невыполненного шага
+  alva.open = true;
+  $("#alva").hidden = false;
+  document.body.classList.add("alva-open");
+  keepAwake(true);
+  renderAlva();
+}
+function closeAlva() {
+  alva.open = false;
+  $("#alva").hidden = true;
+  document.body.classList.remove("alva-open");
+  keepAwake(false);
+  if (drawer.id) buildDrawer();  // перенести вписанное в поля панели
+}
+document.addEventListener("visibilitychange", () => { if (alva.open && !document.hidden) keepAwake(true); });
+
+function renderAlva() {
+  const c = drawer.c, o = ovFor(drawer.id), n = c.edges.length;
+  const start = o.start > 0 ? o.start : c.inAmt;
+  const run = drawerRun(start);
+  const target = c.nodes[n];
+  const big = id => `<span class="abig">${chip(id)}</span>`;
+  const dots = c.edges.map((e, j) => `<span class="${o.got[j] > 0 ? "done" : j === alva.k ? "now" : ""}"></span>`).join("");
+  let html = `<div class="alva-in"><div class="ahead"><div class="adots">${dots}</div>
+    <span class="muted">${alva.k < n ? t("alvaStep", { k: alva.k + 1, n }) : t("alvaDone")}</span>
+    <button type="button" class="ax" title="${esc(t("alvaClose"))}">×</button></div>`;
+  if (alva.k >= n) {
+    const pct = run.out / (start * c.bench) - 1, done = c.edges.every((e, j) => o.got[j] > 0);
+    html += `<div class="asum"><div class="ak">${t("thProfit")}</div>
+      <div class="aprofit ${run.gain > 0 ? "good" : "bad"}">${run.gain > 0 ? "+" : ""}${amt(run.gain)} ${esc(name(target))}</div>
+      <div class="${run.gain > 0 ? "good" : "bad"}" style="font-size:20px">${pct1(pct)}</div>
+      <div class="muted">${amt(start)} ${esc(name(c.nodes[0]))} → ${amt(run.out)} ${esc(name(target))}</div></div>
+      <div class="anav"><button type="button" class="aback ghost">← ${t("alvaBack")}</button>
+        <button type="button" class="asave"${done ? "" : " disabled"}>${t("dSave")}</button></div>
+      ${done ? "" : `<div class="muted">${t("dSaveNeed")}</div>`}
+      <button type="button" class="ghost aclose">${t("alvaClose")}</button></div>`;
+  } else {
+    const k = alva.k, e = c.edges[k], from = c.nodes[k], fwd = rateFwd(e);
+    const [a, b] = fwd ? [from, e.to] : [e.to, from];
+    const mr = fwd ? e.rate : 1 / e.rate;
+    // Курс, при котором весь путь выходит в ноль относительно прямого обмена (остальные шаги — как сейчас).
+    // Доход пути пропорционален курсу шага, поэтому порог = текущий курс × (напрямую / на выходе).
+    // Если в следующих шагах уже вписано «Получил», от этого шага итог не зависит — порог не показываем.
+    const rEff = o.rate[k] > 0 ? (fwd ? o.rate[k] : 1 / o.rate[k]) : e.rate * e.keep;
+    const laterFixed = c.edges.some((x, j) => j > k && o.got[j] > 0);
+    const rBe = !laterFixed && run.out > 0 ? rEff * run.direct / run.out : null;
+    const be = rBe ? (fwd ? rBe : 1 / rBe) : null;
+    const calc = run.calc[k];
+    html += `<div class="arow"><span class="ak">${t("give")}</span><span class="av">${amt(run.amounts[k])}</span>${big(from)}</div>
+      <div class="arow"><span class="ak">${t("alvaGet")}</span><span class="av">${Number.isInteger(calc) ? "" : "≈"}${amt(calc)}</span>${big(e.to)}</div>
+      <div class="arate"><div class="ak">${t("alvaRate")}</div>
+        <div class="arv">1 ${esc(name(a))} = <b>${fmt(mr)}</b> ${esc(name(b))}</div>
+        ${be ? `<div class="abe" title="${esc(t("alvaBeTip"))}">${t("alvaBe")}: 1 ${esc(name(a))} ${fwd ? "≥" : "≤"} <b>${fmt(be)}</b> ${esc(name(b))}</div>` : ""}
+      </div>
+      <div class="agot"><div class="ak">${t("dActual")}, ${esc(name(e.to))}</div>
+        <span class="stepper"><button type="button" tabindex="-1" data-d="-1">−</button><input data-f="got" data-k="${k}" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="${o.got[k] ?? ""}" placeholder="${$("#round").checked ? calc : +calc.toFixed(4)}"><button type="button" tabindex="-1" data-d="1">+</button></span>
+        <div class="muted ahint">${t("alvaGotHint")}</div></div>
+      <div class="anav">${k > 0 ? `<button type="button" class="aback ghost">← ${t("alvaBack")}</button>` : ""}
+        <button type="button" class="anext">${t(k + 1 < n ? "alvaNext" : "alvaFinish")} →</button></div></div>`;
+  }
+  const box = $("#alva");
+  box.innerHTML = html;
+  box.querySelector(".ax").onclick = closeAlva;
+  box.querySelector(".aclose")?.addEventListener("click", closeAlva);
+  box.querySelector(".aback")?.addEventListener("click", () => { alva.k--; renderAlva(); });
+  box.querySelector(".anext")?.addEventListener("click", alvaNext);
+  box.querySelector(".asave")?.addEventListener("click", async () => {
+    await saveTrade();
+    if (!$("#dSave") || $("#dSaveHint").classList.contains("good") || !(journal || []).length) closeAlva(); else closeAlva();
+  });
+  const inp = box.querySelector("input");
+  if (inp) {
+    inp.addEventListener("input", () => {
+      const v = +inp.value;
+      o.got[alva.k] = inp.value !== "" && v > 0 ? v : null;
+      calcDrawer();
+    });
+    inp.addEventListener("keydown", ev => {
+      if (ev.key === "ArrowUp" || ev.key === "ArrowDown") { ev.preventDefault(); bump(inp, ev.key === "ArrowUp" ? 1 : -1); }
+    });
+    box.querySelectorAll(".stepper button").forEach(btn => holdRepeat(btn, () => bump(inp, +btn.dataset.d)));
+  }
+}
+// «Готово»: если «Получил» пустое — считаем, что пришло расчётное количество.
+function alvaNext() {
+  const c = drawer.c, o = ovFor(drawer.id), k = alva.k;
+  if (!(o.got[k] > 0)) {
+    const run = drawerRun(o.start > 0 ? o.start : c.inAmt);
+    o.got[k] = $("#round").checked ? run.calc[k] : +run.calc[k].toFixed(4);
+  }
+  calcDrawer();
+  alva.k++;
+  renderAlva();
+}
+document.addEventListener("keydown", e => {
+  if (!alva.open) return;
+  if (e.key === "Enter" && alva.k < drawer.c.edges.length) { e.preventDefault(); alvaNext(); }
+  else if (e.key === "ArrowLeft" && alva.k > 0 && document.activeElement?.tagName !== "INPUT") { alva.k--; renderAlva(); }
+});
+
+async function saveTrade() {
+  const hint = $("#dSaveHint");
+  $("#dSave").disabled = true;
+  try {
+    await journalOp({ op: "add", trade: tradeRecord() });
+    // Сделка записана — правки этого пути больше не нужны.
+    overrides.delete(drawer.id);
+    Object.assign(drawer, { savedId: drawer.id, savedAt: Date.now() });
+    buildDrawer();
+    const id = drawer.id;
+    setTimeout(() => { if (drawer.id === id) calcDrawer(); }, 4100);
+  } catch (e) {
+    hint.className = "bad";
+    hint.textContent = t("dSaveErr", { e: e.message });
+    $("#dSave").disabled = false;
+  }
+}
+
+const median = a => { const v = [...a].sort((x, y) => x - y); return v.length ? (v.length % 2 ? v[v.length >> 1] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) : NaN; };
+const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : NaN;
+// Значок валюты из текущего рынка, если он есть; иначе — сохранённое название.
+const jchip = (id, nm) => market?.items[id] ? chip(id) : `<span class="cur">${esc(nm || id)}</span>`;
+const signCls = x => x > 0 ? "good" : x < 0 ? "bad" : "muted";
+
+function renderJournal() {
+  const box = $("#tab-journal");
+  if (journal === null) { box.innerHTML = `<div class="empty">${t("jNoServer")}</div>`; return; }
+  if (!journal.length) { box.innerHTML = `<div class="empty">${t("jEmpty")}</div>`; return; }
+  const list = [...journal].sort((a, b) => b.ts - a.ts);
+  const L = k => ` data-label="${esc(t(k))}"`;
+  const mi = (k, v, cls = "") => `<div class="mi"><span class="mk">${k}</span><span class="mv ${cls}">${v}</span></div>`;
+
+  // Сводка: прибыль по каждой конечной валюте отдельно.
+  const byCur = {};
+  for (const r of list) {
+    const k = r.nodes[r.nodes.length - 1];
+    byCur[k] = byCur[k] || { gain: 0, nm: r.names?.[r.names.length - 1] || k };
+    byCur[k].gain += r.gain;
+  }
+  const total = Object.entries(byCur).map(([id, v]) => `<span class="${signCls(v.gain)}">${v.gain > 0 ? "+" : ""}${amt(+v.gain.toFixed(4))}</span> ${esc(market?.items[id] ? name(id) : v.nm)}`).join("<br>");
+  const diff = mean(list.map(r => r.pct - r.pred.pct));
+  let html = `<div class="jsum dmeta">
+    ${mi(t("jTrades"), list.length)}
+    ${mi(t("jTotal"), total)}
+    ${mi(t("jAvg"), pct1(mean(list.map(r => r.pct))), signCls(mean(list.map(r => r.pct))))}
+    ${mi(t("jVsPred"), `<span title="${esc(t("jVsPredTip"))}">${pct1(diff)}</span>`, signCls(diff))}
+  </div>`;
+
+  // Мои пары: насколько реальный курс шага отличался от среднего рыночного.
+  const pairs = {};
+  for (const r of list) for (const st of r.steps) {
+    if (!(st.give > 0 && st.got > 0 && st.market > 0)) continue;
+    const k = st.from + ">" + st.to;
+    (pairs[k] = pairs[k] || { from: st.from, to: st.to, slip: [], margin: [], names: r.names, nodes: r.nodes }).slip.push(st.got / st.give / st.market - 1);
+    pairs[k].margin.push(1 - (st.keep ?? 1));
+  }
+  const prow = Object.values(pairs).sort((a, b) => b.slip.length - a.slip.length || median(a.slip) - median(b.slip));
+  const nm = (id, pr) => pr.names?.[pr.nodes.indexOf(id)];
+  html += `<h3 class="jh">${t("jPairsTitle")}<span class="tip" data-tip="hJPairs"></span></h3>
+  <table class="rt"><thead><tr><th>${t("jPair")}</th><th class="num">${t("jSteps")}</th><th class="num">${t("jSlip")}</th><th class="num">${t("jMargin")}</th></tr></thead><tbody>`;
+  for (const pr of prow) {
+    const sl = median(pr.slip), mg = median(pr.margin);
+    // Реальный курс хуже среднего сильнее, чем закладывает запас, — программа здесь слишком оптимистична.
+    const worse = -sl > mg + 0.002;
+    html += `<tr class="cyc jrow"><td class="wide"><div class="path">${jchip(pr.from, nm(pr.from, pr))}<span class="arrow">→</span>${jchip(pr.to, nm(pr.to, pr))}</div></td>
+      <td class="num"${L("jSteps")}>${pr.slip.length}</td>
+      <td class="num ${signCls(sl)}"${L("jSlip")}>${pct1(sl)}</td>
+      <td class="num${worse ? " warn" : ""}"${L("jMargin")} ${worse ? `title="${esc(t("jMarginLow"))}"` : ""}>${(mg * 100).toFixed(1)}%${worse ? " ⚠" : ""}</td></tr>`;
+  }
+  html += `</tbody></table>`;
+
+  // Список сделок
+  html += `<div class="jhead"><h3 class="jh">${t("jList")}</h3><button id="jExport" type="button" class="ghost">${t("jExport")}</button></div>
+  <table class="rt"><thead><tr><th>${t("jWhen")}</th><th>${t("thPath")}</th><th class="num">${t("thAmt")}</th><th class="num">${t("thProfit")}</th>
+    <th class="num">${t("jForecast")}</th><th class="num">${t("jDiff")}</th><th></th></tr></thead><tbody>`;
+  for (const r of list) {
+    const tn = esc(market?.items[r.nodes[r.nodes.length - 1]] ? name(r.nodes[r.nodes.length - 1]) : r.names?.[r.names.length - 1] || "");
+    const when = new Date(r.ts * 1000).toLocaleString(locale(), { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    const d = r.pct - r.pred.pct;
+    html += `<tr class="cyc jrow">
+      <td${L("jWhen")}>${when}<div class="muted">${esc(r.league)}</div></td>
+      <td class="wide"><div class="path">${r.nodes.map((id, i) => jchip(id, r.names?.[i])).join(`<span class="arrow">→</span>`)}</div></td>
+      <td class="num"${L("thAmt")}>${amt(r.start)} → <b>${amt(r.out)}</b></td>
+      <td class="num ${signCls(r.gain)}"${L("thProfit")}>${r.gain > 0 ? "+" : ""}${amt(+r.gain.toFixed(4))} ${tn}<div>${pct1(r.pct)}</div></td>
+      <td class="num muted"${L("jForecast")}>${pct1(r.pred.pct)}</td>
+      <td class="num ${signCls(d)}"${L("jDiff")}>${pct1(d)}</td>
+      <td class="num"><button type="button" class="jdel" data-id="${esc(r.id)}" title="${esc(t("jDel"))}">×</button></td></tr>`;
+  }
+  html += `</tbody></table>`;
+  box.innerHTML = html;
+  prepTips(box);
+  box.querySelectorAll(".jdel").forEach(b => b.onclick = async () => {
+    if (!confirm(t("jDelConfirm"))) return;
+    try { await journalOp({ op: "delete", id: b.dataset.id }); } catch (e) { alert(e.message); }
+  });
+  $("#jExport").onclick = exportJournal;
+}
+
+// CSV для Excel / Google Таблиц: точка с запятой и BOM, чтобы кириллица и дроби открывались правильно.
+function exportJournal() {
+  const q = v => `"${String(v).replace(/"/g, '""')}"`;
+  const rows = [["date", "league", "path", "start", "out", "gain", "profit_%", "forecast_%", "steps"].join(";")];
+  for (const r of [...journal].sort((a, b) => a.ts - b.ts)) {
+    rows.push([new Date(r.ts * 1000).toISOString(), q(r.league), q((r.names || r.nodes).join(" > ")), r.start, r.out, +r.gain.toFixed(6),
+      (r.pct * 100).toFixed(2), (r.pred.pct * 100).toFixed(2),
+      q(r.steps.map(st => `${st.give} → ${st.got} @ ${(st.got / st.give / st.market * 100 - 100).toFixed(2)}%`).join(" | "))].join(";"));
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + rows.join("\r\n")], { type: "text/csv;charset=utf-8" }));
+  a.download = `poe2flip-journal-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ---------- вкладка «туда-обратно» ----------
+// Простой флип A → B → A. В данных один средний курс на пару (без спреда), поэтому по рынку такой круг
+// всегда в ноль минус запас — прибыль даёт только разница цен покупки и продажи в стакане.
+// Здесь пары ранжируются по ликвидности, а реальные курсы вписываются в панели шагов.
+function flipCandidates(cap = +$("#capital").value || 1) {
+  if (!market) return [];
+  const base = $("#base").value;
+  const whole = $("#round").checked;
+  const maxHours = +$("#maxHours").value || Infinity;
+  const { adj, direct } = buildGraph(+$("#minVol").value || 0);
+  const out = [];
+  for (const e1 of adj.get(base) || []) {
+    const e2 = direct.get(e1.to + "|" + base);
+    if (!e2) continue;
+    const c = { nodes: [base, e1.to, base], edges: [e1, e2], bench: 1, minVol: e1.vol, flip: true,
+                volatile: e1.chg !== null && Math.abs(e1.chg) > VOLATILE };
+    c.inAmt = whole ? Math.max(1, Math.floor(cap + 1e-9)) : cap;
+    c.amounts = simulate(c, c.inAmt, whole);
+    // Меньше одной штуки купить нельзя — на такой капитал флип невыполним (например, Mirror за 10 div).
+    if (c.amounts.some(x => x < 1)) continue;
+    const capDiv = c.inAmt * divValue(base);
+    c.hours = stepHours(e1, capDiv) + stepHours(e2, capDiv);
+    if (c.hours > maxHours) continue;
+    const gs = goldSteps(c.nodes, c.amounts);
+    c.gold = goldSum(gs);
+    c.goldUnknown = gs.includes(null);
+    out.push(c);
+  }
+  return out;
+}
+
+function renderFlips() {
+  const box = $("#tab-flips");
+  if (!market) { box.innerHTML = `<div class="empty">${t("noData")}</div>`; return; }
+  const base = $("#base").value, bn = esc(name(base));
+  const goldOn = Object.values(market.items).some(it => it.gold > 0);
+  let list = flipCandidates();
+  const cmp = {
+    volume: (a, b) => b.minVol - a.minVol,
+    time: (a, b) => a.hours - b.hours,
+    chg: (a, b) => Math.abs(b.edges[0].chg ?? 0) - Math.abs(a.edges[0].chg ?? 0),
+    gold: (a, b) => a.gold - b.gold,
+  }[flipSort];
+  list.sort(cmp);
+  const nFav = list.filter(c => isFav(c.nodes.join(">"))).length;
+  favCount.flips = nFav; updateFavBtn();
+  if (ui.favOnly) list = list.filter(c => isFav(c.nodes.join(">")));
+  const total = list.length;
+  counts.flips = total; updateFilterUi(); scheduleCapPreview();
+  list = list.slice(0, 300);
+  const intro = `<div class="muted" style="margin-bottom:8px">${t("flipsIntro", { b: bn, n: total })}<span class="tip" data-tip="hFlips"></span></div>`;
+  if (!total) { box.innerHTML = intro + `<div class="empty">${t(ui.favOnly ? "favNone" : "flipsNone")}</div>`; prepTips(box); wireFav(box); return; }
+  const arrowTh = k => flipSort === k ? " ▾" : "";
+  const L = k => ` data-label="${esc(t(k))}"`;
+  const sorts = [["volume", "thVol"], ["chg", "thChg"], ["time", "thTime"], ...(goldOn ? [["gold", "thGold"]] : [])];
+  let html = intro + sortSelect("flipSort", sorts, flipSort) + `<table class="rt"><thead><tr>
+    <th>${t("thPair")}</th>
+    <th class="num">${t("thRate")}</th>
+    <th class="num" data-sort="volume" title="${t("flipVolTitle")}">${t("thVol")}${arrowTh("volume")}</th>
+    ${market.source === "ggg" ? `<th class="num" title="${t("flipStockTitle")}">${t("thStock")}</th>` : ""}
+    <th class="num" data-sort="chg" title="${t("flipChgTitle")}">${t("thChg")}${arrowTh("chg")}</th>
+    <th class="num" data-sort="time" title="${t("thTimeTitle")}">${t("thTime")}${arrowTh("time")}</th>
+    ${goldOn ? `<th class="num" data-sort="gold" title="${t("flipGoldTitle")}">${t("thGold")}${arrowTh("gold")}</th>` : ""}
+  </tr></thead><tbody>`;
+  for (const c of list) {
+    const [e1, e2] = c.edges, other = e1.to, id = c.nodes.join(">");
+    const ratio = e1.rate >= 1
+      ? `1 ${bn} = ${fmt(e1.rate)} ${esc(name(other))}`
+      : `1 ${esc(name(other))} = ${fmt(1 / e1.rate)} ${bn}`;
+    // Процент и график — для того же числа, что в колонке «Курс» (1 дорогая = N дешёвых).
+    const shownEdge = e1.rate >= 1 ? e1 : e2;
+    const chgCls = shownEdge.chg !== null && Math.abs(shownEdge.chg) > VOLATILE ? "warn" : "muted";
+    html += `<tr class="cyc${drawer.id === id ? " sel" : ""}" data-id="${esc(id)}">
+      <td class="wide"><div class="path">${favBtn(id)}${chip(base)}<span class="arrow">⇄</span>${chip(other)}</div></td>
+      <td class="num wide"${L("thRate")}>${ratio}</td>
+      <td class="num"${L("thVol")}>${fmt(c.minVol)} div</td>
+      ${market.source === "ggg" ? `<td class="num"${L("thStock")}>${e1.stock == null ? "—" : amt(e1.stock)} / ${e2.stock == null ? "—" : amt(e2.stock)}</td>` : ""}
+      <td class="num"${L("thChg")}><span class="chg">${sparkline(shownEdge.hist && shownEdge.hist.slice(-12))}<span class="${chgCls}">${pctStr(shownEdge.chg)}</span></span></td>
+      <td class="num"${L("thTime")}>${dur(c.hours)}</td>
+      ${goldOn ? `<td class="num"${L("thGold")}>${fmtGold(c.gold)}${c.goldUnknown ? "?" : ""}</td>` : ""}
+    </tr>`;
+  }
+  html += "</tbody></table>";
+  box.innerHTML = html;
+  prepTips(box);
+  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { flipSort = th.dataset.sort; renderFlips(); });
+  $("#flipSort").onchange = e => { flipSort = e.target.value; renderFlips(); };
+  wireFav(box);
+  const byId = new Map(list.map(c => [c.nodes.join(">"), c]));
+  box.querySelectorAll("tr.cyc").forEach(tr => tr.onclick = () => {
+    if (drawer.id === tr.dataset.id) closeDrawer(); else openDrawer(byId.get(tr.dataset.id));
+  });
+}
+
+// ---------- вкладка «курсы» ----------
+function renderRates() {
+  const box = $("#rates");
+  if (!market) { box.innerHTML = ""; return; }
+  const q = $("#search").value.trim().toLowerCase();
+  if (q.length < 2) { box.innerHTML = `<div class="muted">${t("ratesMin")}</div>`; return; }
+  const ids = Object.keys(market.items).filter(id => (market.items[id].name || id).toLowerCase().includes(q)).slice(0, 15);
+  let html = "";
+  for (const id of ids) {
+    const rows = market.pairs.filter(p => p.from === id || p.to === id).map(p => {
+      const other = p.from === id ? p.to : p.from;
+      const rate = p.from === id ? p.rate : 1 / p.rate;
+      return { other, rate, vol: p.volume };
+    }).sort((a, b) => b.vol - a.vol);
+    html += `<div class="steps" style="margin-bottom:10px"><div style="margin-bottom:6px">${chip(id)}
+      <span class="muted">${esc(market.items[id].category || "")}</span></div>`;
+    if (!rows.length) html += `<div class="muted">${t("ratesNoPairs")}</div>`;
+    for (const r of rows) {
+      const txt = r.rate >= 1 ? `1 ${esc(name(id))} = ${fmt(r.rate)} ${esc(name(r.other))}`
+                              : `1 ${esc(name(r.other))} = ${fmt(1 / r.rate)} ${esc(name(id))}`;
+      html += `<div>${chip(r.other)} ${txt} <span class="muted">· ${fmt(r.vol)} ${t("perDay")}</span></div>`;
+    }
+    html += "</div>";
+  }
+  box.innerHTML = html || `<div class="muted">${t("ratesNone")}</div>`;
+}
+
+// ---------- данные ----------
+const isGGG = () => $("#source").value === "ggg";
+const hhmm = ts => new Date(ts * 1000).toLocaleTimeString(locale(), { hour: "2-digit", minute: "2-digit" });
+
+async function loadMarket() {
+  const league = $("#league").value;
+  const r = await fetch(`/api/market?source=${$("#source").value}&league=${encodeURIComponent(league)}&window=${$("#window").value}`);
+  market = await r.json();
+  divCache.clear();
+  if (market && market.error) { const err = market.error; setStatus(() => t("error", { e: err }), true); market = null; }
+  if (market) {
+    if (market.source !== "ggg") {
+      // poe.ninja отдаёт объём за последний час (сверено с почасовыми сводками GGG) — приводим к суткам.
+      for (const p of market.pairs) { p.volume *= 24; if (p.vol7) p.vol7 *= 24; }
+    }
+    const cur = $("#base").value || saved.base || "divine";
+    const curT = $("#target").options.length ? $("#target").value : (saved.target || "");
+    const opts = market.core.map(id => `<option value="${esc(id)}">${esc(name(id))}</option>`).join("");
+    $("#base").innerHTML = opts;
+    $("#base").value = market.core.includes(cur) ? cur : market.core[0];
+    $("#target").innerHTML = `<option value="">${esc(t("sameAsStart"))}</option>` + opts;
+    $("#target").value = market.core.includes(curT) && curT !== $("#base").value ? curT : "";
+    renderCurSeg();
+    const m = market;
+    setStatus(() => t("statusLine", {
+      league: m.league, n: Object.keys(m.items).length, p: m.pairs.length,
+      period: m.source === "ggg" ? t("periodGgg", { a: hhmm(m.periodStart), b: hhmm(m.periodEnd) }) : t("periodNinja", { ago: ago(m.fetchedAt) }),
+    }));
+  } else if (!statusErr) {
+    setStatus(() => t("noLeagueData"));
+  }
+  $("#window").disabled = !isGGG();
+  renderExclude();
+  renderCycles(); renderFlips(); renderRates(); renderJournal();
+  checkNotify();
+  return market;
+}
+
+async function refresh() {
+  if ($("#refresh").disabled) return;
+  const league = $("#league").value;
+  $("#refresh").disabled = true;
+  $("#bar").style.display = "block";
+  await fetch(`/api/refresh?source=${$("#source").value}&league=${encodeURIComponent(league)}&minVolume=1`);
+  while (true) {
+    await new Promise(r => setTimeout(r, 700));
+    const s = await (await fetch("/api/status")).json();
+    $("#bar > div").style.width = s.total ? (100 * s.progress / s.total) + "%" : "5%";
+    setStatus(() => srvMsg(s.message) + (s.total ? ` ${s.progress}/${s.total}` : ""));
+    if (!s.running) {
+      if (s.error) setStatus(() => t("error", { e: s.error }), true);
+      break;
+    }
+  }
+  $("#bar").style.display = "none";
+  $("#refresh").disabled = false;
+  await loadMarket();
+}
+
+function setAuto() {
+  clearInterval(autoTimer);
+  // GGG: новый час появляется в ~:05, проверка дешёвая (качается только недостающий час).
+  if ($("#auto").checked) autoTimer = setInterval(refresh, (isGGG() ? 5 : 30) * 60 * 1000);
+}
+
+async function init() {
+  applyStatic();
+  for (const k of SETTINGS) {
+    if (saved[k] === undefined || k === "league" || k === "base" || k === "target") continue;
+    const el = $("#" + k);
+    if (el.type === "checkbox") el.checked = saved[k]; else el.value = saved[k];
+  }
+  renderSegs();
+  notifyUi();
+  applyView();
+  try {
+    const leagues = await (await fetch("/api/leagues")).json();
+    $("#league").innerHTML = leagues.map(l => `<option>${esc(l)}</option>`).join("");
+    $("#league").value = leagues.includes(saved.league) ? saved.league : leagues[0];
+  } catch (e) {
+    $("#league").innerHTML = "<option>Standard</option>";
+  }
+  loadJournal();
+  loadUpdate();
+  loadTg();
+  const m = await loadMarket();
+  if (isGGG() || !m || Date.now() / 1000 - m.fetchedAt > 30 * 60) refresh();
+  setAuto();
+}
+
+$("#refresh").onclick = refresh;
+$("#league").onchange = async () => { save(); const m = await loadMarket(); if (!m || isGGG()) refresh(); };
+$("#source").onchange = async () => { save(); setAuto(); const m = await loadMarket(); if (!m || isGGG()) refresh(); };
+$("#window").onchange = () => { save(); loadMarket(); };
+$("#auto").onchange = () => { save(); setAuto(); notifyUi(); };
+$("#notifyOn").onchange = () => { save(); notifyEnable(); if (tg?.linked) tgOp({ op: "settings", settings: notifySnapshot(), enabled: tgWanted() }); };
+for (const k of ["notifyPct", "notifyStreak", "notifySound"]) $("#" + k).addEventListener("input", () => { save(); scheduleNotifyBaseline(); });
+for (const k of ["base", "target", "round", "capital", "goldBudget", "goldEff", "maxLen", "fee", "minVol", "minProfit", "maxProfit", "share", "overhead", "maxHours", "minStreak", "noise"])
+  $("#" + k).addEventListener("input", e => {
+    save();
+    // Набор с клавиатуры — пересчёт через паузу (на телефоне перерисовка на каждую цифру тормозит ввод);
+    // кнопки −/+ и переключатели шлют синтетические события — пересчёт сразу.
+    clearTimeout(typingTimer);
+    const run = () => { renderCycles(); renderFlips(); scheduleNotifyBaseline(); };
+    if (e.isTrusted && e.target.tagName === "INPUT" && e.target.type === "text") typingTimer = setTimeout(run, 250); else run();
+  });
+$("#search").addEventListener("input", renderRates);
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  for (const n of ["cycles", "flips", "rates", "journal"]) $("#tab-" + n).hidden = b.dataset.tab !== n;
+  updateFilterUi(); scheduleCapPreview(); updateFavBtn();
+});
+init();
+</script>
+</body>
+</html>

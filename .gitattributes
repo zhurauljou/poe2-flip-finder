@@ -1,0 +1,5 @@
+* text=auto
+# Windows-запускаторы должны остаться с CRLF, иначе cmd читает их неправильно
+*.bat text eol=crlf
+# Mac-запускаторы — только LF, иначе bash не запустит
+*.command text eol=lf
