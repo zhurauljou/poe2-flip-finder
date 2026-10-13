@@ -1351,6 +1351,26 @@
   .ggg.ggg .abe b { color: #e6c47a; font-size: 18px; }
   .ggg.ggg .agot { gap: 4px; }
   .ggg.ggg .alva-in .ahint { color: #6f6f6f; font-size: 14px; }
+  /* «у Альвы»: одна главная кнопка, «Назад» — призрачная под ней; − / + — просто крупные знаки; подсказка — сразу под подписью */
+  .ggg.ggg .alva-in > .anav { flex-direction: column; gap: 6px; }
+  .ggg.ggg .alva-in > .anav :is(.anext, .asave) { flex: none; width: 100%; }
+  .ggg.ggg .alva-in > .anav .aback { order: 2; position: relative; isolation: isolate; width: 100%; min-height: 44px; border: 0; background: transparent; box-shadow: none;
+    color: #e6d39a; font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 #000; }
+  .ggg.ggg .alva-in > .anav .aback::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .15s;
+    clip-path: polygon(13px 2px, calc(100% - 13px) 2px, calc(100% - 3px) 50%, calc(100% - 13px) calc(100% - 2px), 13px calc(100% - 2px), 3px 50%);
+    background: linear-gradient(rgba(241, 228, 194, .09), rgba(241, 228, 194, .05)); }
+  .ggg.ggg .alva-in > .anav .aback::after { content: none; }
+  .ggg.ggg .alva-in > .anav .aback:hover { background: transparent; color: #fff0c0; }
+  .ggg.ggg .alva-in > .anav .aback:hover::before { opacity: 1; }
+  .ggg.ggg .agot .stepper button, .ggg.ggg .agot .stepper button:first-child, .ggg.ggg .agot .stepper button:last-child { width: 64px; height: 64px; border: 0; border-radius: 50%; background: transparent; box-shadow: none;
+    color: #e6c47a; font: 400 46px/1 var(--body); text-shadow: 0 1px 0 #000; }
+  .ggg.ggg .agot .stepper button:hover { background: rgba(241, 228, 194, .07); color: #fff0c0; }
+  .ggg.ggg .agot { display: flex; flex-direction: column; align-items: center; }
+  .ggg.ggg .agot .ahint { order: 1; margin-top: -2px; }
+  .ggg.ggg .agot .stepper { order: 2; }
+  .ggg.ggg #alva .anav .aback { border: 0; background: transparent; box-shadow: none; min-height: 44px; }
+  .ggg.ggg #alva .anav .aback:hover { border: 0; background: transparent; }
+  .ggg.ggg #alva .anav .aback::after { content: none; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1901,6 +1921,20 @@
   .ggg.ggg[data-theme=light] .abe b { color: #856319; font-size: 18px; }
   .ggg.ggg[data-theme=light] .agot { gap: 4px; }
   .ggg.ggg[data-theme=light] .alva-in .ahint { color: #b19b6f; font-size: 14px; }
+  .ggg.ggg[data-theme=light] .alva-in > .anav { flex-direction: column; gap: 6px; }
+  .ggg.ggg[data-theme=light] .alva-in > .anav .aback { order: 2; position: relative; isolation: isolate; width: 100%; min-height: 44px; border: 0; background: transparent; box-shadow: none; color: #6e5a1b; font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.30); }
+  .ggg.ggg[data-theme=light] .alva-in > .anav .aback::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .15s; clip-path: polygon(13px 2px, calc(100% - 13px) 2px, calc(100% - 3px) 50%, calc(100% - 13px) calc(100% - 2px), 13px calc(100% - 2px), 3px 50%); background: linear-gradient(rgba(112, 88, 26, 0.09), rgba(112, 88, 26, 0.05)); }
+  .ggg.ggg[data-theme=light] .alva-in > .anav .aback::after { content: none; }
+  .ggg.ggg[data-theme=light] .alva-in > .anav .aback:hover { background: transparent; color: #8a6900; }
+  .ggg.ggg[data-theme=light] .alva-in > .anav .aback:hover::before { opacity: 1; }
+  .ggg.ggg[data-theme=light] .agot .stepper button, .ggg.ggg[data-theme=light] .agot .stepper button:first-child, .ggg.ggg[data-theme=light] .agot .stepper button:last-child { width: 64px; height: 64px; border: 0; border-radius: 50%; background: transparent; box-shadow: none; color: #856319; font: 400 46px/1 var(--body); text-shadow: 0 1px 0 rgba(0, 0, 0, 0.30); }
+  .ggg.ggg[data-theme=light] .agot .stepper button:hover { background: rgba(112, 88, 26, 0.07); color: #8a6900; }
+  .ggg.ggg[data-theme=light] .agot { display: flex; flex-direction: column; align-items: center; }
+  .ggg.ggg[data-theme=light] .agot .ahint { order: 1; margin-top: -2px; }
+  .ggg.ggg[data-theme=light] .agot .stepper { order: 2; }
+  .ggg.ggg[data-theme=light] #alva .anav .aback { border: 0; background: transparent; box-shadow: none; min-height: 44px; }
+  .ggg.ggg[data-theme=light] #alva .anav .aback:hover { border: 0; background: transparent; }
+  .ggg.ggg[data-theme=light] #alva .anav .aback::after { content: none; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
