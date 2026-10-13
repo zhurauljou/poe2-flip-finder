@@ -1482,6 +1482,11 @@
   /* шапка панели шагов: звезда и крестик — одной высоты, на одной линии */
   .ggg.ggg .dhead :is(#dFav, #dClose) { width: 36px; height: 36px; margin: 0; align-self: flex-start; }
   .ggg.ggg .dhead #dClose { margin-left: -2px; }
+  /* при прокрутке панели шагов путь в шапке сжимается до иконок — экономим место; название — в подсказке */
+  .ggg.ggg #drawer .dhead.stuck .cur { font-size: 0; padding: 0 2px; }
+  .ggg.ggg #drawer .dhead.stuck .cur img { margin-right: 0; }
+  .ggg.ggg #drawer .dhead.stuck .path { row-gap: 4px; }
+  .ggg.ggg #drawer .dhead { transition: padding .15s; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2132,6 +2137,10 @@
   .ggg.ggg[data-theme=light] .toast .tx::before { width: 16px; height: 16px; }
   .ggg.ggg[data-theme=light] .dhead :is(#dFav, #dClose) { width: 36px; height: 36px; margin: 0; align-self: flex-start; }
   .ggg.ggg[data-theme=light] .dhead #dClose { margin-left: -2px; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck .cur { font-size: 0; padding: 0 2px; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck .cur img { margin-right: 0; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck .path { row-gap: 4px; }
+  .ggg.ggg[data-theme=light] #drawer .dhead { transition: padding .15s; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3786,7 +3795,8 @@ document.querySelector("#filters").addEventListener("scroll", e =>
   document.querySelector("#filters .mhead").classList.toggle("stuck", e.target.scrollTop > 2), { passive: true });
 {
   const head = $("#drawer .dhead"), body = $("#dBody"), dr = $("#drawer");
-  const fit = () => { dr.style.setProperty("--dhead-h", head.offsetHeight + "px"); dr.style.setProperty("--dsb-w", (body.offsetWidth - body.clientWidth) + "px"); };
+  // Пока шапка «прилипла» (компактная, только иконки), отступ не трогаем — иначе содержимое прыгало бы.
+  const fit = () => { if (!head.classList.contains("stuck")) dr.style.setProperty("--dhead-h", head.offsetHeight + "px"); dr.style.setProperty("--dsb-w", (body.offsetWidth - body.clientWidth) + "px"); };
   new ResizeObserver(fit).observe(head); new ResizeObserver(fit).observe(body);
   body.addEventListener("scroll", () => head.classList.toggle("stuck", body.scrollTop > 2), { passive: true });
 }
