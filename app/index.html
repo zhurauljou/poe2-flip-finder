@@ -1542,6 +1542,15 @@
   @media (max-width: 800px) {
     .ggg.ggg #favOnlyBtn .star { width: 24px; height: 24px; }
   }
+  /* звёзды избранного везде — иконка без рамки: приглушённая, у отмеченных — залитая золотом */
+  .ggg.ggg :is(.fav, #dFav), .ggg.ggg :is(.fav, #dFav):hover, .ggg.ggg.view-cards .rt td.wide:first-child .path > .fav { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: none; }
+  .ggg.ggg :is(.fav, #dFav) { display: inline-flex; align-items: center; justify-content: center; color: #6f6656; }
+  .ggg.ggg :is(.fav, #dFav):hover { color: #c9b88e; }
+  .ggg.ggg :is(.fav.on, #dFav.on) { color: #e6c47a; }
+  .ggg.ggg :is(.fav, #dFav) .star { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+  .ggg.ggg :is(.fav.on, #dFav.on) .star { fill: currentColor; }
+  .ggg.ggg #dFav .star, .ggg.ggg.view-cards .rt .path > .fav .star { width: 22px; height: 22px; }
+  .ggg.ggg #drawer #dFav, .ggg.ggg #drawer #dFav.on, .ggg.ggg #drawer #dFav:hover { border: 0; background: none; box-shadow: none; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2241,6 +2250,14 @@
   @media (max-width: 800px) {
     .ggg.ggg[data-theme=light] #favOnlyBtn .star { width: 24px; height: 24px; }
   }
+  .ggg.ggg[data-theme=light] :is(.fav, #dFav), .ggg.ggg[data-theme=light] :is(.fav, #dFav):hover, .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .path > .fav { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: none; }
+  .ggg.ggg[data-theme=light] :is(.fav, #dFav) { display: inline-flex; align-items: center; justify-content: center; color: #baa67f; }
+  .ggg.ggg[data-theme=light] :is(.fav, #dFav):hover { color: #716036; }
+  .ggg.ggg[data-theme=light] :is(.fav.on, #dFav.on) { color: #856319; }
+  .ggg.ggg[data-theme=light] :is(.fav, #dFav) .star { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+  .ggg.ggg[data-theme=light] :is(.fav.on, #dFav.on) .star { fill: currentColor; }
+  .ggg.ggg[data-theme=light] #dFav .star, .ggg.ggg[data-theme=light].view-cards .rt .path > .fav .star { width: 22px; height: 22px; }
+  .ggg.ggg[data-theme=light] #drawer #dFav, .ggg.ggg[data-theme=light] #drawer #dFav.on, .ggg.ggg[data-theme=light] #drawer #dFav:hover { border: 0; background: none; box-shadow: none; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3932,7 +3949,7 @@ function buildDrawer() {
   const base = c.nodes[0], target = c.nodes[c.nodes.length - 1];
   $("#dPath").innerHTML = c.nodes.map(chip).map((h, i) => i ? `<span class="pstep"><span class="arrow">→</span>${h}</span>` : h).join("");
   $("#dClose").title = t("dClose");
-  $("#dFav").textContent = isFav(drawer.id) ? "★" : "☆";
+  $("#dFav").innerHTML = `<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z"/></svg>`;
   $("#dFav").classList.toggle("on", isFav(drawer.id));
   $("#dFav").title = t(isFav(drawer.id) ? "favOff" : "favOn");
   $("#dFav").onclick = () => toggleFav(drawer.id);
@@ -4515,7 +4532,7 @@ function toggleFav(id) {
   renderCycles(); renderFlips();
   if (drawer.id) buildDrawer();
 }
-const favBtn = id => `<button type="button" class="fav${isFav(id) ? " on" : ""}" data-fav="${esc(id)}" title="${esc(t(isFav(id) ? "favOff" : "favOn"))}">${isFav(id) ? "★" : "☆"}</button>`;
+const favBtn = id => `<button type="button" class="fav${isFav(id) ? " on" : ""}" data-fav="${esc(id)}" title="${esc(t(isFav(id) ? "favOff" : "favOn"))}"><svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z"/></svg></button>`;
 // «Только избранные» — переключатель-звезда справа в панели вкладок; число — сколько избранных в текущей выдаче.
 const favCount = { cycles: 0, flips: 0 };
 function updateFavBtn() {
