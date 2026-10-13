@@ -663,8 +663,10 @@ def pack():
     print("В архиве только файлы программы — без кэша, журнала, токена бота и подписчиков.")
 
 
-# Файлы версии 1.0, которые лежали в корне. После перехода в app/ они не нужны — убираем, чтобы не путали.
-OLD_ROOT_FILES = ["index.html", "server.py", "ggg.py", "notify.py", "update.py",
+# Устаревшие файлы прошлых версий — пути от корня программы (можно и «app/…»). Обновление только добавляет и
+# заменяет файлы, поэтому всё переименованное или удалённое надо дописать сюда — тогда оно уберётся при запуске.
+# Первые строки — раскладка 1.0, где всё лежало в корне.
+OBSOLETE = ["index.html", "server.py", "ggg.py", "notify.py", "update.py",
                   "Запустить (Windows).bat", "Запустить (Mac).command", "Как запустить.txt",
                   "Запустить для телефона (Windows).bat", "Запустить для телефона (Mac).command",
                   "Собрать архив для передачи (Windows).bat", "Собрать архив для передачи (Mac).command"]
@@ -674,9 +676,11 @@ def tidy_old_layout():
     if ROOT == HERE:
         return
     import shutil
-    for name in OLD_ROOT_FILES:
+    for rel in OBSOLETE:
+        if rel in PACK_FILES:  # на всякий случай: никогда не удаляем файлы текущей версии
+            continue
         try:
-            os.remove(os.path.join(ROOT, name))
+            os.remove(os.path.join(ROOT, *rel.split("/")))
         except OSError:
             pass
     shutil.rmtree(os.path.join(ROOT, "__pycache__"), ignore_errors=True)
