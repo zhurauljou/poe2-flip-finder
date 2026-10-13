@@ -1376,6 +1376,10 @@
   .ggg.ggg .arow { gap: 0; }
   .ggg.ggg .arow .ak { margin-bottom: -4px; }
   .ggg.ggg .arow .abig { margin-top: 8px; }
+  /* «у Альвы»: «Назад» и главная — в одну полосу; «Назад» призрачная слева, главная занимает остальное */
+  .ggg.ggg .alva-in > .anav { flex-direction: row; align-items: center; gap: 4px; }
+  .ggg.ggg .alva-in > .anav :is(.anext, .asave) { flex: 1 1 auto; width: auto; order: 2; }
+  .ggg.ggg #alva .anav .aback { order: 1; flex: none; width: auto; min-height: 52px; padding: 0 14px 0 8px; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1945,6 +1949,8 @@
   .ggg.ggg[data-theme=light] .arow { gap: 0; }
   .ggg.ggg[data-theme=light] .arow .ak { margin-bottom: -4px; }
   .ggg.ggg[data-theme=light] .arow .abig { margin-top: 8px; }
+  .ggg.ggg[data-theme=light] .alva-in > .anav { flex-direction: row; align-items: center; gap: 4px; }
+  .ggg.ggg[data-theme=light] #alva .anav .aback { order: 1; flex: none; width: auto; min-height: 52px; padding: 0 14px 0 8px; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2596,7 +2602,7 @@ const I18N = {
     alvaBtn: "Режим «у Альвы»", alvaBtnTip: "Крупно, по одному шагу на экран — для телефона или второго монитора рядом с игрой",
     alvaStep: "Шаг {k} из {n}", alvaDone: "Путь пройден", alvaGet: "Получишь", alvaRate: "Курс по рынку",
     alvaBe: "Всё ещё выгодно при", alvaBeTip: "Если курс у Альвы хуже этого, весь путь перестаёт давать прибыль (с учётом остальных шагов как сейчас)",
-    alvaGotHint: "Впиши, сколько реально пришло. Пусто — возьму расчётное.", alvaNext: "Готово, дальше", alvaFinish: "Готово, итог",
+    alvaGotHint: "Впиши, сколько реально пришло. Пусто — возьму расчётное.", alvaNext: "Обменял", alvaFinish: "Обменял, к итогу",
     alvaBack: "Назад", alvaClose: "Закрыть", dSaveNeed: "Чтобы записать сделку, впиши «Получил фактически» во всех шагах.",
     dSaved: "Записано в журнал ✓", dSaveErr: "Не удалось записать: {e}",
     jEmpty: "Пока нет записанных сделок. Открой путь, пройди его в игре, впиши в шагах «Получил фактически» и нажми «Записать сделку в журнал».",
@@ -2744,7 +2750,7 @@ const I18N = {
     alvaBtn: "“At Alva” mode", alvaBtnTip: "Big, one step per screen — for a phone or second monitor next to the game",
     alvaStep: "Step {k} of {n}", alvaDone: "Path done", alvaGet: "You'll get", alvaRate: "Market rate",
     alvaBe: "Still profitable at", alvaBeTip: "If Alva's rate is worse than this, the whole path stops being profitable (other steps as they are now)",
-    alvaGotHint: "Enter how much you actually got. Empty — I'll use the expected amount.", alvaNext: "Done, next", alvaFinish: "Done, result",
+    alvaGotHint: "Enter how much you actually got. Empty — I'll use the expected amount.", alvaNext: "Traded", alvaFinish: "Traded, see result",
     alvaBack: "Back", alvaClose: "Close", dSaveNeed: "To save the trade, fill in “Actually received” on every step.",
     dSaved: "Saved to journal ✓", dSaveErr: "Couldn't save: {e}",
     jEmpty: "No trades yet. Open a path, do it in game, fill in “Actually received” on every step and press “Save trade to journal”.",
@@ -2892,7 +2898,7 @@ const I18N = {
     alvaBtn: "“阿尔瓦”模式", alvaBtnTip: "大字显示，每屏一步——适合在游戏旁的手机或第二显示器上使用",
     alvaStep: "第 {k} 步，共 {n} 步", alvaDone: "路径已完成", alvaGet: "将获得", alvaRate: "市场汇率",
     alvaBe: "仍可盈利：", alvaBeTip: "如果阿尔瓦处的汇率比这更差，整条路径将不再盈利（其他步骤按当前计算）",
-    alvaGotHint: "填写实际获得的数量。留空则使用预计数量。", alvaNext: "完成，下一步", alvaFinish: "完成，查看结果",
+    alvaGotHint: "填写实际获得的数量。留空则使用预计数量。", alvaNext: "已兑换", alvaFinish: "已兑换，查看结果",
     alvaBack: "返回", alvaClose: "关闭", dSaveNeed: "要记录交易，请在每一步填写“实际获得”。",
     dSaved: "已记入记录 ✓", dSaveErr: "记录失败：{e}",
     jEmpty: "还没有记录的交易。打开一条路径，在游戏中完成，在每一步填写“实际获得”，然后点击“将交易记入记录”。",
