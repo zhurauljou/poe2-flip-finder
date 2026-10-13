@@ -29,7 +29,9 @@ To check manually — “Check for updates” at the bottom of the filters panel
 - **Steps panel**: what to give and what to get, rate, 24 h trends; you can enter the rate from the game and how much you actually got.
 - **“At Alva” mode** — big, one step per screen (handy on a phone next to the game).
 - **Trade journal** — your real spread per pair.
-- **Notifications** on the page and in **Telegram** (your own bot; others can subscribe to it too — they don't need the program).
+- **Notifications** on the page and in **Telegram** via the shared bot [@PoeFlipperBot](https://t.me/PoeFlipperBot) (or your own bot, for advanced users).
+- **Pairs** — a reference of all pairs with your start currency: rate, liquidity, orders, 24 h trend, with search.
+- **Presets** — “Safe / Fast / Profit” in one click; changed filters are marked and can be reset.
 - **From a phone**: the 📱 button — turn on home Wi-Fi access and scan the QR code.
 - Light/dark theme, Русский / English / 中文.
 
