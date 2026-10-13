@@ -1223,6 +1223,28 @@
     .ggg.ggg .dstep .frow { padding: 8px 0; }
     .ggg.ggg .dstep .dmeta { padding-top: 6px; }
   }
+  /* ===== Карточки — как сводка в панели шагов: путь слева, крупная прибыль в валюте с графиком, сетка показателей ===== */
+  .ggg.ggg .rt td.c-hero { display: none; }
+  .ggg.ggg.view-cards .rt td.c-hero { display: block; grid-column: 1 / -1; }
+  .ggg.ggg.view-cards .rt td.good.big { display: none; }
+  .ggg.ggg.view-cards .rt .c-amt .muted { display: none; }
+  /* шапка карточки: путь по левому краю, без ромбов по бокам, звезда — в правом верхнем углу */
+  .ggg.ggg.view-cards .rt tr.cyc { position: relative; padding: 0 16px 14px; }
+  .ggg.ggg.view-cards .rt td.wide:first-child { margin: 0 -16px; padding: 12px 56px 10px 14px; }
+  .ggg.ggg.view-cards .rt td.wide:first-child::before, .ggg.ggg.view-cards .rt td.wide:first-child::after { content: none; }
+  .ggg.ggg.view-cards .rt td.wide:first-child .path { justify-content: flex-start; padding-left: 0; }
+  .ggg.ggg.view-cards .rt td.wide:first-child .path > .fav { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 1px solid #5a4c32; border-radius: 2px;
+    background: linear-gradient(#2e281b, #1b170f 55%, #130f0a); }
+  .ggg.ggg.view-cards .rt td.wide:first-child .cur { font: 700 15.5px "Alegreya Sans SC", var(--body); }
+  /* прибыль */
+  .ggg.ggg.view-cards .rt .c-hero .dprofit { margin: 0; padding: 4px 0 12px; border-top: 0; border-bottom: 1px solid; border-image: var(--sep) 1; }
+  .ggg.ggg.view-cards .rt .c-hero .mk { flex-basis: 100%; }
+  .ggg.ggg.view-cards .rt .c-hero .hg { font-size: 27px; font-weight: 700; line-height: 1.2; }
+  .ggg.ggg.view-cards .rt .c-hero .hp { font-size: 17px; }
+  .ggg.ggg.view-cards .rt .c-hero .warn { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; }
+  .ggg.ggg.view-cards .rt .c-hero .dtrend { flex-basis: 100%; flex-direction: row; align-items: center; justify-content: space-between; margin: 6px 0 0; }
+  .ggg.ggg.view-cards .rt td[data-label]::before { font-size: 14px; }
+  .ggg.ggg.view-cards .rt td.wide:first-child .path { position: static; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1674,6 +1696,24 @@
     .ggg.ggg[data-theme=light] .dstep .frow { padding: 8px 0; }
     .ggg.ggg[data-theme=light] .dstep .dmeta { padding-top: 6px; }
   }
+  .ggg.ggg[data-theme=light] .rt td.c-hero { display: none; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.c-hero { display: block; grid-column: 1 / -1; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.good.big { display: none; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-amt .muted { display: none; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.cyc { position: relative; padding: 0 16px 14px; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child { margin: 0 -16px; padding: 12px 56px 10px 14px; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child::before, .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child::after { content: none; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .path { justify-content: flex-start; padding-left: 0; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .path > .fav { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border: 1px solid #cec0a4; border-radius: 2px; background: linear-gradient(#eae0cb, #f3ede1 55%, #f7f3ea); }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .cur { font: 700 15.5px "Alegreya Sans SC", var(--body); }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .dprofit { margin: 0; padding: 4px 0 12px; border-top: 0; border-bottom: 1px solid; border-image: var(--sep) 1; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .mk { flex-basis: 100%; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .hg { font-size: 27px; font-weight: 700; line-height: 1.2; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .hp { font-size: 17px; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .warn { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; }
+  .ggg.ggg[data-theme=light].view-cards .rt .c-hero .dtrend { flex-basis: 100%; flex-direction: row; align-items: center; justify-content: space-between; margin: 6px 0 0; }
+  .ggg.ggg[data-theme=light].view-cards .rt td[data-label]::before { font-size: 14px; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .path { position: static; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3214,9 +3254,11 @@ function renderCycles() {
     const id = c.nodes.join(">");
     html += `<tr class="cyc${drawer.id === id ? " sel" : ""}" data-id="${esc(id)}" data-i="${i}">
       <td class="wide"><div class="path">${favBtn(id)}${pathHtml}</div></td>
+      <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${amt(c.gain)} ${tn}</span><span class="hp good">+${(c.pct * 100).toFixed(2)}%</span>${
+        c.volatile ? `<span class="warn" title="${t("volatileTitle")}">${t("volatile")}</span>` : ""}${cardsView() ? pathTrend(c) : ""}</div></td>
       <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%${c.volatile
         ? `<div class="warn" title="${t("volatileTitle")}">${t("volatile")}</div>` : ""}</td>
-      <td class="num"${L("thAmt")}>${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b><div class="muted">+${amt(c.gain)} ${tn}${
+      <td class="num c-amt"${L("thAmt")}>${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b><div class="muted">+${amt(c.gain)} ${tn}${
         isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${c.capped
         ? `<div class="warn" title="${t("cappedTitle")}">${t("capped")}</div>` : ""}</td>
       <td class="num"${L("thTime")}>${dur(c.hours)}</td>
@@ -3239,6 +3281,8 @@ function renderCycles() {
   });
 }
 
+// График в карточке считаем только в виде карточек — в таблице его не видно.
+const cardsView = () => document.documentElement.classList.contains("view-cards");
 // Целые суммы печатаем без копеек.
 function amt(x) {
   return Number.isInteger(x) ? x.toLocaleString(locale()) : fmt(x);
@@ -3867,7 +3911,7 @@ function applyView() {
 }
 document.querySelectorAll(".vtoggle button").forEach(b => b.onclick = () => {
   ui.view = b.dataset.view === "cards" ? "cards" : undefined;
-  saveUi(); applyView();
+  saveUi(); applyView(); if (market) renderCycles();
 });
 matchMedia("(max-width: 800px)").addEventListener("change", applyView);
 
