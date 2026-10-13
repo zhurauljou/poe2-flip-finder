@@ -1371,6 +1371,11 @@
   .ggg.ggg #alva .anav .aback { border: 0; background: transparent; box-shadow: none; min-height: 44px; }
   .ggg.ggg #alva .anav .aback:hover { border: 0; background: transparent; }
   .ggg.ggg #alva .anav .aback::after { content: none; }
+  .ggg.ggg #alva .chev { width: .42em; height: .72em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ggg.ggg #alva .anav button { gap: 10px; }
+  .ggg.ggg .arow { gap: 0; }
+  .ggg.ggg .arow .ak { margin-bottom: -4px; }
+  .ggg.ggg .arow .abig { margin-top: 8px; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1935,6 +1940,11 @@
   .ggg.ggg[data-theme=light] #alva .anav .aback { border: 0; background: transparent; box-shadow: none; min-height: 44px; }
   .ggg.ggg[data-theme=light] #alva .anav .aback:hover { border: 0; background: transparent; }
   .ggg.ggg[data-theme=light] #alva .anav .aback::after { content: none; }
+  .ggg.ggg[data-theme=light] #alva .chev { width: .42em; height: .72em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ggg.ggg[data-theme=light] #alva .anav button { gap: 10px; }
+  .ggg.ggg[data-theme=light] .arow { gap: 0; }
+  .ggg.ggg[data-theme=light] .arow .ak { margin-bottom: -4px; }
+  .ggg.ggg[data-theme=light] .arow .abig { margin-top: 8px; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -4502,7 +4512,7 @@ function renderAlva() {
       <div class="aprofit ${run.gain > 0 ? "good" : "bad"}">${run.gain > 0 ? "+" : ""}${amt(run.gain)} ${esc(name(target))}</div>
       <div class="${run.gain > 0 ? "good" : "bad"}" style="font-size:20px">${pct1(pct)}</div>
       <div class="muted">${amt(start)} ${esc(name(c.nodes[0]))} → ${amt(run.out)} ${esc(name(target))}</div></div>
-      <div class="anav"><button type="button" class="aback ghost">← ${t("alvaBack")}</button>
+      <div class="anav"><button type="button" class="aback ghost"><svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1L1 7l6 6"/></svg>${t("alvaBack")}</button>
         <button type="button" class="asave"${done ? "" : " disabled"}>${t("dSave")}</button></div>
       ${done ? "" : `<div class="muted">${t("dSaveNeed")}</div>`}
       <button type="button" class="ghost aclose">${t("alvaClose")}</button></div>`;
@@ -4527,8 +4537,8 @@ function renderAlva() {
       <div class="agot"><div class="ak">${t("dActual")}, ${esc(name(e.to))}</div>
         <span class="stepper"><button type="button" tabindex="-1" data-d="-1">−</button><input data-f="got" data-k="${k}" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="${o.got[k] ?? ""}" placeholder="${$("#round").checked ? calc : +calc.toFixed(4)}"><button type="button" tabindex="-1" data-d="1">+</button></span>
         <div class="muted ahint">${t("alvaGotHint")}</div></div>
-      <div class="anav">${k > 0 ? `<button type="button" class="aback ghost">← ${t("alvaBack")}</button>` : ""}
-        <button type="button" class="anext">${t(k + 1 < n ? "alvaNext" : "alvaFinish")} →</button></div></div>`;
+      <div class="anav">${k > 0 ? `<button type="button" class="aback ghost"><svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1L1 7l6 6"/></svg>${t("alvaBack")}</button>` : ""}
+        <button type="button" class="anext">${t(k + 1 < n ? "alvaNext" : "alvaFinish")}<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6"/></svg></button></div></div>`;
   }
   const box = $("#alva");
   box.innerHTML = html;
