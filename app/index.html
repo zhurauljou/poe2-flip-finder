@@ -1498,6 +1498,14 @@
   @media (prefers-reduced-motion: reduce) {
     .ggg.ggg #drawer .dhead .cur, .ggg.ggg #drawer .dhead .cur img { transition: none; }
   }
+  /* поиск в «Парах» */
+  .ggg.ggg #flipSearch { display: block; width: 100%; max-width: 420px; height: 40px; margin: 0 0 14px; padding: 0 12px 0 38px;
+    background: #07090d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8270' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 11px center / 18px 18px;
+    border: 1px solid #4d4a40; border-radius: 0; color: #f1e4c2; font: 500 16px var(--body); }
+  .ggg.ggg #flipSearch:focus { border-color: #8a7a52; box-shadow: 0 0 0 1px #8a7a52; outline: none; }
+  @media (max-width: 800px) {
+    .ggg.ggg #flipSearch { max-width: none; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2161,6 +2169,11 @@
   @media (prefers-reduced-motion: reduce) {
     .ggg.ggg[data-theme=light] #drawer .dhead .cur, .ggg.ggg[data-theme=light] #drawer .dhead .cur img { transition: none; }
   }
+  .ggg.ggg[data-theme=light] #flipSearch { display: block; width: 100%; max-width: 420px; height: 40px; margin: 0 0 14px; padding: 0 12px 0 38px; background: #f9f6f1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a8968' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 11px center / 18px 18px; border: 1px solid #cec0a3; border-radius: 0; color: #70581a; font: 500 16px var(--body); }
+  .ggg.ggg[data-theme=light] #flipSearch:focus { border-color: #b29c70; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.80); outline: none; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] #flipSearch { max-width: none; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2280,7 +2293,6 @@
       <div class="tabs">
         <button data-tab="cycles" class="on"><span class="tl" data-i18n="tabCycles"></span><span class="ts" data-i18n="tabCyclesS"></span></button>
         <button data-tab="flips"><span class="tl" data-i18n="tabFlips"></span><span class="ts" data-i18n="tabFlips"></span></button>
-        <button data-tab="rates"><span class="tl" data-i18n="tabRates"></span><span class="ts" data-i18n="tabRatesS"></span></button>
         <button data-tab="journal"><span class="tl" data-i18n="tabJournal"></span><span class="ts" data-i18n="tabJournal"></span></button>
       </div>
       <button type="button" id="favOnlyBtn" class="favtoggle"></button>
@@ -2290,12 +2302,8 @@
       </div>
     </div>
     <div id="tab-cycles"></div>
-    <div id="tab-flips" hidden></div>
+    <div id="tab-flips" hidden><input id="flipSearch" type="search" autocomplete="off" data-i18n-ph="flipSearchPh"><div id="flipsBox"></div></div>
     <div id="tab-journal" hidden></div>
-    <div id="tab-rates" hidden>
-      <input id="search" data-i18n-ph="searchPh" style="max-width:420px">
-      <div id="rates" style="margin-top:12px"></div>
-    </div>
   </section>
 </main>
 <div id="drawer" hidden>
@@ -2779,7 +2787,7 @@ const I18N = {
     srvCats: "Загружаю списки категорий…", srvPairs: "Загружаю пары обмена…", srvItems: "Загружаю справочник предметов…",
     srvGold: "Загружаю комиссии в золоте…", srvHours: "Загружаю часовые сводки GGG…", srvErr: "Ошибка загрузки",
     srvDoneNinja: "Готово: {a} валют, {b} пар", srvDoneGgg: "Готово: сводок за {n} ч",
-    tabFlips: "Туда-обратно", tabJournal: "Журнал",
+    tabFlips: "Пары", flipSearchPh: "Поиск валюты: Chaos, Greater Rune…", flipsNoMatch: "Нет пар с валютой «{q}» при текущих фильтрах.", tabJournal: "Журнал",
     lanScan: "Наведи камеру телефона на код — откроется программа:", lanTitle: "Доступ с телефона", lanOnShort: "включён", lanToggle: "Открывать программу с телефона в этой Wi-Fi сети",
     lanSwitching: "Переключаю…", lanOpen: "Или открой адрес вручную (телефон — в той же Wi-Fi сети):",
     lanMany: "Адресов несколько — нужен тот, что от Wi-Fi роутера, обычно 192.168.x.x.",
@@ -2927,7 +2935,7 @@ const I18N = {
     srvCats: "Loading category lists…", srvPairs: "Loading exchange pairs…", srvItems: "Loading item database…",
     srvGold: "Loading gold fees…", srvHours: "Loading GGG hourly digests…", srvErr: "Load error",
     srvDoneNinja: "Done: {a} currencies, {b} pairs", srvDoneGgg: "Done: {n} h of digests",
-    tabFlips: "Round trips", tabJournal: "Journal",
+    tabFlips: "Pairs", flipSearchPh: "Search currency: Chaos, Greater Rune…", flipsNoMatch: "No pairs with “{q}” under the current filters.", tabJournal: "Journal",
     lanScan: "Point your phone camera at the code to open the program:", lanTitle: "Phone access", lanOnShort: "on", lanToggle: "Open the program from a phone on this Wi-Fi",
     lanSwitching: "Switching…", lanOpen: "Or type the address (phone on the same Wi-Fi):",
     lanMany: "There are several addresses — you need the one from your Wi-Fi router, usually 192.168.x.x.",
@@ -3075,7 +3083,7 @@ const I18N = {
     srvCats: "正在加载分类列表…", srvPairs: "正在加载兑换交易对…", srvItems: "正在加载物品数据…",
     srvGold: "正在加载金币手续费…", srvHours: "正在加载 GGG 每小时汇总…", srvErr: "加载出错",
     srvDoneNinja: "完成：{a} 种货币，{b} 个交易对", srvDoneGgg: "完成：{n} 小时的汇总",
-    tabFlips: "往返倒卖", tabJournal: "交易记录",
+    tabFlips: "交易对", flipSearchPh: "搜索货币：Chaos、Greater Rune…", flipsNoMatch: "当前筛选下没有包含“{q}”的交易对。", tabJournal: "交易记录",
     lanScan: "用手机相机扫描此码即可打开程序：", lanTitle: "手机访问", lanOnShort: "已开启", lanToggle: "允许在此 Wi-Fi 网络中用手机打开程序",
     lanSwitching: "正在切换…", lanOpen: "或手动输入地址（手机需连接同一 Wi-Fi）：",
     lanMany: "有多个地址——需要来自 Wi-Fi 路由器的那个，通常是 192.168.x.x。",
@@ -4947,7 +4955,7 @@ function flipCandidates(cap = +$("#capital").value || 1) {
 }
 
 function renderFlips() {
-  const box = $("#tab-flips");
+  const box = $("#flipsBox");
   if (!market) { box.innerHTML = `<div class="empty">${t("noData")}</div>`; return; }
   const base = $("#base").value, bn = esc(name(base));
   const goldOn = Object.values(market.items).some(it => it.gold > 0);
@@ -4962,11 +4970,14 @@ function renderFlips() {
   const nFav = list.filter(c => isFav(c.nodes.join(">"))).length;
   favCount.flips = nFav; updateFavBtn();
   if (ui.favOnly) list = list.filter(c => isFav(c.nodes.join(">")));
+  // Поиск по названию любой из двух валют пары.
+  const fq = ($("#flipSearch")?.value || "").trim().toLowerCase();
+  if (fq) list = list.filter(c => c.nodes.some(id => name(id).toLowerCase().includes(fq) || id.includes(fq)));
   const total = list.length;
   counts.flips = total; updateFilterUi(); scheduleCapPreview();
   list = list.slice(0, 300);
   const intro = `<div class="muted" style="margin-bottom:8px">${t("flipsIntro", { b: bn, n: total })}<span class="tip" data-tip="hFlips"></span></div>`;
-  if (!total) { box.innerHTML = intro + `<div class="empty">${t(ui.favOnly ? "favNone" : "flipsNone")}</div>`; prepTips(box); wireFav(box); return; }
+  if (!total) { box.innerHTML = intro + `<div class="empty">${fq ? t("flipsNoMatch", { q: esc(fq) }) : t(ui.favOnly ? "favNone" : "flipsNone")}</div>`; prepTips(box); wireFav(box); return; }
   const arrowTh = k => flipSort === k ? " ▾" : "";
   const L = k => ` data-label="${esc(t(k))}"`;
   const sorts = [["volume", "thVol"], ["chg", "thChg"], ["time", "thTime"], ...(goldOn ? [["gold", "thGold"]] : [])];
@@ -5012,6 +5023,7 @@ function renderFlips() {
 // ---------- вкладка «курсы» ----------
 function renderRates() {
   const box = $("#rates");
+  if (!box) return;
   if (!market) { box.innerHTML = ""; return; }
   const q = $("#search").value.trim().toLowerCase();
   if (q.length < 2) { box.innerHTML = `<div class="muted">${t("ratesMin")}</div>`; return; }
@@ -5144,10 +5156,10 @@ for (const k of ["base", "target", "round", "capital", "goldBudget", "goldEff", 
     const run = () => { renderCycles(); renderFlips(); scheduleNotifyBaseline(); };
     if (e.isTrusted && e.target.tagName === "INPUT" && e.target.type === "text") typingTimer = setTimeout(run, 250); else run();
   });
-$("#search").addEventListener("input", renderRates);
+$("#flipSearch").addEventListener("input", () => { clearTimeout(typingTimer); typingTimer = setTimeout(renderFlips, 150); });
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
-  for (const n of ["cycles", "flips", "rates", "journal"]) $("#tab-" + n).hidden = b.dataset.tab !== n;
+  for (const n of ["cycles", "flips", "journal"]) $("#tab-" + n).hidden = b.dataset.tab !== n;
   updateFilterUi(); scheduleCapPreview(); updateFavBtn();
 });
 init();
