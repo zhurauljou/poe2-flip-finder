@@ -1251,6 +1251,21 @@
   .ggg.ggg.view-cards .rt tr.cyc.sel { background: linear-gradient(#24211b, #14161a 55%, #101216); border: 2px solid #b8975a; box-shadow: none; padding: 0 15px 13px; }
   .ggg.ggg.view-cards .rt tr.cyc.sel td.wide:first-child { margin: 0 -15px; }
   .ggg.ggg.view-cards .rt td.wide:first-child { background: none; border-bottom: 0; padding-bottom: 4px; }
+  /* телефон: прилипшая строка «Фильтры + вкладки» — как верхняя панель на компьютере: прогрессивное размытие с затемнением */
+  @media (max-width: 800px) {
+    .ggg.ggg .toolbar { isolation: isolate; --shade: 9, 11, 15; background: none; border-bottom: 0; }
+    .ggg.ggg .toolbar::before, .ggg.ggg .toolbar::after { content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none; transition: bottom .2s, opacity .2s; }
+    .ggg.ggg .toolbar::before { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      background: linear-gradient(rgba(var(--shade), .96) 0%, rgba(var(--shade), .9) 55%, rgba(var(--shade), .6) 82%, rgba(var(--shade), .1) 100%);
+      -webkit-mask-image: linear-gradient(#000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(#000 0%, #000 60%, transparent 100%); }
+    .ggg.ggg .toolbar::after { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+      -webkit-mask-image: linear-gradient(transparent 35%, #000 70%, #000 82%, transparent 100%); mask-image: linear-gradient(transparent 35%, #000 70%, #000 82%, transparent 100%); }
+    /* пока не прилипла — ровный фон и тонкая золотая линия снизу */
+    .ggg.ggg .toolbar:not(.stuck)::before { background: rgba(var(--shade), .55); -webkit-mask-image: none; mask-image: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .ggg.ggg .toolbar:not(.stuck)::after { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none;
+      background: linear-gradient(90deg, transparent, rgba(201, 162, 86, .38) 12%, rgba(201, 162, 86, .38) 88%, transparent) left bottom / 100% 1px no-repeat; }
+    .ggg.ggg .toolbar.stuck::before, .ggg.ggg .toolbar.stuck::after { bottom: -26px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1725,6 +1740,15 @@
   .ggg.ggg[data-theme=light].view-cards .rt tr.cyc.sel { background: linear-gradient(#ede4d2, #f2ebde 55%, #f4efe4); border: 2px solid #a58447; box-shadow: none; padding: 0 15px 13px; }
   .ggg.ggg[data-theme=light].view-cards .rt tr.cyc.sel td.wide:first-child { margin: 0 -15px; }
   .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child { background: none; border-bottom: 0; padding-bottom: 4px; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .toolbar { isolation: isolate; --shade: 248, 245, 238; background: none; border-bottom: 0; }
+    .ggg.ggg[data-theme=light] .toolbar::before, .ggg.ggg[data-theme=light] .toolbar::after { content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none; transition: bottom .2s, opacity .2s; }
+    .ggg.ggg[data-theme=light] .toolbar::before { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); background: linear-gradient(rgba(var(--shade), .96) 0%, rgba(var(--shade), .9) 55%, rgba(var(--shade), .6) 82%, rgba(var(--shade), .1) 100%); -webkit-mask-image: linear-gradient(#faf7f2 0%, #faf7f2 60%, transparent 100%); mask-image: linear-gradient(#faf7f2 0%, #faf7f2 60%, transparent 100%); }
+    .ggg.ggg[data-theme=light] .toolbar::after { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); -webkit-mask-image: linear-gradient(transparent 35%, #faf7f2 70%, #faf7f2 82%, transparent 100%); mask-image: linear-gradient(transparent 35%, #faf7f2 70%, #faf7f2 82%, transparent 100%); }
+    .ggg.ggg[data-theme=light] .toolbar:not(.stuck)::before { background: rgba(var(--shade), .55); -webkit-mask-image: none; mask-image: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .ggg.ggg[data-theme=light] .toolbar:not(.stuck)::after { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; background: linear-gradient(90deg, transparent, rgba(169, 130, 54, 0.38) 12%, rgba(169, 130, 54, 0.38) 88%, transparent) left bottom / 100% 1px no-repeat; }
+    .ggg.ggg[data-theme=light] .toolbar.stuck::before, .ggg.ggg[data-theme=light] .toolbar.stuck::after { bottom: -26px; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3368,7 +3392,11 @@ function syncDrawer(byId) {
   buildDrawer();
 }
 $("#dClose").onclick = closeDrawer;
-addEventListener("scroll", () => document.querySelector("body > header").classList.toggle("stuck", scrollY > 2), { passive: true });
+addEventListener("scroll", () => {
+  document.querySelector("body > header").classList.toggle("stuck", scrollY > 2);
+  const tb = document.querySelector(".toolbar");  // на телефоне она прилипает к верху — там включаем размытие
+  tb.classList.toggle("stuck", scrollY > 2 && tb.getBoundingClientRect().top <= 1);
+}, { passive: true });
 {
   const head = $("#drawer .dhead"), body = $("#dBody"), dr = $("#drawer");
   const fit = () => { dr.style.setProperty("--dhead-h", head.offsetHeight + "px"); dr.style.setProperty("--dsb-w", (body.offsetWidth - body.clientWidth) + "px"); };
