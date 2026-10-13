@@ -1290,6 +1290,15 @@
     .ggg.ggg .hctl button { width: 38px; height: 38px; }
     .ggg.ggg .hctl select { width: 62px; height: 38px; padding-left: 9px; }
   }
+  /* кнопки внизу панели шагов: не помещаются в ряд — встают друг под другом */
+  .ggg.ggg .dbtns { flex-wrap: wrap; }
+  .ggg.ggg .dbtns button { flex: 1 1 auto; min-width: max-content; }
+  /* шапка панели шагов: длинное название валюты не выталкивает звезду и крестик за край */
+  .ggg.ggg .dhead .path { min-width: 0; }
+  .ggg.ggg .dhead .pstep { min-width: 0; max-width: 100%; }
+  .ggg.ggg .dhead .cur { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 30px; }
+  .ggg.ggg .dhead .cur img { vertical-align: -6px; margin-right: 7px; }
+  .ggg.ggg .dbtns :is(#dSave, #dReset) { flex: 1 1 auto; min-width: max-content; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1796,6 +1805,13 @@
     .ggg.ggg[data-theme=light] .hctl button { width: 38px; height: 38px; }
     .ggg.ggg[data-theme=light] .hctl select { width: 62px; height: 38px; padding-left: 9px; }
   }
+  .ggg.ggg[data-theme=light] .dbtns { flex-wrap: wrap; }
+  .ggg.ggg[data-theme=light] .dbtns button { flex: 1 1 auto; min-width: max-content; }
+  .ggg.ggg[data-theme=light] .dhead .path { min-width: 0; }
+  .ggg.ggg[data-theme=light] .dhead .pstep { min-width: 0; max-width: 100%; }
+  .ggg.ggg[data-theme=light] .dhead .cur { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 30px; }
+  .ggg.ggg[data-theme=light] .dhead .cur img { vertical-align: -6px; margin-right: 7px; }
+  .ggg.ggg[data-theme=light] .dbtns :is(#dSave, #dReset) { flex: 1 1 auto; min-width: max-content; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
