@@ -1517,6 +1517,12 @@
     .ggg.ggg .xitem .cur { min-height: 44px; }
     .ggg.ggg .xitem button { width: 44px; height: 44px; }
   }
+  /* «Показать ещё» — призрачная кнопка на всю ширину под списком */
+  .ggg.ggg .more-wrap { margin: 14px 0 6px; }
+  .ggg.ggg button.more { width: 100%; min-height: 46px; border: 1px solid #2c2a25; border-radius: 4px; background: none; box-shadow: none;
+    color: #e6d39a; font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; }
+  .ggg.ggg button.more::after { content: none; }
+  .ggg.ggg button.more:hover { background: rgba(241, 228, 194, .06); border-color: #5a4d36; color: #fff0c0; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2195,6 +2201,10 @@
     .ggg.ggg[data-theme=light] .xitem .cur { min-height: 44px; }
     .ggg.ggg[data-theme=light] .xitem button { width: 44px; height: 44px; }
   }
+  .ggg.ggg[data-theme=light] .more-wrap { margin: 14px 0 6px; }
+  .ggg.ggg[data-theme=light] button.more { width: 100%; min-height: 46px; border: 1px solid #e8dcc5; border-radius: 4px; background: none; box-shadow: none; color: #6e5a1b; font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; }
+  .ggg.ggg[data-theme=light] button.more::after { content: none; }
+  .ggg.ggg[data-theme=light] button.more:hover { background: rgba(112, 88, 26, 0.06); border-color: #cdbea1; color: #8a6900; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2777,7 +2787,7 @@ const I18N = {
     empty: "Выгодных {what} с такими фильтрами нет. Попробуй снизить «Мин. объём», «Прибыль от»{extra} или увеличить «Макс. время».",
     emptyEff: ", уменьшить «div на 100к золота»", emptyBudget: ", увеличить бюджет золота",
     emptyWhole: ", увеличить капитал (в целых числах округления съедают прибыль на малых суммах)",
-    found: "Найдено {what}: {n}{more} · {ms} мс · клик по строке — шаги и пересчёт под курсы в игре.", foundMore: " (показаны первые 300)",
+    showMore: "Показать ещё {n} · осталось {left}", found: "Найдено {what}: {n}{more} · {ms} мс · клик по строке — шаги и пересчёт под курсы в игре.", foundMore: " (показаны первые 300)",
     vs: " Прибыль считается относительно прямого обмена {b} → {t} (1 {b} ≈ {r} {t} с учётом запаса).",
     thPath: "Путь", thProfit: "Прибыль", thTime: "Время", thGold: "Золото", thPerHour: "Прибыль/час", thVol: "Ликвидность", thScore: "Рейтинг",
     thAmtTitle: "Целая стартовая сумма в пределах капитала, при которой прибыль в штуках максимальна",
@@ -2925,7 +2935,7 @@ const I18N = {
     empty: "No profitable {what} with these filters. Try lowering “Min. pair volume”, “Profit from”{extra} or raising “Max cycle time”.",
     emptyEff: ", lowering “div per 100k gold”", emptyBudget: ", raising the gold budget",
     emptyWhole: ", raising capital (with whole numbers rounding eats the profit on small amounts)",
-    found: "Found {what}: {n}{more} · {ms} ms · click a row for steps and recalculation with in-game rates.", foundMore: " (showing first 300)",
+    showMore: "Show {n} more · {left} left", found: "Found {what}: {n}{more} · {ms} ms · click a row for steps and recalculation with in-game rates.", foundMore: " (showing first 300)",
     vs: " Profit is measured against a direct trade {b} → {t} (1 {b} ≈ {r} {t} after margin).",
     thPath: "Path", thProfit: "Profit", thTime: "Time", thGold: "Gold", thPerHour: "Profit/hour", thVol: "Liquidity", thScore: "Score",
     thAmtTitle: "Whole starting amount within capital that maximizes profit in units",
@@ -3073,7 +3083,7 @@ const I18N = {
     empty: "当前筛选条件下没有盈利的{what}。可尝试降低“最低成交量”、“最低利润”{extra}，或提高“最长循环时间”。",
     emptyEff: "、降低“每 10 万金币 div”", emptyBudget: "、提高金币预算",
     emptyWhole: "、增加本金（整数模式下，小额兑换的利润会被取整吃掉）",
-    found: "找到{what}：{n}{more} · {ms} 毫秒 · 点击行查看步骤并按游戏内汇率重新计算。", foundMore: "（仅显示前 300 条）",
+    showMore: "再显示 {n} 条 · 剩余 {left}", found: "找到{what}：{n}{more} · {ms} 毫秒 · 点击行查看步骤并按游戏内汇率重新计算。", foundMore: "（仅显示前 300 条）",
     vs: " 利润相对于直接兑换 {b} → {t} 计算（1 {b} ≈ {r} {t}，已扣余量）。",
     thPath: "路径", thProfit: "利润", thTime: "时间", thGold: "金币", thPerHour: "利润/小时", thVol: "流动性", thScore: "评分",
     thAmtTitle: "本金范围内使利润（件数）最大的整数起始数量",
@@ -3698,7 +3708,7 @@ function renderCycles() {
   if (ui.favOnly) cyc = cyc.filter(c => isFav(c.nodes.join(">")));
   const total = cyc.length;
   counts.cycles = total; updateFilterUi();
-  cyc = cyc.slice(0, 300);
+  cyc = cyc.slice(0, listN.cycles);
   const what = t(isCycle ? "whatCycles" : "whatPaths");
   if (!total) {
     const extra = (g.minEff ? t("emptyEff") : "") + (isFinite(g.budget) ? t("emptyBudget") : "") + (whole ? t("emptyWhole") : "");
@@ -3712,7 +3722,7 @@ function renderCycles() {
   const L = k => ` data-label="${esc(t(k))}"`;
   const sorts = [["score", "thScore"], ["profit", "thProfit"], ["perHour", "thPerHour"], ["time", "thTime"],
                  ["volume", "thVol"], ...(g.on ? [["gold", "thGold"]] : []), ["streak", "thStreak"], ["seen", "thSeen"], ["len", "thPath"]];
-  let html = `<div class="muted" style="margin-bottom:8px">${t("found", { what, n: total, more: total > 300 ? t("foundMore") : "", ms })}${vs}</div>
+  let html = `<div class="muted" style="margin-bottom:8px">${t("found", { what, n: total, more: "", ms })}${vs}</div>
   ${sortSelect("cycSort", sorts, sortKey)}
   <table class="rt"><thead><tr>
     <th data-sort="len">${t("thPath")}${arrowTh("len")}</th>
@@ -3747,10 +3757,11 @@ function renderCycles() {
       <td class="num${c.streak ? "" : " muted"}"${L("thStreak")}>${streakText(c)}</td>
       <td class="num"${L("thSeen")}>${seenBadge(c.seen)}</td></tr>`;
   });
-  html += "</tbody></table>";
+  html += "</tbody></table>" + moreBtn("cycles", total);
   box.innerHTML = html;
-  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { sortKey = th.dataset.sort; renderCycles(); });
-  $("#cycSort").onchange = e => { sortKey = e.target.value; renderCycles(); };
+  wireMore(box, "cycles", renderCycles);
+  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { sortKey = th.dataset.sort; listN.cycles = PAGE; renderCycles(); });
+  $("#cycSort").onchange = e => { sortKey = e.target.value; listN.cycles = PAGE; renderCycles(); };
   wireFav(box);
   const shown = new Map(cyc.map(c => [c.nodes.join(">"), c]));
   box.querySelectorAll("tr.cyc").forEach(tr => tr.onclick = () => {
@@ -3760,6 +3771,13 @@ function renderCycles() {
 
 // График в карточке считаем только в виде карточек — в таблице его не видно.
 const cardsView = () => document.documentElement.classList.contains("view-cards");
+// Сколько строк показано в циклах и парах; «Показать ещё» добавляет по PAGE.
+const PAGE = 20, listN = { cycles: PAGE, flips: PAGE };
+const moreBtn = (key, total) => total > listN[key]
+  ? `<div class="more-wrap"><button type="button" class="ghost more" data-more="${key}">${t("showMore", { n: Math.min(PAGE, total - listN[key]), left: total - listN[key] })}</button></div>` : "";
+function wireMore(box, key, render) {
+  box.querySelector(`[data-more="${key}"]`)?.addEventListener("click", () => { listN[key] += PAGE; render(); });
+}
 // Целые суммы печатаем без копеек.
 function amt(x) {
   return Number.isInteger(x) ? x.toLocaleString(locale()) : fmt(x);
@@ -4996,7 +5014,7 @@ function renderFlips() {
   if (fq) list = list.filter(c => c.nodes.some(id => name(id).toLowerCase().includes(fq) || id.includes(fq)));
   const total = list.length;
   counts.flips = total; updateFilterUi(); scheduleCapPreview();
-  list = list.slice(0, 300);
+  list = list.slice(0, listN.flips);
   const intro = `<div class="muted" style="margin-bottom:8px">${t("flipsIntro", { b: bn, n: total })}<span class="tip" data-tip="hFlips"></span></div>`;
   if (!total) { box.innerHTML = intro + `<div class="empty">${fq ? t("flipsNoMatch", { q: esc(fq) }) : t(ui.favOnly ? "favNone" : "flipsNone")}</div>`; prepTips(box); wireFav(box); return; }
   const arrowTh = k => flipSort === k ? " ▾" : "";
@@ -5029,11 +5047,12 @@ function renderFlips() {
       ${goldOn ? `<td class="num"${L("thGold")}>${fmtGold(c.gold)}${c.goldUnknown ? "?" : ""}</td>` : ""}
     </tr>`;
   }
-  html += "</tbody></table>";
+  html += "</tbody></table>" + moreBtn("flips", total);
   box.innerHTML = html;
   prepTips(box);
-  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { flipSort = th.dataset.sort; renderFlips(); });
-  $("#flipSort").onchange = e => { flipSort = e.target.value; renderFlips(); };
+  wireMore(box, "flips", renderFlips);
+  box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { flipSort = th.dataset.sort; listN.flips = PAGE; renderFlips(); });
+  $("#flipSort").onchange = e => { flipSort = e.target.value; listN.flips = PAGE; renderFlips(); };
   wireFav(box);
   const byId = new Map(list.map(c => [c.nodes.join(">"), c]));
   box.querySelectorAll("tr.cyc").forEach(tr => tr.onclick = () => {
@@ -5174,10 +5193,10 @@ for (const k of ["base", "target", "round", "capital", "goldBudget", "goldEff", 
     // Набор с клавиатуры — пересчёт через паузу (на телефоне перерисовка на каждую цифру тормозит ввод);
     // кнопки −/+ и переключатели шлют синтетические события — пересчёт сразу.
     clearTimeout(typingTimer);
-    const run = () => { renderCycles(); renderFlips(); scheduleNotifyBaseline(); };
+    const run = () => { listN.cycles = listN.flips = PAGE; renderCycles(); renderFlips(); scheduleNotifyBaseline(); };
     if (e.isTrusted && e.target.tagName === "INPUT" && e.target.type === "text") typingTimer = setTimeout(run, 250); else run();
   });
-$("#flipSearch").addEventListener("input", () => { clearTimeout(typingTimer); typingTimer = setTimeout(renderFlips, 150); });
+$("#flipSearch").addEventListener("input", () => { clearTimeout(typingTimer); typingTimer = setTimeout(() => { listN.flips = PAGE; renderFlips(); }, 150); });
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
   for (const n of ["cycles", "flips", "journal"]) $("#tab-" + n).hidden = b.dataset.tab !== n;
