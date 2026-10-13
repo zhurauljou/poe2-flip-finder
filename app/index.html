@@ -1613,6 +1613,22 @@
   @media (max-width: 800px) {
     #notifyPanel { right: 12px; left: 12px; width: auto; }
   }
+  /* готовые наборы — три кнопки в ряд вверху фильтров; выбранный — золотой */
+  .ggg.ggg .presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 12px; }
+  .ggg.ggg .presets button { min-height: 38px; margin: 0; padding: 0 6px; border: 1px solid #3a3528; border-radius: 2px; background: none; box-shadow: none;
+    color: #b9ad85; font: 700 14px/1.15 "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: none; white-space: normal; }
+  .ggg.ggg .presets button:hover { background: rgba(241, 228, 194, .06); border-color: #6f5d3a; color: #f1e4c2; }
+  .ggg.ggg .presets button.on { background: linear-gradient(#3a2a14, #22180c); border-color: #b8975a; color: #ffe08a; }
+  .ggg.ggg .fhead { margin-top: -4px; }
+  /* поиск валюты для исключения */
+  .ggg.ggg #exSearch { display: block; width: 100%; height: 40px; margin: 10px 0 0; padding: 0 12px 0 36px;
+    background: #07090d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c8270' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 10px center / 17px 17px;
+    border: 1px solid #4d4a40; border-radius: 0; color: #f1e4c2; font: 500 15px var(--body); text-transform: none; letter-spacing: 0; }
+  .ggg.ggg #exSearch:focus { border-color: #8a7a52; box-shadow: 0 0 0 1px #8a7a52; outline: none; }
+  @media (max-width: 800px) {
+    .ggg.ggg .presets button { min-height: 44px; font-size: 15px; }
+    .ggg.ggg #exSearch { height: 44px; font-size: 16px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2364,6 +2380,17 @@
   @media (max-width: 800px) {
     #notifyPanel { right: 12px; left: 12px; width: auto; }
   }
+  .ggg.ggg[data-theme=light] .presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 12px; }
+  .ggg.ggg[data-theme=light] .presets button { min-height: 38px; margin: 0; padding: 0 6px; border: 1px solid #e3d5b9; border-radius: 2px; background: none; box-shadow: none; color: #73664d; font: 700 14px/1.15 "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: none; white-space: normal; }
+  .ggg.ggg[data-theme=light] .presets button:hover { background: rgba(112, 88, 26, 0.06); border-color: #dfd6c3; color: #70581a; }
+  .ggg.ggg[data-theme=light] .presets button.on { background: linear-gradient(#e8ddc8, #f2ebde); border-color: #a58447; color: #8a6500; }
+  .ggg.ggg[data-theme=light] .fhead { margin-top: -4px; }
+  .ggg.ggg[data-theme=light] #exSearch { display: block; width: 100%; height: 40px; margin: 10px 0 0; padding: 0 12px 0 36px; background: #f9f6f1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a8968' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 10px center / 17px 17px; border: 1px solid #cec0a3; border-radius: 0; color: #70581a; font: 500 15px var(--body); text-transform: none; letter-spacing: 0; }
+  .ggg.ggg[data-theme=light] #exSearch:focus { border-color: #b29c70; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.80); outline: none; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .presets button { min-height: 44px; font-size: 15px; }
+    .ggg.ggg[data-theme=light] #exSearch { height: 44px; font-size: 16px; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2409,6 +2436,7 @@
   <aside id="filters">
     <div id="resizer"></div>
     <div class="mhead"><b data-i18n="filters"></b><button id="filtersClose" type="button">×</button></div>
+    <div class="presets" id="presets" role="group"></div>
     <div class="fhead"><button type="button" id="fReset" class="linkbtn" data-i18n="fReset" hidden></button></div>
     <div class="lbl"><span data-i18n="base"></span><div class="seg" id="baseSeg" role="group"></div></div>
     <label class="check"><input id="same" type="checkbox" checked><span data-i18n="sameTarget"></span><span class="tip" data-tip="hTarget"></span></label>
@@ -2446,6 +2474,7 @@
     <div class="lbl xsec"><span class="lh"><span data-i18n="exclude"></span><span class="tip" data-tip="hExclude"></span></span>
       <div id="exCats" class="xchips"></div>
       <div id="exItems" class="xchips"></div>
+      <input id="exSearch" type="search" list="exList" autocomplete="off" data-i18n-ph="exSearchPh"><datalist id="exList"></datalist>
     </div>
     <details class="fadv" id="fAdv"><summary><span data-i18n="fAdv"></span><span id="fadvN"></span></summary>
     <div class="row">
@@ -2916,7 +2945,7 @@ const I18N = {
     hRound: "Каждый обмен в целых штуках. Стартовая сумма подбирается в пределах капитала так, чтобы округления съели меньше всего.",
     maxLen: "Обменов (макс.)", fee: "Запас, % за шаг",
     hFee: "Вычитается на каждом шаге, чтобы покрыть разницу между средним курсом и ценой в стакане. С «Запасом по шуму пары» — это минимум.",
-    adaptive: "Запас по шуму пары", dMargin: "Запас", noiseOff: "выключен — один для всех", noiseSoft: "мягко (×0.5)", noiseNorm: "обычно (×1)", noiseStrict: "строго (×1.5)", nOff: "выкл", nSoft: "мягко", nNorm: "обычно", nStrict: "строго",
+    adaptive: "Осторожность", dMargin: "Запас", noiseOff: "выключен — один для всех", noiseSoft: "мягко (×0.5)", noiseNorm: "обычно (×1)", noiseStrict: "строго (×1.5)", nOff: "выкл", nSoft: "мягко", nNorm: "обычно", nStrict: "строго",
     hAdaptive: "Запас каждого шага — не меньше того, насколько курс этой пары обычно скачет от часа к часу (по последним 24 ч). Шумным парам запас больше, стабильным — «Запас» из настроек. Пары почти без истории — 3%.<br>Проверка на 2 сутках истории — доля путей, сохранивших прибыль ≥1% в следующем часу: один запас 1% — 71%, 2% — 76%; по шуму мягко — 77% (хороших путей столько же, как при 1%), обычно — 83%, строго — 87% (путей меньше).<br>Работает с источником GGG; в панели шагов виден запас каждого шага.",
     goldBudget: "Бюджет золота", noLimit: "без лимита",
     hGoldBudget: "Комиссия биржи считается сама: за каждую <b>полученную</b> штуку — её цена в золоте из файлов игры (Divine 800, Chaos 160, Exalted 120…). Поэтому набирать дешёвую валюту дорого: Exalted на 1 div ≈ 90 тыс золота.<br>Бюджет — сколько золота готов потратить: сумма уменьшится, чтобы в него уложиться.",
@@ -2949,7 +2978,7 @@ const I18N = {
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
     tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (качается только недостающий час), poe.ninja — каждые 30 минут.",
-    refresh: "Обновить данные", fReset: "Сбросить фильтры", fAdv: "Дополнительно", notifyTitle: "Уведомления",
+    refresh: "Обновить данные", fReset: "Сбросить фильтры", pre_safe: "Надёжные", pre_fast: "Быстрые", pre_max: "Максимум прибыли", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
     tabCycles: "Циклы флипа", tabRates: "Курсы валюты", searchPh: "Название валюты, напр. Chaos Orb или Greater Rune",
     noData: "Нет данных. Нажми «Обновить данные».",
     whatCycles: "циклов", whatPaths: "путей",
@@ -3064,7 +3093,7 @@ const I18N = {
     hRound: "Every trade uses whole units. The starting amount is picked within your capital so rounding eats as little as possible.",
     maxLen: "Trades (max)", fee: "Margin, % per step",
     hFee: "Deducted on every step to cover the gap between the average rate and the order book price. With “Margin by pair noise” this is the minimum.",
-    adaptive: "Margin by pair noise", dMargin: "Margin", noiseOff: "off — same for all", noiseSoft: "soft (×0.5)", noiseNorm: "normal (×1)", noiseStrict: "strict (×1.5)", nOff: "off", nSoft: "soft", nNorm: "normal", nStrict: "strict",
+    adaptive: "Caution", dMargin: "Margin", noiseOff: "off — same for all", noiseSoft: "soft (×0.5)", noiseNorm: "normal (×1)", noiseStrict: "strict (×1.5)", nOff: "off", nSoft: "soft", nNorm: "normal", nStrict: "strict",
     hAdaptive: "Each step's margin is at least how much this pair's rate usually moves from hour to hour (over the last 24 h). Noisy pairs get a bigger margin, stable ones — the “Margin” from settings. Pairs with almost no history — 3%.<br>Tested on 2 days of history — share of paths that kept ≥1% profit the next hour: flat 1% — 71%, 2% — 76%; by noise soft — 77% (as many good paths as with 1%), normal — 83%, strict — 87% (fewer paths).<br>GGG source only; the steps panel shows each step's margin.",
     goldBudget: "Gold budget", noLimit: "no limit",
     hGoldBudget: "The exchange fee is calculated automatically: for every unit you <b>receive</b> you pay its gold price from the game files (Divine 800, Chaos 160, Exalted 120…). So collecting cheap currency is expensive: 1 div worth of Exalted ≈ 90k gold.<br>Budget is how much gold you are willing to spend: the amount is reduced to fit.",
@@ -3097,7 +3126,7 @@ const I18N = {
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
     tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded), poe.ninja — every 30 minutes.",
-    refresh: "Refresh data", fReset: "Reset filters", fAdv: "Advanced", notifyTitle: "Notifications",
+    refresh: "Refresh data", fReset: "Reset filters", pre_safe: "Reliable", pre_fast: "Fast", pre_max: "Max profit", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
     tabCycles: "Flip cycles", tabRates: "Currency rates", searchPh: "Currency name, e.g. Chaos Orb or Greater Rune",
     noData: "No data. Press “Refresh data”.",
     whatCycles: "cycles", whatPaths: "paths",
@@ -3212,7 +3241,7 @@ const I18N = {
     hRound: "每次兑换都使用整数数量。会在本金范围内挑选起始数量，使取整损失最小。",
     maxLen: "最多兑换次数", fee: "每步余量 %",
     hFee: "每一步都会扣除，用于弥补平均汇率与挂单价格之间的差异。开启“按交易对波动设余量”时，此值为最小值。",
-    adaptive: "按交易对波动设余量", dMargin: "余量", noiseOff: "关闭——统一余量", noiseSoft: "宽松（×0.5）", noiseNorm: "标准（×1）", noiseStrict: "严格（×1.5）", nOff: "关闭", nSoft: "宽松", nNorm: "标准", nStrict: "严格",
+    adaptive: "谨慎程度", dMargin: "余量", noiseOff: "关闭——统一余量", noiseSoft: "宽松（×0.5）", noiseNorm: "标准（×1）", noiseStrict: "严格（×1.5）", nOff: "关闭", nSoft: "宽松", nNorm: "标准", nStrict: "严格",
     hAdaptive: "每一步的余量至少等于该交易对汇率通常每小时的波动幅度（按最近 24 小时）。波动大的交易对余量更大，稳定的使用设置中的“余量”。几乎没有历史的交易对为 3%。<br>基于 2 天历史的检验——下一小时仍保持 ≥1% 利润的路径比例：统一 1% — 71%，2% — 76%；按波动 宽松 — 77%（好路径数量与 1% 相同），标准 — 83%，严格 — 87%（路径更少）。<br>仅适用于 GGG 数据源；步骤面板中可看到每一步的余量。",
     goldBudget: "金币预算", noLimit: "不限",
     hGoldBudget: "交易所手续费自动计算：每<b>获得</b>一件货币，需支付其在游戏文件中的金币价格（神圣石 800、混沌石 160、崇高石 120…）。因此收集廉价货币很贵：价值 1 div 的崇高石 ≈ 9 万金币。<br>预算即愿意花费的金币：数量会被缩减以符合预算。",
@@ -3245,7 +3274,7 @@ const I18N = {
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
     tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG 每 5 分钟检查一次（只下载缺少的小时），poe.ninja 每 30 分钟一次。",
-    refresh: "刷新数据", fReset: "重置筛选", fAdv: "更多选项", notifyTitle: "通知",
+    refresh: "刷新数据", fReset: "重置筛选", pre_safe: "稳健", pre_fast: "快速", pre_max: "最大利润", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
     tabCycles: "套利循环", tabRates: "货币汇率", searchPh: "货币名称，如 Chaos Orb 或 Greater Rune",
     noData: "没有数据。请点击“刷新数据”。",
     whatCycles: "循环", whatPaths: "路径",
@@ -3407,7 +3436,7 @@ $("#theme").onclick = () => {
 };
 $("#lang").onchange = () => {
   lang = $("#lang").value; ui.lang = lang; saveUi();
-  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan(); renderPlayers();
+  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan(); renderPlayers(); renderPresets();
 };
 
 // ---------- подсказки ----------
@@ -4638,6 +4667,9 @@ function renderExclude() {
     : `<span class="muted xlbl">${t("exNone")}</span>`;
   $("#exCats").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("cat", b.dataset.cat, !b.classList.contains("off")));
   $("#exItems").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("item", b.dataset.item, false));
+  const ids = new Set(); for (const p of market.pairs) ids.add(p.from), ids.add(p.to);
+  $("#exList").innerHTML = [...ids].filter(id => !market.core.includes(id) && !exItems().has(id)).map(id => name(id)).sort()
+    .map(n => `<option value="${esc(n)}"></option>`).join("");
 }
 
 // ---------- избранные пути ----------
@@ -5381,6 +5413,7 @@ function updateFilterMarks() {
   $("#fReset").hidden = !n;
   $("#fadvN").textContent = nAdv ? ` · ${nAdv}` : "";
   $("#notifyBtn").classList.toggle("on", $("#notifyOn").checked);
+  renderPresets();
 }
 $("#fReset").onclick = () => {
   const reload = ["source", "window"].some(k => $("#" + k).value !== FILTER_DEF[k]);
@@ -5388,6 +5421,36 @@ $("#fReset").onclick = () => {
   renderSegs(); save(); listN.cycles = listN.flips = PAGE;
   if (reload) loadMarket(); else { renderCycles(); renderFlips(); }
 };
+
+// Готовые наборы: остальные фильтры — по умолчанию; набор подсвечен, пока значения совпадают.
+const PRESETS = {
+  safe: { minStreak: "3", minVol: "300", noise: "1.5", maxLen: "3", sort: "score" },
+  fast: { maxHours: "1", minVol: "200", maxLen: "3", sort: "perHour" },
+  max: { maxLen: "5", sort: "profit" },
+};
+const filterVal = f => { const el = $("#" + f); return el.type === "checkbox" ? el.checked : el.value; };
+const activePreset = () => Object.keys(PRESETS).find(k => FILTER_KEYS.every(f => filterVal(f) === (f in PRESETS[k] ? PRESETS[k][f] : FILTER_DEF[f])));
+function applyPreset(k) {
+  const p = PRESETS[k], reload = ["source", "window"].some(f => $("#" + f).value !== FILTER_DEF[f]);
+  for (const f of FILTER_KEYS) { const el = $("#" + f), v = f in p ? p[f] : FILTER_DEF[f]; if (el.type === "checkbox") el.checked = v; else el.value = v; }
+  sortKey = p.sort; renderSegs(); save(); listN.cycles = listN.flips = PAGE;
+  if (reload) loadMarket(); else { renderCycles(); renderFlips(); }
+}
+function renderPresets() {
+  const a = activePreset();
+  $("#presets").innerHTML = Object.keys(PRESETS).map(k =>
+    `<button type="button" data-preset="${k}" class="${a === k ? "on" : ""}" title="${esc(t("pre_" + k + "T"))}">${t("pre_" + k)}</button>`).join("");
+  $("#presets").querySelectorAll("button").forEach(b => b.onclick = () => applyPreset(b.dataset.preset));
+}
+// «Исключить»: валюта по названию — список подсказок из валют текущего рынка.
+$("#exSearch").addEventListener("change", e => {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q || !market) return;
+  const id = Object.keys(market.items).find(id => name(id).toLowerCase() === q)
+          || Object.keys(market.items).find(id => name(id).toLowerCase().includes(q));
+  if (id && !market.core.includes(id)) setExcluded("item", id, true);
+  e.target.value = "";
+});
 // Уведомления и Telegram — панель под колокольчиком.
 {
   const p = $("#notifyPanel"), b = $("#notifyBtn");
