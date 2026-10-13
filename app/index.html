@@ -1299,6 +1299,20 @@
   .ggg.ggg .dhead .cur { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 30px; }
   .ggg.ggg .dhead .cur img { vertical-align: -6px; margin-right: 7px; }
   .ggg.ggg .dbtns :is(#dSave, #dReset) { flex: 1 1 auto; min-width: max-content; }
+  /* телефон: шапка «Фильтры» — как верхняя панель: ровный фон с золотой линией, при прокрутке — прогрессивное размытие */
+  @media (max-width: 800px) {
+    .ggg.ggg .mhead { isolation: isolate; --shade: 9, 11, 15; background: none; border-bottom: 0; }
+    .ggg.ggg .mhead::before, .ggg.ggg .mhead::after { content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none; transition: bottom .2s; }
+    .ggg.ggg .mhead::before { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+      background: linear-gradient(rgba(var(--shade), .96) 0%, rgba(var(--shade), .9) 55%, rgba(var(--shade), .6) 82%, rgba(var(--shade), .1) 100%);
+      -webkit-mask-image: linear-gradient(#000 0%, #000 60%, transparent 100%); mask-image: linear-gradient(#000 0%, #000 60%, transparent 100%); }
+    .ggg.ggg .mhead::after { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+      -webkit-mask-image: linear-gradient(transparent 35%, #000 70%, #000 82%, transparent 100%); mask-image: linear-gradient(transparent 35%, #000 70%, #000 82%, transparent 100%); }
+    .ggg.ggg .mhead:not(.stuck)::before { background: rgba(var(--shade), .55); -webkit-mask-image: none; mask-image: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .ggg.ggg .mhead:not(.stuck)::after { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none;
+      background: linear-gradient(90deg, transparent, rgba(201, 162, 86, .38) 12%, rgba(201, 162, 86, .38) 88%, transparent) left bottom / 100% 1px no-repeat; }
+    .ggg.ggg .mhead.stuck::before, .ggg.ggg .mhead.stuck::after { bottom: -26px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1812,6 +1826,15 @@
   .ggg.ggg[data-theme=light] .dhead .cur { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 30px; }
   .ggg.ggg[data-theme=light] .dhead .cur img { vertical-align: -6px; margin-right: 7px; }
   .ggg.ggg[data-theme=light] .dbtns :is(#dSave, #dReset) { flex: 1 1 auto; min-width: max-content; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .mhead { isolation: isolate; --shade: 248, 245, 238; background: none; border-bottom: 0; }
+    .ggg.ggg[data-theme=light] .mhead::before, .ggg.ggg[data-theme=light] .mhead::after { content: ""; position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: -1; pointer-events: none; transition: bottom .2s; }
+    .ggg.ggg[data-theme=light] .mhead::before { -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); background: linear-gradient(rgba(var(--shade), .96) 0%, rgba(var(--shade), .9) 55%, rgba(var(--shade), .6) 82%, rgba(var(--shade), .1) 100%); -webkit-mask-image: linear-gradient(#faf7f2 0%, #faf7f2 60%, transparent 100%); mask-image: linear-gradient(#faf7f2 0%, #faf7f2 60%, transparent 100%); }
+    .ggg.ggg[data-theme=light] .mhead::after { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); -webkit-mask-image: linear-gradient(transparent 35%, #faf7f2 70%, #faf7f2 82%, transparent 100%); mask-image: linear-gradient(transparent 35%, #faf7f2 70%, #faf7f2 82%, transparent 100%); }
+    .ggg.ggg[data-theme=light] .mhead:not(.stuck)::before { background: rgba(var(--shade), .55); -webkit-mask-image: none; mask-image: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .ggg.ggg[data-theme=light] .mhead:not(.stuck)::after { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; background: linear-gradient(90deg, transparent, rgba(169, 130, 54, 0.38) 12%, rgba(169, 130, 54, 0.38) 88%, transparent) left bottom / 100% 1px no-repeat; }
+    .ggg.ggg[data-theme=light] .mhead.stuck::before, .ggg.ggg[data-theme=light] .mhead.stuck::after { bottom: -26px; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3460,6 +3483,9 @@ addEventListener("scroll", () => {
   const tb = document.querySelector(".toolbar");  // на телефоне она прилипает к верху — там включаем размытие
   tb.classList.toggle("stuck", scrollY > 2 && tb.getBoundingClientRect().top <= 1);
 }, { passive: true });
+// Фильтры на телефоне прокручиваются сами по себе — шапка «Фильтры» размывает то, что уходит под неё.
+document.querySelector("#filters").addEventListener("scroll", e =>
+  document.querySelector("#filters .mhead").classList.toggle("stuck", e.target.scrollTop > 2), { passive: true });
 {
   const head = $("#drawer .dhead"), body = $("#dBody"), dr = $("#drawer");
   const fit = () => { dr.style.setProperty("--dhead-h", head.offsetHeight + "px"); dr.style.setProperty("--dsb-w", (body.offsetWidth - body.clientWidth) + "px"); };
