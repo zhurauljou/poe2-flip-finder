@@ -320,6 +320,39 @@
   .linkbtn:disabled { color: var(--muted); text-decoration: none; }
   #updCheckMsg { margin-top: 4px; }
   #updCheckMsg:empty { display: none; }
+  /* ---- модальное окно ---- */
+  #modal { position: fixed; inset: 0; z-index: 95; display: flex; align-items: center; justify-content: center; padding: 16px;
+           background: rgba(0, 0, 0, .55); animation: tin .15s ease-out; }
+  .modal-open { overflow: hidden; }
+  .mdl { width: min(560px, 100%); max-height: min(80vh, 720px); display: flex; flex-direction: column; background: var(--panel);
+         border: 1px solid var(--btn-line); border-radius: 12px; box-shadow: var(--shadow); }
+  .mdl-hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px;
+            border-bottom: 1px solid var(--line); font-size: 15px; }
+  .mdl-x { width: 32px; height: 32px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 18px; }
+  .mdl-bd { padding: 6px 16px 12px; overflow: auto; font-size: 13.5px; line-height: 1.55; }
+  .mdl-bd ul { margin: 6px 0; padding-left: 20px; }
+  .mdl-bd li { margin: 4px 0; }
+  .mdl-bd p { margin: 6px 0; }
+  .mdl-ft { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); }
+  .mdl-ft[hidden] { display: none; }
+  .mdl-btn { width: auto; margin: 0; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--btn-line); background: var(--btn);
+             color: var(--btn-text); font-weight: 600; font-size: 13.5px; text-decoration: none; display: inline-flex; align-items: center; }
+  .mdl-btn.ghost { background: transparent; border-color: var(--line); color: var(--text); font-weight: 500; }
+  .mdl-btn:hover { background: var(--btn-hover); }
+  .mdl-btn.ghost:hover { background: var(--hover); }
+  .clrel { padding: 10px 0; }
+  .clrel + .clrel { border-top: 1px solid var(--line2); }
+  .clhd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .clhd b { color: var(--gold); font-size: 14.5px; }
+  .cltag { font-size: 11px; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--btn-line); color: var(--gold); }
+  @media (max-width: 800px) { #modal { align-items: flex-end; padding: 0; } .mdl { width: 100%; border-radius: 14px 14px 0 0; max-height: 85vh; }
+    .mdl-ft { padding-bottom: calc(12px + env(safe-area-inset-bottom)); } }
+  /* ---- Telegram: общий бот ---- */
+  .tgbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border-radius: 6px;
+           background: var(--btn); border: 1px solid var(--btn-line); color: var(--btn-text); font-weight: 600; text-decoration: none; }
+  .tgbtn:hover { background: var(--btn-hover); }
+  .tgqr .qr { width: 132px; }
+  @media (max-width: 800px) { .tgqr { display: none; } }
   /* ---- полоска обновления ---- */
   #updBar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 20px; border-bottom: 1px solid var(--btn-line);
             background: color-mix(in srgb, var(--gold) 10%, var(--bg)); font-size: 13.5px; }
@@ -555,12 +588,13 @@
         </div>
         <label class="check"><input id="notifySound" type="checkbox" checked><span data-i18n="notifySound"></span></label>
         <div id="notifyHint" class="nhint"></div>
-        <div class="tg" id="tgBox"></div>
       </div>
     </div>
+    <div class="tg" id="tgBox"></div>
     <button id="refresh" data-i18n="refresh"></button>
     <div class="bar" id="bar"><div></div></div>
     <div class="verline"><span id="verText"></span><button type="button" id="updCheck" class="linkbtn" data-i18n="updCheck"></button>
+      · <button type="button" id="clOpen" class="linkbtn" data-i18n="updNotes"></button>
       <div id="updCheckMsg"></div></div>
     <div class="mfoot"><button id="filtersDone" type="button"></button></div>
   </aside>
@@ -812,6 +846,85 @@ async function loadUpdate() {
   } catch (e) { upd = null; }
   renderUpdate();
 }
+// ---------- модальное окно ----------
+function openModal(title, body, footer = "") {
+  closeModal();
+  const m = document.createElement("div");
+  m.id = "modal";
+  m.innerHTML = `<div class="mdl" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="mdl-hd"><b>${title}</b><button type="button" class="mdl-x" title="${esc(t("dClose"))}">×</button></div>
+    <div class="mdl-bd">${body}</div><div class="mdl-ft"${footer ? "" : " hidden"}>${footer}</div></div>`;
+  document.body.appendChild(m);
+  document.body.classList.add("modal-open");
+  m.addEventListener("click", e => { if (e.target === m) closeModal(); });
+  m.querySelector(".mdl-x").onclick = closeModal;
+  return m;
+}
+function closeModal() {
+  $("#modal")?.remove();
+  document.body.classList.remove("modal-open");
+}
+
+// ---------- «Что нового» ----------
+// Описание релиза на трёх языках (блоки начинаются с флагов) — показываем блок на языке интерфейса.
+const NOTE_FLAGS = { ru: "🇷🇺", en: "🇬🇧", zh: "🇨🇳" };
+function notesForLang(notes) {
+  const text = String(notes || "").replace(/\r\n/g, "\n");
+  const flags = Object.values(NOTE_FLAGS);
+  if (!flags.some(f => text.includes(f))) return text;
+  const parts = {};
+  let cur = null;
+  for (const line of text.split("\n")) {
+    const f = flags.find(x => line.trim().startsWith(x));
+    if (f) { cur = f; parts[f] = line.trim().slice(f.length).trim() + "\n"; }
+    else if (cur) parts[cur] += line + "\n";
+  }
+  return (parts[NOTE_FLAGS[lang]] || parts[NOTE_FLAGS.en] || text).trim();
+}
+// Простейшая разметка описания: строки «- …» — список, остальное — абзацы, **жирный**.
+function mdLite(text) {
+  let html = "", list = false;
+  for (const raw of esc(text).split("\n")) {
+    const l = raw.trim();
+    if (/^[-*•] /.test(l)) { if (!list) { html += "<ul>"; list = true; } html += `<li>${l.slice(2)}</li>`; continue; }
+    if (list) { html += "</ul>"; list = false; }
+    if (l) html += `<p>${l}</p>`;
+  }
+  if (list) html += "</ul>";
+  return html.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+}
+async function openChangelog() {
+  const m = openModal(t("clTitle"), `<div class="muted">${t("clLoading")}</div>`);
+  let d;
+  try { d = await (await fetch("/api/releases")).json(); } catch (e) { d = { releases: [], error: e.message }; }
+  if (!document.body.contains(m)) return;
+  const rels = (d.releases || []).slice(0, 2);
+  const date = s => { const x = new Date(s); return isNaN(x) ? s : x.toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }); };
+  m.querySelector(".mdl-bd").innerHTML = rels.length ? rels.map(r => `<div class="clrel">
+      <div class="clhd"><b>${t("verLabel", { v: esc(r.version) })}</b>${r.date ? `<span class="muted">${esc(date(r.date))}</span>` : ""}
+        ${upd?.current === r.version ? `<span class="cltag">${t("clYours")}</span>` : ""}</div>
+      ${mdLite(notesForLang(r.notes)) || `<p class="muted">${t("clNoNotes")}</p>`}</div>`).join("")
+    : `<p class="bad">${esc(d.error ? t("updCheckErr", { e: d.error }) : t("clEmpty"))}</p>`;
+  const canUpdate = upd?.available && !upd.installed;
+  const ft = m.querySelector(".mdl-ft");
+  ft.innerHTML = `<a class="mdl-btn ghost" href="${esc(d.page || "https://github.com")}" target="_blank" rel="noopener">${t("clAll")} ↗</a>
+    ${canUpdate ? `<button type="button" class="mdl-btn" id="clUpdate">${t("clUpdateTo", { v: esc(upd.latest) })}</button>` : ""}`;
+  ft.hidden = false;
+  $("#clUpdate")?.addEventListener("click", () => { closeModal(); installUpdate(); });
+}
+$("#clOpen").onclick = openChangelog;
+
+async function installUpdate() {
+  updBusy = true; updMsg = null; renderUpdate();
+  try {
+    const r = await fetch("/api/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ op: "install" }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || "HTTP " + r.status);
+    upd.installed = d.version;
+  } catch (e) { updMsg = t("updErr", { e: e.message }); }
+  updBusy = false; renderUpdate();
+}
+
 // «Проверить обновления»: спросить GitHub сейчас, не дожидаясь проверки раз в 6 часов.
 async function checkUpdateNow() {
   const msg = $("#updCheckMsg"), btn = $("#updCheck");
@@ -850,23 +963,15 @@ function renderUpdate() {
     html = `<span>✅ ${t("updDone", { v: esc(upd.installed) })}</span>`;
   } else if (upd.available && ui.updSkip !== upd.latest) {
     html = `<span>🔔 ${t("updAvail", { v: esc(upd.latest), cur: esc(upd.current) })}</span>
-      ${upd.notes ? `<details><summary>${t("updNotes")}</summary><div class="updnotes">${esc(upd.notes)}</div></details>` : ""}
+      <button type="button" id="updNotes" class="ghost">${t("updNotes")}</button>
       <button type="button" id="updGo"${updBusy ? " disabled" : ""}>${updBusy ? t("updBusy") : t("updInstall")}</button>
       <button type="button" id="updSkip" class="ghost" title="${esc(t("updSkipTip"))}">×</button>`;
   }
   if (updMsg) html += `<span class="bad">${esc(updMsg)}</span>`;
   bar.innerHTML = html;
   bar.hidden = !html;
-  $("#updGo")?.addEventListener("click", async () => {
-    updBusy = true; updMsg = null; renderUpdate();
-    try {
-      const r = await fetch("/api/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ op: "install" }) });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(d.error || "HTTP " + r.status);
-      upd.installed = d.version;
-    } catch (e) { updMsg = t("updErr", { e: e.message }); }
-    updBusy = false; renderUpdate();
-  });
+  $("#updGo")?.addEventListener("click", installUpdate);
+  $("#updNotes")?.addEventListener("click", openChangelog);
   $("#updSkip")?.addEventListener("click", () => { ui.updSkip = upd.latest; saveUi(); renderUpdate(); });
 }
 setInterval(loadUpdate, 3600 * 1000);
@@ -991,7 +1096,12 @@ const I18N = {
     updAvail: "Доступна новая версия {v} (у тебя {cur}).", updNotes: "Что нового", updInstall: "Обновить", updBusy: "Скачиваю…",
     updDone: "Обновлено до версии {v}. Чтобы она заработала, закрой чёрное окно программы и запусти её снова.",
     updErr: "Не удалось обновить: {e}", updSkipTip: "Не напоминать об этой версии",
-    verLabel: "Версия {v}", updCheck: "Проверить обновления", updChecking: "Проверяю…",
+    verLabel: "Версия {v}", clTitle: "Что нового", clLoading: "Загружаю описание…", clYours: "у тебя",
+    clAll: "Все изменения на GitHub", clUpdateTo: "Обновить до {v}", clEmpty: "Описаний релизов пока нет.", clNoNotes: "Без описания.",
+    tgPubText: "Получай новые выгодные пути в Telegram от бота @{bot}: открой его и нажми «Старт» — лига, капитал и прибыль настраиваются там кнопками.",
+    tgPubOpen: "Открыть @{bot} в Telegram", tgPubNote: "Бот работает на компьютере автора программы, поэтому иногда может молчать.",
+    tgOwnLink: "Хочу своего бота (для продвинутых)", tgOwnHide: "Скрыть настройку своего бота",
+    hTgPub: "Общий бот присылает новые выгодные пути по твоим условиям, даже когда программа закрыта. Условия задаются в самом боте: /settings.<br>Свой бот нужен, только если хочешь, чтобы уведомления шли с твоего компьютера по всем фильтрам этой страницы.", updCheck: "Проверить обновления", updChecking: "Проверяю…",
     updLatest: "У тебя последняя версия.", updFound: "Есть новая версия {v} — кнопка «Обновить» вверху страницы.",
     updCheckErr: "Не удалось проверить: {e}",
     viewTable: "Таблицей", viewCards: "Карточками",
@@ -1132,7 +1242,12 @@ const I18N = {
     updAvail: "New version {v} is available (you have {cur}).", updNotes: "What's new", updInstall: "Update", updBusy: "Downloading…",
     updDone: "Updated to version {v}. To start using it, close the program's black window and run it again.",
     updErr: "Couldn't update: {e}", updSkipTip: "Don't remind me about this version",
-    verLabel: "Version {v}", updCheck: "Check for updates", updChecking: "Checking…",
+    verLabel: "Version {v}", clTitle: "What's new", clLoading: "Loading release notes…", clYours: "yours",
+    clAll: "All changes on GitHub", clUpdateTo: "Update to {v}", clEmpty: "No release notes yet.", clNoNotes: "No description.",
+    tgPubText: "Get new profitable paths in Telegram from the @{bot} bot: open it and press “Start” — league, capital and profit are set there with buttons.",
+    tgPubOpen: "Open @{bot} in Telegram", tgPubNote: "The bot runs on the program author's computer, so it may sometimes be quiet.",
+    tgOwnLink: "I want my own bot (advanced)", tgOwnHide: "Hide own bot setup",
+    hTgPub: "The shared bot sends new profitable paths matching your conditions even when the program is closed. Conditions are set in the bot itself: /settings.<br>You only need your own bot if you want notifications to come from your computer using all the filters on this page.", updCheck: "Check for updates", updChecking: "Checking…",
     updLatest: "You have the latest version.", updFound: "Version {v} is available — the “Update” button is at the top of the page.",
     updCheckErr: "Couldn't check: {e}",
     viewTable: "Table", viewCards: "Cards",
@@ -1273,7 +1388,12 @@ const I18N = {
     updAvail: "有新版本 {v}（当前为 {cur}）。", updNotes: "更新内容", updInstall: "更新", updBusy: "正在下载…",
     updDone: "已更新到 {v} 版本。关闭程序的黑色窗口并重新运行即可使用。",
     updErr: "更新失败：{e}", updSkipTip: "不再提醒此版本",
-    verLabel: "版本 {v}", updCheck: "检查更新", updChecking: "正在检查…",
+    verLabel: "版本 {v}", clTitle: "更新内容", clLoading: "正在加载更新说明…", clYours: "当前版本",
+    clAll: "在 GitHub 查看全部更新", clUpdateTo: "更新到 {v}", clEmpty: "暂无版本说明。", clNoNotes: "无说明。",
+    tgPubText: "通过机器人 @{bot} 在 Telegram 中接收新的盈利路径：打开它并点击“开始”——赛季、本金和利润都在那里用按钮设置。",
+    tgPubOpen: "在 Telegram 中打开 @{bot}", tgPubNote: "该机器人运行在程序作者的电脑上，因此有时可能没有消息。",
+    tgOwnLink: "我想用自己的机器人（高级）", tgOwnHide: "隐藏自建机器人设置",
+    hTgPub: "公共机器人会按你的条件推送新的盈利路径，即使程序已关闭。条件在机器人中设置：/settings。<br>只有当你希望由自己的电脑按本页面的全部筛选条件发送提醒时，才需要自己的机器人。", updCheck: "检查更新", updChecking: "正在检查…",
     updLatest: "已是最新版本。", updFound: "有新版本 {v}——页面顶部有“更新”按钮。",
     updCheckErr: "检查失败：{e}",
     viewTable: "表格", viewCards: "卡片",
@@ -1420,7 +1540,8 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
-  if (tipEl) { hideTip(); document.activeElement?.blur(); }
+  if ($("#modal")) closeModal();
+  else if (tipEl) { hideTip(); document.activeElement?.blur(); }
   else if (alva.open) closeAlva();
   else if (drawer.id) closeDrawer();
   else if (document.body.classList.contains("filters-open")) setFiltersOpen(false);
@@ -2665,7 +2786,10 @@ function notifySnapshot() {
     share: v("share"), overhead: v("overhead"), minStreak: v("minStreak"), exItems: ui.exItems || [], exCats: ui.exCats || [],
     notifyPct: v("notifyPct"), notifyStreak: v("notifyStreak"), lang };
 }
-const tgWanted = () => $("#notifyOn").checked && $("#tgOn")?.checked;
+const tgWanted = () => !!$("#tgOn")?.checked;
+// Общий бот автора программы: большинству не нужно заводить своего — достаточно написать ему /start.
+const PUBLIC_BOT = "PoeFlipperBot";
+let tgOwnOpen = false;
 function scheduleTgSync() {
   if (!tg?.linked) return;
   clearTimeout(tgSyncTimer);
@@ -2675,10 +2799,19 @@ function renderTg() {
   const box = $("#tgBox");
   if (!box) return;
   const ago2 = ts => ts ? ago(ts) : "—";
-  let html = `<div class="tgh">Telegram<span class="tip" data-tip="hTg"></span></div>`;
-  if (tg === null) html += `<div class="muted">${t("tgOldServer")}</div>`;
-  else if (!tg.configured) html += `<div class="muted">${t("tgStep1")}</div>
-    <div class="tgrow"><input id="tgToken" type="password" autocomplete="off" placeholder="123456:ABC-DEF…"><button type="button" id="tgSave">${t("tgConnect")}</button></div>`;
+  let html = `<div class="tgh">Telegram<span class="tip" data-tip="${tg?.configured ? "hTg" : "hTgPub"}"></span></div>`;
+  if (!tg?.configured) {
+    // Не владелец своего бота — ссылка на общего бота; свой бот — по ссылке «для продвинутых».
+    const url = "https://t.me/" + PUBLIC_BOT;
+    html += `<div class="muted">${t("tgPubText", { bot: PUBLIC_BOT })}</div>
+      <a class="tgbtn" href="${url}" target="_blank" rel="noopener">${t("tgPubOpen", { bot: PUBLIC_BOT })}</a>
+      <div class="qrbox tgqr">${qrSvg(url, 132)}</div>
+      <div class="muted small">${t("tgPubNote")}</div>
+      <button type="button" id="tgOwnToggle" class="linkbtn">${tgOwnOpen ? t("tgOwnHide") : t("tgOwnLink")}</button>`;
+    if (tgOwnOpen) html += tg === null ? `<div class="muted">${t("tgOldServer")}</div>`
+      : `<div class="muted">${t("tgStep1")}</div>
+      <div class="tgrow"><input id="tgToken" type="password" autocomplete="off" placeholder="123456:ABC-DEF…"><button type="button" id="tgSave">${t("tgConnect")}</button></div>`;
+  }
   else if (!tg.linked) html += `<div class="muted">${t("tgStep2", { bot: esc(tg.bot || "") })}</div>
     <div class="tgcode"><code>/link ${esc(tg.link_code || "")}</code><button type="button" id="tgCopy" class="ghost">${t("tgCopy")}</button></div>
     <div class="muted">${t("tgWaiting")}</div>
@@ -2696,6 +2829,7 @@ function renderTg() {
   box.innerHTML = html;
   prepTips(box);
   box.querySelectorAll("button").forEach(b => b.disabled = tgBusy);
+  $("#tgOwnToggle")?.addEventListener("click", () => { tgOwnOpen = !tgOwnOpen; renderTg(); });
   $("#tgSave")?.addEventListener("click", async () => {
     const token = $("#tgToken").value.trim();
     if (token && await tgOp({ op: "token", token })) tgMsg = { text: t("tgTokenOk", { bot: tg.bot }) }, renderTg();
@@ -2714,7 +2848,7 @@ function renderTg() {
   $("#tgOff")?.addEventListener("click", async () => { if (confirm(t("tgDisconnectQ"))) await tgOp({ op: "disconnect" }); });
   $("#tgOn")?.addEventListener("change", () => tgOp({ op: "settings", settings: notifySnapshot(), enabled: tgWanted() }));
 }
-setInterval(() => { if ($("#notifyOn").checked) loadTg(); }, 60000);
+setInterval(() => { if (tg?.configured) loadTg(); }, 60000);
 // Ссылка «Открыть в программе» из Telegram, если страница уже открыта: меняется только #open=…
 addEventListener("hashchange", () => {
   const h = location.hash.match(/^#open=(.+)$/);

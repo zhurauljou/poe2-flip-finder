@@ -54,6 +54,23 @@ def check(ua):
             state.update(checked=int(time.time()), error="нет связи с GitHub (%s)" % e.__class__.__name__)
 
 
+_releases = {"t": 0, "list": [], "error": None}
+
+
+def releases(ua, n=5):
+    """Последние релизы для окна «Что нового» (кэш 10 минут — у GitHub лимит 60 запросов в час без входа)."""
+    if time.time() - _releases["t"] > 600 or not _releases["list"]:
+        try:
+            d = json.loads(_get("%s/repos/%s/releases?per_page=%d" % (API, REPO, n), ua).decode("utf-8"))
+            _releases.update(t=time.time(), error=None, list=[
+                {"version": str(r.get("tag_name") or "").lstrip("vV"), "notes": r.get("body") or "",
+                 "date": (r.get("published_at") or "")[:10], "url": r.get("html_url")}
+                for r in d if not r.get("draft") and not r.get("prerelease")])
+        except Exception as e:
+            _releases.update(t=time.time(), error="нет связи с GitHub (%s)" % e.__class__.__name__)
+    return {"releases": _releases["list"], "error": _releases["error"], "page": "https://github.com/%s/releases" % REPO}
+
+
 def status(current):
     with _lock:
         s = dict(state)

@@ -414,6 +414,8 @@ class Handler(BaseHTTPRequestHandler):
         elif url.path == "/api/journal":
             with journal_lock:
                 self.send_json(journal_read())
+        elif url.path == "/api/releases":
+            self.send_json(update.releases(UA))
         elif url.path == "/api/update":
             self.send_json(update.status(VERSION))
         elif url.path == "/api/lan":
