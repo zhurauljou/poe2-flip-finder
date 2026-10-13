@@ -1487,6 +1487,17 @@
   .ggg.ggg #drawer .dhead.stuck .cur img { margin-right: 0; }
   .ggg.ggg #drawer .dhead.stuck .path { row-gap: 4px; }
   .ggg.ggg #drawer .dhead { transition: padding .15s; }
+  /* сжатая шапка: иконки по центру относительно звезды и крестика; ширина плашек не прыгает — меняется только текст */
+  .ggg.ggg #drawer .dhead.stuck { align-items: center; }
+  .ggg.ggg #drawer .dhead.stuck .path { align-items: center; align-self: center; }
+  .ggg.ggg #drawer .dhead.stuck :is(#dFav, #dClose) { align-self: center; }
+  .ggg.ggg #drawer .dhead.stuck .cur { padding: 0 6px 0 2px; }
+  /* сжатие и разжатие пути — плавно, но быстро */
+  .ggg.ggg #drawer .dhead .cur { transition: font-size .18s ease, padding .18s ease; }
+  .ggg.ggg #drawer .dhead .cur img { transition: margin .18s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    .ggg.ggg #drawer .dhead .cur, .ggg.ggg #drawer .dhead .cur img { transition: none; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2141,6 +2152,15 @@
   .ggg.ggg[data-theme=light] #drawer .dhead.stuck .cur img { margin-right: 0; }
   .ggg.ggg[data-theme=light] #drawer .dhead.stuck .path { row-gap: 4px; }
   .ggg.ggg[data-theme=light] #drawer .dhead { transition: padding .15s; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck { align-items: center; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck .path { align-items: center; align-self: center; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck :is(#dFav, #dClose) { align-self: center; }
+  .ggg.ggg[data-theme=light] #drawer .dhead.stuck .cur { padding: 0 6px 0 2px; }
+  .ggg.ggg[data-theme=light] #drawer .dhead .cur { transition: font-size .18s ease, padding .18s ease; }
+  .ggg.ggg[data-theme=light] #drawer .dhead .cur img { transition: margin .18s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    .ggg.ggg[data-theme=light] #drawer .dhead .cur, .ggg.ggg[data-theme=light] #drawer .dhead .cur img { transition: none; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3798,7 +3818,11 @@ document.querySelector("#filters").addEventListener("scroll", e =>
   // Пока шапка «прилипла» (компактная, только иконки), отступ не трогаем — иначе содержимое прыгало бы.
   const fit = () => { if (!head.classList.contains("stuck")) dr.style.setProperty("--dhead-h", head.offsetHeight + "px"); dr.style.setProperty("--dsb-w", (body.offsetWidth - body.clientWidth) + "px"); };
   new ResizeObserver(fit).observe(head); new ResizeObserver(fit).observe(body);
-  body.addEventListener("scroll", () => head.classList.toggle("stuck", body.scrollTop > 2), { passive: true });
+  // С запасом: сжимаем после 24 px прокрутки, разжимаем только у самого верха — иначе на границе шапка дёргается туда-обратно.
+  body.addEventListener("scroll", () => {
+    const y = body.scrollTop, on = head.classList.contains("stuck");
+    if (!on && y > 24) head.classList.add("stuck"); else if (on && y < 4) head.classList.remove("stuck");
+  }, { passive: true });
 }
 
 // Прибыль всего пути по часам — видно, растёт она или тает.
