@@ -1563,6 +1563,14 @@
   @media (min-width: 801px) {
     .ggg.ggg main > aside { overflow-x: hidden; }
   }
+  /* значок «новый» */
+  .ggg.ggg .newb { display: inline-block; margin: 4px 0 0; padding: 1px 7px; border: 1px solid rgba(143, 143, 255, .45); border-radius: 2px;
+    color: #a8a8ff; font: 700 12px/1.4 "Alegreya Sans SC", var(--body); letter-spacing: .4px; white-space: nowrap; }
+  .ggg.ggg .c-hero .newb { margin: 0 0 0 4px; align-self: center; }
+  /* «Найден» больше нет — последнюю колонку (теперь «Держится») не прячем */
+  @media (max-width: 1600px) {
+    .ggg.ggg:not(.view-cards) #tab-cycles .rt :is(th, td):last-child { display: table-cell; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2279,6 +2287,11 @@
   @media (min-width: 801px) {
     .ggg.ggg[data-theme=light] main > aside { overflow-x: hidden; }
   }
+  .ggg.ggg[data-theme=light] .newb { display: inline-block; margin: 4px 0 0; padding: 1px 7px; border: 1px solid rgba(31, 31, 107, 0.45); border-radius: 2px; color: #1f1f6b; font: 700 12px/1.4 "Alegreya Sans SC", var(--body); letter-spacing: .4px; white-space: nowrap; }
+  .ggg.ggg[data-theme=light] .c-hero .newb { margin: 0 0 0 4px; align-self: center; }
+  @media (max-width: 1600px) {
+    .ggg.ggg[data-theme=light]:not(.view-cards) #tab-cycles .rt :is(th, td):last-child { display: table-cell; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2867,7 +2880,7 @@ const I18N = {
     thAmtTitle: "Целая стартовая сумма в пределах капитала, при которой прибыль в штуках максимальна",
     thTimeTitle: "Оценка времени, чтобы прогнать сумму через все шаги",
     thGoldTitle: "Комиссия биржи в золоте за весь путь и сколько div прибыли даёт каждые 100 тыс золота",
-    thPerHourTitle: "Прибыль за час, в {t}", thSeen: "Найден", thStreak: "Держится", streakVal: "{n} ч",
+    thPerHourTitle: "Прибыль за час, в {t}", thSeen: "Найден", newBadge: "новый", thStreak: "Держится", streakVal: "{n} ч",
     thStreakTitle: "Сколько последних часов подряд курсы реальных сделок давали прибыль не меньше «Прибыль от». Чем дольше, тем надёжнее: по истории за 2 суток в следующем часу прибыль сохраняли 49% путей с 0 ч и 92% — с 12+ ч",
     minStreak: "Держится от, ч", anyStreak: "не важно",
     hMinStreak: "Показывать только пути, которые давали прибыль не меньше «Прибыль от» столько последних часов подряд (по курсам реальных сделок каждого часа).<br>По истории за 2 суток прибыль ≥1% в следующем часу сохраняли: 0 ч — 49%, 1–2 ч — ~67%, 3–5 ч — 76%, 6–11 ч — 83%, 12+ ч — 92% путей.<br>Работает только с источником GGG.", thSeenTitle: "Когда путь впервые появился в выдаче на этом устройстве. Если путь не появлялся больше суток, отсчёт начинается заново", thVolTitle: "Минимальный суточный объём среди пар пути, в Divine", thScoreTitle: "Прибыль × шанс продержаться ещё час (по «Держится») × log(ликвидность). Проверено на истории: в топ-10 прибыль в следующем часу сохраняли 89% путей против 82% у прежнего рейтинга «прибыль × ликвидность»", holdChance: "Шанс на час", holdChanceTip: "Насколько часто путь с таким «Держится» сохранял прибыль ≥1% в следующем часу (по истории за 2 суток)",
@@ -3015,7 +3028,7 @@ const I18N = {
     thAmtTitle: "Whole starting amount within capital that maximizes profit in units",
     thTimeTitle: "Estimated time to push the amount through all steps",
     thGoldTitle: "Exchange fee in gold for the whole path and div of profit per 100k gold",
-    thPerHourTitle: "Profit per hour, in {t}", thSeen: "Found", thStreak: "Holds", streakVal: "{n} h",
+    thPerHourTitle: "Profit per hour, in {t}", thSeen: "Found", newBadge: "new", thStreak: "Holds", streakVal: "{n} h",
     thStreakTitle: "How many recent hours in a row real trade rates gave at least “Profit from”. The longer, the more reliable: over 2 days of history 49% of paths with 0 h and 92% with 12+ h kept profit the next hour",
     minStreak: "Holds at least, h", anyStreak: "any",
     hMinStreak: "Show only paths that gave at least “Profit from” for this many recent hours in a row (using real trade rates of each hour).<br>Over 2 days of history, ≥1% profit held the next hour for: 0 h — 49%, 1–2 h — ~67%, 3–5 h — 76%, 6–11 h — 83%, 12+ h — 92% of paths.<br>GGG source only.", thSeenTitle: "When the path first appeared in results on this device. If it hasn't appeared for over a day, the timer starts over", thVolTitle: "Lowest daily volume among the path's pairs, in Divine", thScoreTitle: "Profit × chance to hold another hour (by “Holds”) × log(liquidity). Tested on history: in the top 10, 89% of paths kept profit the next hour vs 82% with the old “profit × liquidity” score", holdChance: "Hour chance", holdChanceTip: "How often a path with this “Holds” kept ≥1% profit the next hour (over 2 days of history)",
@@ -3163,7 +3176,7 @@ const I18N = {
     thAmtTitle: "本金范围内使利润（件数）最大的整数起始数量",
     thTimeTitle: "将本金走完所有步骤的预计时间",
     thGoldTitle: "整条路径的交易所金币手续费，以及每 10 万金币带来的 div 利润",
-    thPerHourTitle: "每小时利润，以 {t} 计", thSeen: "发现于", thStreak: "持续", streakVal: "{n} 小时",
+    thPerHourTitle: "每小时利润，以 {t} 计", thSeen: "发现于", newBadge: "新", thStreak: "持续", streakVal: "{n} 小时",
     thStreakTitle: "最近连续多少小时的真实成交汇率达到“最低利润”。持续越久越可靠：2 天历史中，持续 0 小时的路径有 49%、持续 12 小时以上的有 92% 在下一小时仍有利润",
     minStreak: "至少持续（小时）", anyStreak: "不限",
     hMinStreak: "只显示最近连续这么多小时都达到“最低利润”的路径（按每小时真实成交汇率）。<br>2 天历史中，下一小时仍保持 ≥1% 利润的比例：0 小时 — 49%，1–2 小时 — ~67%，3–5 小时 — 76%，6–11 小时 — 83%，12 小时以上 — 92%。<br>仅适用于 GGG 数据源。", thSeenTitle: "该路径首次出现在本设备结果中的时间。若超过一天未出现，则重新计时", thVolTitle: "路径中各交易对的最低日成交量（Divine）", thScoreTitle: "利润 × 再持续一小时的概率（按“持续”）× log(流动性)。历史检验：前 10 名中 89% 的路径在下一小时保持利润，旧评分“利润 × 流动性”为 82%", holdChance: "一小时概率", holdChanceTip: "具有此“持续”值的路径在下一小时保持 ≥1% 利润的频率（2 天历史）",
@@ -3795,7 +3808,7 @@ function renderCycles() {
   const arrowTh = k => sortKey === k ? " ▾" : "";
   const L = k => ` data-label="${esc(t(k))}"`;
   const sorts = [["score", "thScore"], ["profit", "thProfit"], ["perHour", "thPerHour"], ["time", "thTime"],
-                 ["volume", "thVol"], ...(g.on ? [["gold", "thGold"]] : []), ["streak", "thStreak"], ["seen", "thSeen"], ["len", "thPath"]];
+                 ["volume", "thVol"], ...(g.on ? [["gold", "thGold"]] : []), ["streak", "thStreak"], ["len", "thPath"]];
   let html = `<div class="muted" style="margin-bottom:8px">${t("found", { what, n: total, more: "", ms })}${vs}</div>
   ${sortSelect("cycSort", sorts, sortKey)}
   <table class="rt"><thead><tr>
@@ -3808,16 +3821,15 @@ function renderCycles() {
     <th class="num" data-sort="volume" title="${t("thVolTitle")}">${t("thVol")}${arrowTh("volume")}</th>
     <th class="num" data-sort="score" title="${t("thScoreTitle")}">${t("thScore")}${arrowTh("score")}</th>
     <th class="num" data-sort="streak" title="${t("thStreakTitle")}">${t("thStreak")}${arrowTh("streak")}</th>
-    <th class="num" data-sort="seen" title="${t("thSeenTitle")}">${t("thSeen")}${arrowTh("seen")}</th>
   </tr></thead><tbody>`;
   cyc.forEach((c, i) => {
     const pathHtml = c.nodes.map(chip).map((h, i) => i ? `<span class="pstep"><span class="arrow">→</span>${h}</span>` : h).join("");
     const id = c.nodes.join(">");
     html += `<tr class="cyc${drawer.id === id ? " sel" : ""}" data-id="${esc(id)}" data-i="${i}">
       <td class="wide"><div class="path">${favBtn(id)}${pathHtml}</div></td>
-      <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${amt(c.gain)} ${tn}</span><span class="hp good">+${(c.pct * 100).toFixed(2)}%</span>${
+      <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${amt(c.gain)} ${tn}</span><span class="hp good">+${(c.pct * 100).toFixed(2)}%</span>${newBadge(c)}${
         c.volatile ? `<span class="warn" title="${t("volatileTitle")}">${t("volatile")}</span>` : ""}${cardsView() ? pathTrend(c) : ""}</div></td>
-      <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%${c.volatile
+      <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%${newBadge(c) ? `<div>${newBadge(c)}</div>` : ""}${c.volatile
         ? `<div class="warn" title="${t("volatileTitle")}">${t("volatile")}</div>` : ""}</td>
       <td class="num c-amt"${L("thAmt")}>${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b><div class="muted">+${amt(c.gain)} ${tn}${
         isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${c.capped
@@ -3828,8 +3840,7 @@ function renderCycles() {
       <td class="num"${L("thPerHour")}>${c.perHour > 0 ? "+" : ""}${fmt(c.perHour)}</td>
       <td class="num"${L("thVol")}>${fmt(c.minVol)} div</td>
       <td class="num c-score"${L("thScore")}>${(score(c) * 100).toFixed(1)}</td>
-      <td class="num${c.streak ? "" : " muted"}"${L("thStreak")}>${streakText(c)}</td>
-      <td class="num"${L("thSeen")}>${seenBadge(c.seen)}</td></tr>`;
+      <td class="num${c.streak ? "" : " muted"}"${L("thStreak")}>${streakText(c)}</td></tr>`;
   });
   html += "</tbody></table>" + moreBtn("cycles", total);
   box.innerHTML = html;
@@ -4478,6 +4489,8 @@ function markSeen(list) {
   try { localStorage.setItem(SEEN_KEY, JSON.stringify(seenDb)); } catch (e) {}
 }
 // «Найден» — обычный серый текст; «N мин назад» обновляется сам, без перерисовки таблицы.
+// Путь появился в выдаче меньше часа назад — показываем значок «новый».
+const newBadge = c => c.seen && Date.now() / 1000 - c.seen < 3600 ? `<span class="newb" title="${esc(t("thSeenTitle"))}">${t("newBadge")}</span>` : "";
 const seenBadge = ts => `<span class="muted" data-ts="${ts}">${ago(ts)}</span>`;
 setInterval(() => document.querySelectorAll("[data-ts]").forEach(el => el.textContent = ago(+el.dataset.ts)), 30000);
 
