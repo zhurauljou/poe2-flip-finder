@@ -1,4 +1,4 @@
-﻿PoE 2 Flip Finder 1.0.3
+﻿PoE 2 Flip Finder 1.0.4
 Profitable currency exchange paths for Path of Exile 2 (Alva's exchange)
 (Русская версия и 中文版 — ниже)
 
@@ -110,7 +110,7 @@ Don't send your own program folder — the link is enough.
                            РУССКИЙ
 ══════════════════════════════════════════════════════════════
 
-PoE 2 Flip Finder 1.0.3
+PoE 2 Flip Finder 1.0.4
 Поиск выгодных обменов валюты на бирже Path of Exile 2 (у Альвы)
 
 Программа берёт официальные почасовые данные GGG о реальных сделках на бирже и ищет
@@ -223,7 +223,7 @@ MAC
                             中文
 ══════════════════════════════════════════════════════════════
 
-PoE 2 Flip Finder 1.0.3
+PoE 2 Flip Finder 1.0.4
 《流放之路 2》货币兑换（阿尔瓦交易所）盈利路径查找工具
 
 程序读取 GGG 官方的每小时真实成交数据，寻找能带来利润的兑换链，
