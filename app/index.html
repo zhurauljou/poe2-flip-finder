@@ -1380,6 +1380,16 @@
   .ggg.ggg .alva-in > .anav { flex-direction: row; align-items: center; gap: 4px; }
   .ggg.ggg .alva-in > .anav :is(.anext, .asave) { flex: 1 1 auto; width: auto; order: 2; }
   .ggg.ggg #alva .anav .aback { order: 1; flex: none; width: auto; min-height: 52px; padding: 0 14px 0 8px; }
+  /* журнал: удалить сделку — иконка-корзина; приглушена, при наведении — красная */
+  .ggg.ggg .jdel { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0;
+    border: 1px solid transparent; border-radius: 2px; background: transparent; box-shadow: none; color: #8c8270; }
+  .ggg.ggg .jdel svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .ggg.ggg .jdel:hover { color: #e8705f; border-color: rgba(232, 112, 95, .45); background: rgba(232, 112, 95, .1); }
+  .ggg.ggg .rt td.c-del { vertical-align: middle; width: 44px; }
+  .ggg.ggg.view-cards .rt tr.jrow { position: relative; }
+  .ggg.ggg.view-cards .rt td.c-del { position: absolute; top: 8px; right: 8px; width: auto; }
+  .ggg.ggg.view-cards .rt tr.jrow > td:first-child { padding-right: 44px; }
+  .ggg.ggg.view-cards .rt tr.jrow > td:first-child { grid-column: 1 / -1; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1951,6 +1961,14 @@
   .ggg.ggg[data-theme=light] .arow .abig { margin-top: 8px; }
   .ggg.ggg[data-theme=light] .alva-in > .anav { flex-direction: row; align-items: center; gap: 4px; }
   .ggg.ggg[data-theme=light] #alva .anav .aback { order: 1; flex: none; width: auto; min-height: 52px; padding: 0 14px 0 8px; }
+  .ggg.ggg[data-theme=light] .jdel { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 2px; background: transparent; box-shadow: none; color: #9a8968; }
+  .ggg.ggg[data-theme=light] .jdel svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .ggg.ggg[data-theme=light] .jdel:hover { color: #a02817; border-color: rgba(160, 40, 23, 0.45); background: rgba(160, 40, 23, 0.1); }
+  .ggg.ggg[data-theme=light] .rt td.c-del { vertical-align: middle; width: 44px; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow { position: relative; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.c-del { position: absolute; top: 8px; right: 8px; width: auto; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow > td:first-child { padding-right: 44px; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow > td:first-child { grid-column: 1 / -1; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -4672,7 +4690,7 @@ function renderJournal() {
       <td class="num ${signCls(r.gain)}"${L("thProfit")}>${r.gain > 0 ? "+" : ""}${amt(+r.gain.toFixed(4))} ${tn}<div>${pct1(r.pct)}</div></td>
       <td class="num muted"${L("jForecast")}>${pct1(r.pred.pct)}</td>
       <td class="num ${signCls(d)}"${L("jDiff")}>${pct1(d)}</td>
-      <td class="num"><button type="button" class="jdel" data-id="${esc(r.id)}" title="${esc(t("jDel"))}">×</button></td></tr>`;
+      <td class="num c-del"><button type="button" class="jdel" data-id="${esc(r.id)}" title="${esc(t("jDel"))}" aria-label="${esc(t("jDel"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></svg></button></td></tr>`;
   }
   html += `</tbody></table>`;
   box.innerHTML = html;
