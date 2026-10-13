@@ -1630,6 +1630,34 @@
     .ggg.ggg #exSearch { height: 44px; font-size: 16px; }
   }
   .ggg.ggg #filtersBtn .fcount { min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; font: 700 15px/1 var(--body); letter-spacing: 0; }
+  /* ===== Меню на телефоне ===== */
+  #menuBtn { display: none; }
+  #menuPanel { position: fixed; right: 12px; left: 12px; top: 56px; z-index: 45; padding: 10px; display: grid; gap: 4px;
+               background: var(--panel); border: 1px solid var(--btn-line); box-shadow: var(--shadow); }
+  #menuPanel[hidden] { display: none; }
+  #menuPanel .mlangs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
+  #menuPanel .mlangs button { min-height: 44px; margin: 0; }
+  #menuPanel .mrow { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 50px; margin: 0; padding: 0 12px; text-align: left; }
+  #menuPanel .mrow svg { width: 22px; height: 22px; flex: none; }
+  #menuPanel .mrow span { flex: 1; }
+  #menuPanel .mon { width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
+  .ggg.ggg #menuPanel { border-radius: 0; background: #0e131b; border-color: #4a3f2c; box-shadow: var(--frame), var(--shadow); }
+  .ggg.ggg #menuPanel .mlangs button { border: 1px solid #3a3528; border-radius: 2px; background: none; box-shadow: none;
+    color: #b9ad85; font: 700 16px var(--body); }
+  .ggg.ggg #menuPanel .mlangs button.on { background: linear-gradient(#3a2a14, #22180c); border-color: #b8975a; color: #ffe08a; }
+  .ggg.ggg #menuPanel .mrow { border: 0; border-radius: 2px; background: none; box-shadow: none; color: #e6d39a;
+    font: 700 17px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 #000; }
+  .ggg.ggg #menuPanel .mrow + .mrow { border-top: 1px solid #23211c; border-radius: 0; }
+  .ggg.ggg #menuPanel .mrow:hover { background: rgba(241, 228, 194, .06); color: #fff0c0; }
+  .ggg.ggg #menuPanel .mrow svg { color: #c9a256; }
+  @media (max-width: 800px) {
+    .ggg.ggg .hctl :is(#lang, #notifyBtn, #lanBtn, #theme) { display: none; }
+    .ggg.ggg .hctl #menuBtn { display: inline-flex; }
+    .ggg.ggg .hctl button, .ggg.ggg .hctl #refresh { width: 44px; height: 44px; }
+    .ggg.ggg .hctl svg { width: 20px; height: 20px; }
+    .ggg.ggg .hctl { gap: 8px; }
+    .ggg.ggg header h1 { font-size: 16px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2393,6 +2421,30 @@
     .ggg.ggg[data-theme=light] #exSearch { height: 44px; font-size: 16px; }
   }
   .ggg.ggg[data-theme=light] #filtersBtn .fcount { min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; font: 700 15px/1 var(--body); letter-spacing: 0; }
+  #menuBtn { display: none; }
+  #menuPanel { position: fixed; right: 12px; left: 12px; top: 56px; z-index: 45; padding: 10px; display: grid; gap: 4px; background: var(--panel); border: 1px solid var(--btn-line); box-shadow: var(--shadow); }
+  #menuPanel[hidden] { display: none; }
+  #menuPanel .mlangs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
+  #menuPanel .mlangs button { min-height: 44px; margin: 0; }
+  #menuPanel .mrow { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 50px; margin: 0; padding: 0 12px; text-align: left; }
+  #menuPanel .mrow svg { width: 22px; height: 22px; flex: none; }
+  #menuPanel .mrow span { flex: 1; }
+  #menuPanel .mon { width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
+  .ggg.ggg[data-theme=light] #menuPanel { border-radius: 0; background: #f3ede2; border-color: #d6cab2; box-shadow: var(--frame), var(--shadow); }
+  .ggg.ggg[data-theme=light] #menuPanel .mlangs button { border: 1px solid #e3d5b9; border-radius: 2px; background: none; box-shadow: none; color: #73664d; font: 700 16px var(--body); }
+  .ggg.ggg[data-theme=light] #menuPanel .mlangs button.on { background: linear-gradient(#e8ddc8, #f2ebde); border-color: #a58447; color: #8a6500; }
+  .ggg.ggg[data-theme=light] #menuPanel .mrow { border: 0; border-radius: 2px; background: none; box-shadow: none; color: #6e5a1b; font: 700 17px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.30); }
+  .ggg.ggg[data-theme=light] #menuPanel .mrow + .mrow { border-top: 1px solid #ede4d2; border-radius: 0; }
+  .ggg.ggg[data-theme=light] #menuPanel .mrow:hover { background: rgba(112, 88, 26, 0.06); color: #8a6900; }
+  .ggg.ggg[data-theme=light] #menuPanel .mrow svg { color: #a98236; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .hctl :is(#lang, #notifyBtn, #lanBtn, #theme) { display: none; }
+    .ggg.ggg[data-theme=light] .hctl #menuBtn { display: inline-flex; }
+    .ggg.ggg[data-theme=light] .hctl button, .ggg.ggg[data-theme=light] .hctl #refresh { width: 44px; height: 44px; }
+    .ggg.ggg[data-theme=light] .hctl svg { width: 20px; height: 20px; }
+    .ggg.ggg[data-theme=light] .hctl { gap: 8px; }
+    .ggg.ggg[data-theme=light] header h1 { font-size: 16px; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2416,9 +2468,11 @@
     <button id="refresh" type="button" data-i18n-title="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></svg></button>
     <button id="lanBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg></button>
     <button id="theme" type="button"></button>
+    <button id="menuBtn" type="button" data-i18n-title="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
 </header>
 <div id="lanPanel" hidden></div>
+<div id="menuPanel" hidden></div>
 <div id="notifyPanel" hidden><div class="npin"><div class="lanhead"><b data-i18n="notifyTitle"></b><button type="button" class="lanx" id="notifyClose">×</button></div>
     <div class="nsec">
       <label class="check"><input id="notifyOn" type="checkbox"><span data-i18n="notifyOn"></span><span class="tip" data-tip="hNotify"></span></label>
@@ -2980,7 +3034,7 @@ const I18N = {
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
     tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (качается только недостающий час), poe.ninja — каждые 30 минут.",
-    refresh: "Обновить данные", fReset: "Сбросить фильтры", pre_safe: "Надёжные", pre_fast: "Быстрые", pre_max: "Максимум прибыли", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
+    refresh: "Обновить данные", fReset: "Сбросить фильтры", menu: "Меню", pre_safe: "Надёжные", pre_fast: "Быстрые", pre_max: "Максимум прибыли", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
     tabCycles: "Циклы флипа", tabRates: "Курсы валюты", searchPh: "Название валюты, напр. Chaos Orb или Greater Rune",
     noData: "Нет данных. Нажми «Обновить данные».",
     whatCycles: "циклов", whatPaths: "путей",
@@ -3128,7 +3182,7 @@ const I18N = {
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
     tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded), poe.ninja — every 30 minutes.",
-    refresh: "Refresh data", fReset: "Reset filters", pre_safe: "Reliable", pre_fast: "Fast", pre_max: "Max profit", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
+    refresh: "Refresh data", fReset: "Reset filters", menu: "Menu", pre_safe: "Reliable", pre_fast: "Fast", pre_max: "Max profit", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
     tabCycles: "Flip cycles", tabRates: "Currency rates", searchPh: "Currency name, e.g. Chaos Orb or Greater Rune",
     noData: "No data. Press “Refresh data”.",
     whatCycles: "cycles", whatPaths: "paths",
@@ -3276,7 +3330,7 @@ const I18N = {
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
     tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG 每 5 分钟检查一次（只下载缺少的小时），poe.ninja 每 30 分钟一次。",
-    refresh: "刷新数据", fReset: "重置筛选", pre_safe: "稳健", pre_fast: "快速", pre_max: "最大利润", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
+    refresh: "刷新数据", fReset: "重置筛选", menu: "菜单", pre_safe: "稳健", pre_fast: "快速", pre_max: "最大利润", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
     tabCycles: "套利循环", tabRates: "货币汇率", searchPh: "货币名称，如 Chaos Orb 或 Greater Rune",
     noData: "没有数据。请点击“刷新数据”。",
     whatCycles: "循环", whatPaths: "路径",
@@ -5453,6 +5507,42 @@ $("#exSearch").addEventListener("change", e => {
   if (id && !market.core.includes(id)) setExcluded("item", id, true);
   e.target.value = "";
 });
+
+// Меню на телефоне: пункты вызывают те же кнопки, что в шапке на компьютере.
+{
+  const p = $("#menuPanel"), b = $("#menuBtn");
+  const row = (act, icon, label, extra = "") => `<button type="button" class="mrow" data-act="${act}">${icon}<span>${label}</span>${extra}</button>`;
+  const render = () => {
+    const dark = document.documentElement.dataset.theme !== "light";
+    p.innerHTML = `<div class="mlangs" role="group">${[["ru", "RU"], ["en", "EN"], ["zh", "中文"]].map(([v, l]) =>
+        `<button type="button" data-lang="${v}" class="${lang === v ? "on" : ""}">${l}</button>`).join("")}</div>` +
+      row("notify", $("#notifyBtn").innerHTML, t("notifyTitle"), $("#notifyOn").checked ? `<i class="mon"></i>` : "") +
+      row("lan", $("#lanBtn").innerHTML, t("lanTitle"), lan?.enabled ? `<i class="mon"></i>` : "") +
+      row("theme", $("#theme").innerHTML, t(dark ? "toLight" : "toDark"));
+    p.querySelectorAll("[data-lang]").forEach(x => x.onclick = () => {
+      const s = $("#lang"); s.value = x.dataset.lang; s.dispatchEvent(new Event("change")); render();
+    });
+    p.querySelectorAll("[data-act]").forEach(x => x.onclick = e => {
+      e.stopPropagation();
+      p.hidden = true;
+      if (x.dataset.act === "theme") $("#theme").click();
+      else {
+        $(x.dataset.act === "notify" ? "#notifyBtn" : "#lanBtn").click();
+        // кнопки в шапке скрыты — ставим панель под кнопкой меню
+        const top = Math.round(b.getBoundingClientRect().bottom + 6) + "px";
+        $("#notifyPanel").style.top = top; $("#lanPanel").style.top = top;
+      }
+    });
+  };
+  b.onclick = e => {
+    e.stopPropagation();
+    p.hidden = !p.hidden;
+    if (!p.hidden) { render(); $("#notifyPanel").hidden = true; $("#lanPanel").hidden = true;
+      p.style.top = Math.round(b.getBoundingClientRect().bottom + 6) + "px"; }
+  };
+  document.addEventListener("click", e => { if (!p.hidden && !p.contains(e.target) && !b.contains(e.target)) p.hidden = true; });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") p.hidden = true; });
+}
 // Уведомления и Telegram — панель под колокольчиком.
 {
   const p = $("#notifyPanel"), b = $("#notifyBtn");
