@@ -4730,7 +4730,7 @@ function renderJournal() {
   html += `</tbody></table>`;
 
   // Список сделок
-  html += `<div class="jhead"><h3 class="jh">${t("jList")}</h3><button id="jExport" type="button" class="ghost">${t("jExport")}</button></div>
+  html += `<div class="jhead"><h3 class="jh">${t("jList")}</h3></div>
   <table class="rt"><thead><tr><th>${t("jWhen")}</th><th>${t("thPath")}</th><th class="num">${t("thAmt")}</th><th class="num">${t("thProfit")}</th>
     <th class="num">${t("jForecast")}</th><th class="num">${t("jDiff")}</th><th></th></tr></thead><tbody>`;
   for (const r of list) {
@@ -4753,7 +4753,6 @@ function renderJournal() {
     if (!confirm(t("jDelConfirm"))) return;
     try { await journalOp({ op: "delete", id: b.dataset.id }); } catch (e) { alert(e.message); }
   });
-  $("#jExport").onclick = exportJournal;
 }
 
 // CSV для Excel / Google Таблиц: точка с запятой и BOM, чтобы кириллица и дроби открывались правильно.
