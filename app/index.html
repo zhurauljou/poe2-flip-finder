@@ -1424,6 +1424,21 @@
   .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td.wide { order: -1; padding-right: 44px; }
   .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child .muted { display: inline; margin-left: 6px; }
   .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child { grid-column: span 2; }
+  /* ===== Журнал: итоги — плитки дашборда с крупными цифрами ===== */
+  .ggg.ggg .jsum { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
+    padding: 0; margin-bottom: 20px; border: 0; border-image: none; background: none; box-shadow: none; }
+  .ggg.ggg .jsum .mi { padding: 16px 18px 18px; border: 1px solid #34302a; border-radius: 4px;
+    background: linear-gradient(#1a1916, #0e1014 70%); }
+  .ggg.ggg .jsum .mk { font: 700 15px/1.2 "Alegreya Sans SC", var(--body); letter-spacing: .3px; color: #8c8c8c; margin-bottom: 8px; }
+  .ggg.ggg .jsum .mv { font: 700 34px/1.1 var(--body); color: #f6efdc; font-variant-numeric: tabular-nums; }
+  .ggg.ggg .jsum .mv .jcur { display: inline; font-size: 16px; font-weight: 500; color: #b8ad92; margin-left: 2px; }
+  @media (max-width: 800px) {
+    .ggg.ggg .jsum { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .ggg.ggg .jsum .mi { padding: 12px 14px 14px; }
+    .ggg.ggg .jsum .mv { font-size: 28px; }
+  }
+  .ggg.ggg .jsum .mv.good { color: #7fd77a; }
+  .ggg.ggg .jsum .mv.bad { color: #e8705f; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2032,6 +2047,18 @@
   .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td.wide { order: -1; padding-right: 44px; }
   .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td:first-child .muted { display: inline; margin-left: 6px; }
   .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:has(.c-del) > td:first-child { grid-column: span 2; }
+  .ggg.ggg[data-theme=light] .jsum { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; padding: 0; margin-bottom: 20px; border: 0; border-image: none; background: none; box-shadow: none; }
+  .ggg.ggg[data-theme=light] .jsum .mi { padding: 16px 18px 18px; border: 1px solid #e4d7bc; border-radius: 4px; background: linear-gradient(#f1eadd, #f5f0e7 70%); }
+  .ggg.ggg[data-theme=light] .jsum .mk { font: 700 15px/1.2 "Alegreya Sans SC", var(--body); letter-spacing: .3px; color: #8a7b5c; margin-bottom: 8px; }
+  .ggg.ggg[data-theme=light] .jsum .mv { font: 700 34px/1.1 var(--body); color: #6e581c; font-variant-numeric: tabular-nums; }
+  .ggg.ggg[data-theme=light] .jsum .mv .jcur { display: inline; font-size: 16px; font-weight: 500; color: #6c6048; margin-left: 2px; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .jsum { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .ggg.ggg[data-theme=light] .jsum .mi { padding: 12px 14px 14px; }
+    .ggg.ggg[data-theme=light] .jsum .mv { font-size: 28px; }
+  }
+  .ggg.ggg[data-theme=light] .jsum .mv.good { color: #2d8528; }
+  .ggg.ggg[data-theme=light] .jsum .mv.bad { color: #a02817; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -4706,7 +4733,7 @@ function renderJournal() {
     byCur[k] = byCur[k] || { gain: 0, nm: r.names?.[r.names.length - 1] || k };
     byCur[k].gain += r.gain;
   }
-  const total = Object.entries(byCur).map(([id, v]) => `<span class="${signCls(v.gain)}">${v.gain > 0 ? "+" : ""}${amt(+v.gain.toFixed(4))}</span> ${esc(market?.items[id] ? name(id) : v.nm)}`).join("<br>");
+  const total = Object.entries(byCur).map(([id, v]) => `<span class="${signCls(v.gain)}">${v.gain > 0 ? "+" : ""}${amt(+v.gain.toFixed(4))}</span> <small class="jcur">${esc(market?.items[id] ? name(id) : v.nm)}</small>`).join("<br>");
   const diff = mean(list.map(r => r.pct - r.pred.pct));
   let html = `<div class="jsum dmeta">
     ${mi(t("jTrades"), list.length)}
