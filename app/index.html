@@ -1540,6 +1540,28 @@
   /* валюта внутри плашки шага — без своей рамки (светлое правило рамок валют не должно её возвращать) */
   .ggg.ggg[data-theme=light] .drow .cur { border-image: none; }
 
+  /* полоска «Доступна новая версия»: тона Divine Orb (приглушённая состаренная бронза), крупный текст,
+     «Что нового» — ссылкой, закрыть — крестиком у правого края */
+  .ggg #updBar { justify-content: center; gap: 10px 18px; padding: 10px 56px 10px 20px; position: relative; border: 0; color: #1f1916;
+    background: linear-gradient(#b9a68a, #9d8a70 45%, #7f6d59);
+    box-shadow: inset 0 1px 0 rgba(255, 240, 215, .3), inset 0 -1px 0 #4c423c, 0 2px 8px rgba(0, 0, 0, .35); }
+  .ggg #updBar .updtxt { font: 600 17px var(--body); }
+  .ggg #updBar #updNotes { color: #2a211c; font: 700 16px var(--body); text-decoration: underline; text-underline-offset: 3px; }
+  .ggg #updBar #updNotes:hover { color: #000; }
+  .ggg #updBar #updSkip, .ggg #updBar #updSkip:hover { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
+    padding: 0; border: 0; background: none; box-shadow: none; color: #3a3028; font-size: 0; text-shadow: none; }
+  .ggg #updBar #updSkip:hover { color: #000; }
+  .ggg #updBar #updSkip::before { content: ""; display: block; width: 20px; height: 20px; margin: auto; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; }
+  .ggg #updBar .bad { color: #7a1408; font-weight: 700; }
+  @media (max-width: 800px) { .ggg #updBar { padding: 10px 48px 10px 12px; } .ggg #updBar .updtxt { font-size: 15.5px; flex-basis: 100%; text-align: center; } }
+  /* «курс за…» в шапке на средних экранах не ломается в столбик — обрезается многоточием */
+  @media (min-width: 801px) { .ggg header #status { flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+  /* переключатель вида всегда справа, даже когда звезды «только избранное» нет (журнал) */
+  .ggg .toolbar #favOnlyBtn[hidden] + .vtoggle { margin-left: auto; }
+  /* итоги журнала — воздух от панели вкладок */
+  .ggg .jsum { margin-top: 18px; }
+  @media (max-width: 800px) { .ggg .jsum { margin-top: 8px; } }
 </style>
 </head>
 <body>
@@ -2036,12 +2058,12 @@ function renderUpdate() {
   if (!upd) { bar.hidden = true; return; }
   let html = "";
   if (upd.installed) {
-    html = `<span>✅ ${t("updDone", { v: esc(upd.installed) })}</span>`;
+    html = `<span class="updtxt">${t("updDone", { v: esc(upd.installed) })}</span>`;
   } else if (upd.available && ui.updSkip !== upd.latest) {
-    html = `<span>🔔 ${t("updAvail", { v: esc(upd.latest), cur: esc(upd.current) })}</span>
-      <button type="button" id="updNotes" class="ghost">${t("updNotes")}</button>
+    html = `<span class="updtxt">${t("updAvail", { v: esc(upd.latest), cur: esc(upd.current) })}</span>
+      <button type="button" id="updNotes" class="linkbtn">${t("updNotes")}</button>
       <button type="button" id="updGo"${updBusy ? " disabled" : ""}>${updBusy ? t("updBusy") : t("updInstall")}</button>
-      <button type="button" id="updSkip" class="ghost" title="${esc(t("updSkipTip"))}">×</button>`;
+      <button type="button" id="updSkip" title="${esc(t("updSkipTip"))}" aria-label="${esc(t("updSkipTip"))}"></button>`;
   }
   if (updMsg) html += `<span class="bad">${esc(updMsg)}</span>`;
   bar.innerHTML = html;
