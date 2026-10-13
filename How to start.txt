@@ -1,0 +1,327 @@
+﻿PoE 2 Flip Finder 1.1
+Profitable currency exchange paths for Path of Exile 2 (Alva's exchange)
+(Русская версия и 中文版 — ниже)
+
+The program reads GGG's official hourly data on real exchange trades and finds chains of trades
+that make a profit, e.g. Divine → Chaos → X → Divine. It runs on your computer, in your browser.
+Nothing to install except Python.
+
+Important: these are AVERAGE rates of real trades per hour, not the live order book. Always check
+the rate in game before trading. No guarantee of profit — use at your own risk.
+Not affiliated with Grinding Gear Games.
+
+
+═══ INSTALL ═══
+
+WINDOWS
+1. Unzip: right-click poe2-flip.zip → "Extract All". It won't run from inside the archive.
+2. Install Python 3.8 or newer (free): https://www.python.org/downloads/
+   During setup be sure to tick "Add python.exe to PATH".
+3. Run "Start (Windows).bat". If Windows says "Windows protected your PC" — click "More info" → "Run anyway".
+4. Your browser opens the program. The black window IS the program: keep it open while you use it.
+After the first start a "PoE 2 Flip Finder" shortcut with a Divine Orb icon appears next to it —
+use it from then on (you can drag it to the desktop or pin it).
+
+MAC
+1. Unzip by double-clicking.
+2. Right-click "Start (Mac).command" → "Open" (the first time exactly like that, later just double-click).
+3. If macOS offers to install developer tools (for python3) — agree and wait for it to finish.
+
+The only file you need to run is "Start (Windows).bat" (Mac: "Start (Mac).command").
+The program itself lives in the "app" folder — you don't need to go in there.
+
+First start: ~10 seconds to download the last day of data, then everything works.
+While the window is open, it fetches new data every 5 minutes on its own.
+
+
+═══ HOW TO USE ═══
+
+Top bar: league, language (RU / EN / 中文), theme, 📱 phone access. Left: filters (on a phone — the "Filters" button).
+Every field has a "?" with an explanation.
+
+Tabs:
+- "Flip cycles" — found paths. The most reliable are on top ("Score" column): it combines profit,
+  liquidity and "Holds" — how many hours in a row the path has already been profitable.
+- "Round trips" — pairs for a simple buy-low / sell-high flip.
+- "Currency rates" — rates for any currency.
+- "Journal" — your recorded trades and your real spread per pair.
+
+Click a path to open the steps panel: what to give and get, rate, liquidity, 24 h trends.
+You can enter the rate you see at Alva and how much you actually got — everything is recalculated.
+"At Alva" mode — big, one step per screen (handy on a phone next to the game).
+When done, press "Save trade to journal".
+
+
+═══ FROM A PHONE ═══
+(phone and computer on the same Wi-Fi)
+
+1. On the computer press 📱 at the top of the page and turn on "Open the program from a phone".
+2. Point your phone camera at the QR code — the program opens. You can also type the address shown.
+3. The first time, Windows asks about Python's network access — click "Allow".
+   If the Wi-Fi is marked "Public network", switch it to "Private":
+   Settings → Network & Internet → Wi-Fi → network properties → "Private network".
+4. A VPN on the computer may block home-network access — turn it off or allow local network in it.
+This is for home use: while it's on, any device on your Wi-Fi can open the page.
+Turn it off with the same 📱 button. No restart needed.
+
+
+═══ NOTIFICATIONS ═══
+
+On the page: the "Notify about new paths" checkbox on the left — a card, a sound and a browser
+notification when a path with the profit and "Holds" you want appears.
+
+In Telegram (arrive even with the browser closed — but the program must be running):
+1. Turn on "Notify about new paths" — a Telegram block appears below.
+2. In Telegram open @BotFather → /newbot → pick a name → copy the token and paste it into the program.
+3. Send your bot the /link message with the code the program shows.
+Other people can use your bot too: give them the link t.me/your_bot — they send /start and set their
+own conditions with buttons right in Telegram. They need neither the program nor the token.
+
+If someone gave you a link to their bot — you don't need the program: just send that bot /start.
+
+
+═══ WHERE DATA IS STORED ═══
+
+- Downloaded rates — in app/cache (safe to delete, they'll download again).
+- Trade journal, Telegram bot token and subscribers — separately, in your user profile:
+  Windows: %APPDATA%\poe2-flip     Mac: ~/.config/poe2-flip
+- Filters, favourites and page view — in your browser.
+To remove the program completely: delete its folder and the poe2-flip folder in your profile (paths above).
+
+
+═══ UPDATES AND SHARING ═══
+
+When a new version is out, a bar with an "Update" button appears at the top of the page.
+To give the program to someone — just the link: https://github.com/zhurauljou/poe2-flip-finder/releases/latest
+Don't send your own program folder — the link is enough.
+
+
+═══ IF IT DOESN'T WORK ═══
+
+- The window closes at once or shows an error — take a screenshot of the black window.
+- "Python not found" — install it (see above) with "Add python.exe to PATH" ticked.
+- The browser opened but shows "Error" at the top — no access to the data sites
+  (poe.ninja, web.poecdn.com, repoe-fork.github.io): check your internet and VPN.
+- "Server is already running" — the program is already open in another window; it will be opened.
+
+
+
+══════════════════════════════════════════════════════════════
+                           РУССКИЙ
+══════════════════════════════════════════════════════════════
+
+PoE 2 Flip Finder 1.1
+Поиск выгодных обменов валюты на бирже Path of Exile 2 (у Альвы)
+
+Программа берёт официальные почасовые данные GGG о реальных сделках на бирже и ищет
+цепочки обменов, которые приносят прибыль: например, Divine → Chaos → X → Divine.
+Работает у вас на компьютере, в браузере. Ничего не устанавливает, кроме Python.
+
+Важно: это СРЕДНИЕ курсы по сделкам за час, а не живой стакан. Перед каждым обменом
+сверяйте курс в игре. Никаких гарантий прибыли — используйте на свой страх и риск.
+Программа не связана с Grinding Gear Games.
+
+
+═══ УСТАНОВКА ═══
+
+WINDOWS
+1. Распакуйте архив: правый клик по poe2-flip.zip → «Извлечь все». Из самого архива не запускается.
+2. Нужен Python 3.8 или новее (бесплатно): https://www.python.org/downloads/
+   При установке ОБЯЗАТЕЛЬНО отметьте галочку «Add python.exe to PATH».
+3. Запустите «Start (Windows).bat». Если Windows покажет «Windows защитила ваш компьютер» —
+   нажмите «Подробнее» → «Выполнить в любом случае».
+4. Откроется браузер с программой. Чёрное окно — это сама программа: не закрывайте его, пока пользуетесь.
+После первого запуска рядом появится ярлык «PoE 2 Flip Finder» с иконкой Divine Orb —
+дальше можно запускать им (его можно перетащить на рабочий стол или закрепить).
+
+MAC
+1. Распакуйте архив двойным щелчком.
+2. Правый клик по «Start (Mac).command» → «Открыть» (в первый раз именно так, потом — двойным щелчком).
+3. Если macOS предложит установить инструменты разработчика (для python3) — согласитесь и дождитесь установки.
+
+Запускать нужно только «Start (Windows).bat» (на Mac — «Start (Mac).command»).
+Сама программа лежит в папке app — туда заходить не нужно.
+
+Первый запуск: программа ~10 секунд скачивает данные за последние сутки, потом всё работает сразу.
+Дальше, пока окно открыто, она сама докачивает новые данные каждые 5 минут.
+
+
+═══ КАК ПОЛЬЗОВАТЬСЯ ═══
+
+Вверху — лига, язык (RU / EN / 中文), тема и 📱 доступ с телефона. Слева — фильтры (на телефоне — кнопка «Фильтры»).
+У каждого поля есть «?» с подсказкой.
+
+Вкладки:
+- «Циклы флипа» — найденные пути. Самые надёжные сверху (колонка «Рейтинг»):
+  учитывается прибыль, ликвидность и «Держится» — сколько часов подряд путь уже даёт прибыль.
+- «Туда-обратно» — пары для простого флипа «купить дешевле — продать дороже».
+- «Курсы валюты» — курсы любой валюты.
+- «Журнал» — ваши записанные сделки и ваш реальный спред по парам.
+
+Клик по пути открывает панель шагов: что отдать, что получить, курс, ликвидность, тренды за сутки.
+Туда можно вписать курс, который видите у Альвы, и сколько реально получили — всё пересчитается.
+Кнопка «Режим у Альвы» — крупно, по одному шагу на экран (удобно на телефоне рядом с игрой).
+Пройдя путь, нажмите «Записать сделку в журнал».
+
+
+═══ С ТЕЛЕФОНА ═══
+(телефон и компьютер — в одной Wi-Fi сети)
+
+1. На компьютере нажмите кнопку 📱 вверху страницы и включите «Открывать программу с телефона».
+2. Наведите камеру телефона на QR-код — откроется программа. Можно и вручную ввести адрес из окна.
+3. Windows при первом включении спросит про доступ Python к сети — нажмите «Разрешить».
+   Если Wi-Fi отмечен как «Общедоступная сеть», переключите на «Частная»:
+   Параметры → Сеть и Интернет → Wi-Fi → свойства сети → «Частная сеть».
+4. VPN на компьютере может закрывать доступ из домашней сети — отключите его
+   или включите в VPN доступ к локальной сети.
+Этот режим — для дома: пока он включён, страницу может открыть любое устройство в вашей Wi-Fi сети.
+Выключается той же кнопкой 📱. Перезапускать программу не нужно.
+
+
+═══ УВЕДОМЛЕНИЯ ═══
+
+На странице: галочка «Уведомлять о новых путях» слева — карточка на странице, звук
+и уведомление браузера, когда появляется путь с нужной прибылью и «Держится».
+
+В Telegram (приходят, даже когда браузер закрыт, — но программа должна быть запущена):
+1. Включите «Уведомлять о новых путях» — ниже появится блок Telegram.
+2. В Telegram откройте @BotFather → /newbot → придумайте имя → скопируйте токен и вставьте в программу.
+3. Отправьте своему боту сообщение /link с кодом, который покажет программа.
+Другие люди тоже могут пользоваться вашим ботом: дайте им ссылку t.me/имя_бота — они напишут
+/start и настроят свои условия кнопками прямо в Telegram. Им не нужна ни программа, ни токен.
+
+Если вам кто-то дал ссылку на своего бота — программа не нужна: просто напишите боту /start.
+
+
+═══ ГДЕ ХРАНЯТСЯ ДАННЫЕ ═══
+
+- Скачанные курсы — в app/cache (можно удалить, скачаются заново).
+- Журнал сделок, токен Telegram-бота и подписчики — отдельно, в профиле пользователя:
+  Windows: %APPDATA%\poe2-flip     Mac: ~/.config/poe2-flip
+- Фильтры, избранное и вид страницы — в вашем браузере.
+Удалить программу полностью: удалите её папку и папку poe2-flip из профиля (пути выше).
+
+
+═══ ОБНОВЛЕНИЯ И ПЕРЕДАЧА ДРУГОМУ ═══
+
+Когда выйдет новая версия, вверху страницы появится полоска с кнопкой «Обновить».
+Дать программу другому — просто ссылка: https://github.com/zhurauljou/poe2-flip-finder/releases/latest
+Не отправляйте свою папку программы целиком — ссылки достаточно.
+
+
+═══ ЕСЛИ НЕ РАБОТАЕТ ═══
+
+- Окно сразу закрывается или пишет ошибку — сделайте скриншот чёрного окна.
+- «Не найден Python» — установите его (см. выше) с галочкой «Add python.exe to PATH».
+- Браузер открылся, но вверху «Ошибка» — нет доступа к сайтам с данными
+  (poe.ninja, web.poecdn.com, repoe-fork.github.io): проверьте интернет и VPN.
+- Пишет «Сервер уже работает» — программа уже запущена в другом окне; оно и откроется.
+
+
+
+══════════════════════════════════════════════════════════════
+                            中文
+══════════════════════════════════════════════════════════════
+
+PoE 2 Flip Finder 1.1
+《流放之路 2》货币兑换（阿尔瓦交易所）盈利路径查找工具
+
+程序读取 GGG 官方的每小时真实成交数据，寻找能带来利润的兑换链，
+例如 Divine → Chaos → X → Divine。程序在你的电脑上、在浏览器中运行，除 Python 外无需安装任何东西。
+
+重要：这些是每小时真实成交的平均汇率，而不是实时挂单。每次兑换前请在游戏中核对汇率。
+不保证盈利——风险自负。本程序与 Grinding Gear Games 无关。
+
+
+═══ 安装 ═══
+
+WINDOWS
+1. 解压：右键点击 poe2-flip.zip →“全部解压缩”。不能直接在压缩包内运行。
+2. 安装 Python 3.8 或更高版本（免费）：https://www.python.org/downloads/
+   安装时务必勾选“Add python.exe to PATH”。
+3. 运行“Start (Windows).bat”。如果 Windows 提示“Windows 已保护你的电脑”——点击“更多信息”→“仍要运行”。
+4. 浏览器会打开程序。黑色窗口就是程序本身：使用期间请不要关闭。
+首次运行后，旁边会出现带有神圣石（Divine Orb）图标的“PoE 2 Flip Finder”快捷方式——
+之后可以用它启动（可拖到桌面或固定）。
+
+MAC
+1. 双击解压。
+2. 右键点击“Start (Mac).command”→“打开”（第一次必须这样，之后双击即可）。
+3. 如果 macOS 提示安装开发者工具（用于 python3）——同意并等待安装完成。
+
+只需要运行“Start (Windows).bat”（Mac 上是“Start (Mac).command”）。
+程序本身位于 app 文件夹中——无需进入。
+
+首次运行：程序约 10 秒下载最近一天的数据，之后即可使用。
+窗口打开期间，程序每 5 分钟自动获取新数据。
+
+
+═══ 使用方法 ═══
+
+顶部：赛季、语言（RU / EN / 中文）、主题、📱 手机访问。左侧：筛选（手机上为“筛选”按钮）。
+每个字段都有“?”说明。
+
+标签页：
+-“套利循环”——找到的路径。最可靠的排在最上面（“评分”列）：综合利润、流动性和“持续”
+ （路径已连续盈利多少小时）。
+-“往返倒卖”——低买高卖的简单倒卖交易对。
+-“货币汇率”——任意货币的汇率。
+-“交易记录”——你记录的交易以及各交易对的实际价差。
+
+点击路径打开步骤面板：付出什么、获得什么、汇率、流动性、24 小时走势。
+可以填写在阿尔瓦处看到的汇率和实际获得的数量——一切会重新计算。
+“阿尔瓦”模式——大字显示，每屏一步（在游戏旁用手机很方便）。
+完成后点击“将交易记入记录”。
+
+
+═══ 用手机访问 ═══
+（手机和电脑需连接同一 Wi-Fi）
+
+1. 在电脑上点击页面顶部的 📱 按钮，开启“允许在此 Wi-Fi 网络中用手机打开程序”。
+2. 用手机相机扫描二维码——即可打开程序。也可以手动输入显示的地址。
+3. 首次开启时 Windows 会询问 Python 的网络访问——点击“允许”。
+   如果 Wi-Fi 被标记为“公用网络”，请改为“专用网络”：
+   设置 → 网络和 Internet → Wi-Fi → 网络属性 →“专用网络”。
+4. 电脑上的 VPN 可能会阻止家庭网络访问——请关闭 VPN，或在 VPN 中允许本地网络。
+此功能用于家庭环境：开启期间，你的 Wi-Fi 中任何设备都能打开该页面。
+用同一个 📱 按钮关闭。无需重启程序。
+
+
+═══ 提醒 ═══
+
+页面上：左侧的“新路径提醒”复选框——当出现符合利润和“持续”条件的路径时，
+页面会显示卡片、播放声音并发送浏览器通知。
+
+Telegram 中（即使关闭浏览器也会收到——但程序必须在运行）：
+1. 开启“新路径提醒”——下方会出现 Telegram 区块。
+2. 在 Telegram 中打开 @BotFather → /newbot → 取个名字 → 复制令牌并粘贴到程序中。
+3. 把程序显示的带代码的 /link 消息发送给你的机器人。
+其他人也可以使用你的机器人：把链接 t.me/你的机器人 发给他们——他们发送 /start，
+并直接在 Telegram 中用按钮设置自己的条件。他们既不需要程序也不需要令牌。
+
+如果有人给了你他的机器人链接——你不需要程序：直接给那个机器人发送 /start 即可。
+
+
+═══ 数据存储位置 ═══
+
+- 下载的汇率——在 app/cache 中（可以删除，会重新下载）。
+- 交易记录、Telegram 机器人令牌和订阅者——单独存放在用户配置文件中：
+  Windows：%APPDATA%\poe2-flip     Mac：~/.config/poe2-flip
+- 筛选、收藏和页面视图——保存在你的浏览器中。
+完全删除程序：删除程序文件夹以及配置文件中的 poe2-flip 文件夹（路径见上）。
+
+
+═══ 更新与分享 ═══
+
+有新版本时，页面顶部会出现带“更新”按钮的提示条。
+把程序分享给别人——只需链接：https://github.com/zhurauljou/poe2-flip-finder/releases/latest
+不要发送你自己的程序文件夹——链接就足够了。
+
+
+═══ 无法运行时 ═══
+
+- 窗口立即关闭或显示错误——请截图黑色窗口。
+-“未找到 Python”——安装 Python（见上），并勾选“Add python.exe to PATH”。
+- 浏览器已打开但顶部显示“错误”——无法访问数据网站
+ （poe.ninja、web.poecdn.com、repoe-fork.github.io）：请检查网络和 VPN。
+-“服务器已在运行”——程序已在另一个窗口中打开；会直接打开它。

@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PoE 2 Flip Finder</title>
+<link rel="icon" href="/favicon.ico" sizes="16x16 24x24 32x32 48x48 64x64">
+<link rel="icon" type="image/png" href="/icon.png" sizes="256x256">
+<link rel="apple-touch-icon" href="/icon.png">
 <script>
   // Тему и ширину панели ставим до отрисовки, чтобы не мигало.
   try {
@@ -36,7 +39,8 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif; }
   header { padding: 10px 20px; border-bottom: 1px solid var(--line); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  header h1 { margin: 0; font-size: 18px; color: var(--gold); letter-spacing: .3px; }
+  header h1 { margin: 0; font-size: 18px; color: var(--gold); letter-spacing: .3px; display: flex; align-items: center; gap: 8px; }
+  header h1 .logo { width: 26px; height: 26px; flex: none; }
   #status { color: var(--muted); font-size: 13px; flex: 1; min-width: 0; }
   .hleague { width: auto; max-width: 240px; margin: 0; padding: 5px 30px 5px 8px; font-weight: 600; }
   .hctl { display: flex; gap: 8px; align-items: center; margin-left: auto; }
@@ -454,7 +458,7 @@
 </head>
 <body>
 <header>
-  <h1>PoE 2 Flip Finder</h1>
+  <h1><img src="/icon.png" alt="" class="logo">PoE 2 Flip Finder</h1>
   <select id="league" class="hleague"></select>
   <span id="status"></span>
   <div class="hctl">
@@ -961,7 +965,7 @@ const I18N = {
     alvaBack: "Назад", alvaClose: "Закрыть", dSaveNeed: "Чтобы записать сделку, впиши «Получил фактически» во всех шагах.",
     dSaved: "Записано в журнал ✓", dSaveErr: "Не удалось записать: {e}",
     jEmpty: "Пока нет записанных сделок. Открой путь, пройди его в игре, впиши в шагах «Получил фактически» и нажми «Записать сделку в журнал».",
-    jNoServer: "Журнал хранится на сервере программы — перезапусти программу (закрой окно и снова запусти «Запустить (Windows).bat»).",
+    jNoServer: "Журнал хранится на сервере программы — перезапусти программу (закрой окно и снова запусти «Start (Windows).bat»).",
     jTrades: "Сделок", jTotal: "Прибыль всего", jAvg: "Средняя прибыль", jVsPred: "Отличие от прогноза",
     jVsPredTip: "Насколько в среднем реальная прибыль отличалась от того, что обещала программа по рыночным курсам с запасом. Минус — на деле выходит меньше.",
     jPairsTitle: "Мои пары: реальный курс против среднего рыночного",
@@ -1099,7 +1103,7 @@ const I18N = {
     alvaBack: "Back", alvaClose: "Close", dSaveNeed: "To save the trade, fill in “Actually received” on every step.",
     dSaved: "Saved to journal ✓", dSaveErr: "Couldn't save: {e}",
     jEmpty: "No trades yet. Open a path, do it in game, fill in “Actually received” on every step and press “Save trade to journal”.",
-    jNoServer: "The journal is stored by the program's server — restart the program (close the window and run “Запустить (Windows).bat” again).",
+    jNoServer: "The journal is stored by the program's server — restart the program (close the window and run “Start (Windows).bat” again).",
     jTrades: "Trades", jTotal: "Total profit", jAvg: "Average profit", jVsPred: "Vs. forecast",
     jVsPredTip: "How much real profit differed on average from what the program promised at market rates after margin. Negative — reality is worse.",
     jPairsTitle: "My pairs: real rate vs. market average",
@@ -1237,7 +1241,7 @@ const I18N = {
     alvaBack: "返回", alvaClose: "关闭", dSaveNeed: "要记录交易，请在每一步填写“实际获得”。",
     dSaved: "已记入记录 ✓", dSaveErr: "记录失败：{e}",
     jEmpty: "还没有记录的交易。打开一条路径，在游戏中完成，在每一步填写“实际获得”，然后点击“将交易记入记录”。",
-    jNoServer: "交易记录保存在程序的服务器上——请重启程序（关闭窗口后重新运行 “Запустить (Windows).bat”）。",
+    jNoServer: "交易记录保存在程序的服务器上——请重启程序（关闭窗口后重新运行 “Start (Windows).bat”）。",
     jTrades: "交易数", jTotal: "总利润", jAvg: "平均利润", jVsPred: "与预测的差异",
     jVsPredTip: "实际利润与程序按市场汇率（扣除余量后）预测的利润平均相差多少。负数表示实际更差。",
     jPairsTitle: "我的交易对：实际汇率与市场平均",

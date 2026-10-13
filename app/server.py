@@ -378,6 +378,20 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+        elif url.path in ("/icon.png", "/icon.ico", "/favicon.ico"):
+            name = "icon.png" if url.path == "/icon.png" else "icon.ico"
+            try:
+                with open(os.path.join(HERE, name), "rb") as fh:
+                    body = fh.read()
+            except OSError:
+                self.send_error(404)
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "image/png" if name.endswith(".png") else "image/x-icon")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "max-age=86400")
+            self.end_headers()
+            self.wfile.write(body)
         elif url.path == "/api/leagues":
             names = leagues_list()
             if names:
@@ -548,8 +562,9 @@ def lan_ips():
 
 # Что кладётся в архив для людей (и в обновление): запускаторы и инструкция в корне, программа — в app/.
 # Без кэша и личных файлов (они и так не в папке программы). Пути — относительно корня.
-PACK_FILES = ["Запустить (Windows).bat", "Запустить (Mac).command", "Как запустить.txt",
-              "app/index.html", "app/server.py", "app/ggg.py", "app/notify.py", "app/update.py"]
+PACK_FILES = ["Start (Windows).bat", "Start (Mac).command", "How to start.txt",
+              "app/index.html", "app/server.py", "app/ggg.py", "app/notify.py", "app/update.py",
+              "app/icon.ico", "app/icon.png"]
 
 
 def pack():
@@ -571,6 +586,7 @@ def pack():
 
 # Файлы версии 1.0, которые лежали в корне. После перехода в app/ они не нужны — убираем, чтобы не путали.
 OLD_ROOT_FILES = ["index.html", "server.py", "ggg.py", "notify.py", "update.py",
+                  "Запустить (Windows).bat", "Запустить (Mac).command", "Как запустить.txt",
                   "Запустить для телефона (Windows).bat", "Запустить для телефона (Mac).command",
                   "Собрать архив для передачи (Windows).bat", "Собрать архив для передачи (Mac).command"]
 
@@ -599,10 +615,46 @@ def tidy_old_layout():
         shutil.rmtree(old_cache, ignore_errors=True)  # в app/cache уже есть свои — старые скачаются заново при нужде
 
 
+# ---------- ярлык с иконкой (Windows) ----------
+# У .bat нельзя задать свою иконку — Windows всегда рисует терминал. Поэтому рядом создаём ярлык
+# «PoE 2 Flip Finder» с иконкой Divine Orb. Ярлык хранит полный путь, поэтому его не кладут в архив,
+# а создают здесь — и пересоздают, если папку перенесли.
+SHORTCUT = "PoE 2 Flip Finder.lnk"
+
+
+def ensure_shortcut():
+    if os.name != "nt" or ROOT == HERE:
+        return
+    bat, ico, lnk = os.path.join(ROOT, "Start (Windows).bat"), os.path.join(HERE, "icon.ico"), os.path.join(ROOT, SHORTCUT)
+    if not (os.path.exists(bat) and os.path.exists(ico)):
+        return
+    st = app_settings()
+    if os.path.exists(lnk) and st.get("shortcut_root") == ROOT:
+        return
+    import subprocess
+    # Пути — через переменные окружения: так не мешают пробелы и кириллица в пути.
+    ps = ("$s=(New-Object -ComObject WScript.Shell).CreateShortcut($env:PF_LNK);"
+          "$s.TargetPath=$env:PF_BAT;$s.WorkingDirectory=$env:PF_ROOT;$s.IconLocation=$env:PF_ICO+',0';"
+          "$s.Description='PoE 2 Flip Finder';$s.Save()")
+    try:
+        subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", ps], timeout=60, capture_output=True,
+                       env=dict(os.environ, PF_LNK=lnk, PF_BAT=bat, PF_ROOT=ROOT, PF_ICO=ico),
+                       creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    except (OSError, subprocess.SubprocessError):
+        return
+    if os.path.exists(lnk):
+        st["shortcut_root"] = ROOT
+        save_app_settings(st)
+
+
 def main():
     if "--pack" in sys.argv:
         pack()
         return
+    if ROOT == HERE and os.path.exists(os.path.join(HERE, "app", "server.py")):
+        # Папка ещё в раскладке 1.0, а новая версия уже лежит в app/ — запускаем её (она же уберёт старые файлы).
+        import subprocess
+        sys.exit(subprocess.call([sys.executable, os.path.join(HERE, "app", "server.py")] + sys.argv[1:]))
     url = "http://127.0.0.1:%d/" % PORT
     host = os.environ.get("POE2FLIP_HOST") or (LAN if app_settings().get("lan") else LOCAL)
     try:
@@ -617,6 +669,7 @@ def main():
     print("Закройте это окно, чтобы остановить.")
     tidy_old_layout()
     migrate_private()
+    threading.Thread(target=ensure_shortcut, daemon=True).start()
     threading.Thread(target=background, daemon=True).start()
     threading.Thread(target=update_loop, daemon=True).start()
     threading.Thread(target=notify.poll_loop, daemon=True,

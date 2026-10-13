@@ -9,10 +9,11 @@
 
 **[⬇ Последняя версия — poe2-flip.zip](https://github.com/zhurauljou/poe2-flip-finder/releases/latest)**
 
-Распакуйте архив и следуйте файлу «Как запустить.txt». Коротко — запускать нужно один файл:
+Распакуйте архив и следуйте файлу `How to start.txt`. Коротко — запускать нужно один файл:
 
-- **Windows:** нужен [Python 3.8+](https://www.python.org/downloads/) (при установке отметьте «Add python.exe to PATH»), затем запустите `Запустить (Windows).bat`.
-- **Mac:** правый клик по `Запустить (Mac).command` → «Открыть».
+- **Windows:** нужен [Python 3.8+](https://www.python.org/downloads/) (при установке отметьте «Add python.exe to PATH»), затем запустите `Start (Windows).bat`
+  (после первого запуска рядом появится ярлык **PoE 2 Flip Finder** с иконкой Divine Orb — дальше можно им).
+- **Mac:** правый клик по `Start (Mac).command` → «Открыть».
 
 Обновления программа находит сама: когда выйдет новая версия, сверху появится кнопка «Обновить».
 
