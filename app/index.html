@@ -1245,6 +1245,12 @@
   .ggg.ggg.view-cards .rt .c-hero .dtrend { flex-basis: 100%; flex-direction: row; align-items: center; justify-content: space-between; margin: 6px 0 0; }
   .ggg.ggg.view-cards .rt td[data-label]::before { font-size: 14px; }
   .ggg.ggg.view-cards .rt td.wide:first-child .path { position: static; }
+  /* карточки цельные: один лёгкий градиент сверху вниз, шапка без отдельного фона и линии; выбранная — толще рамка и чуть светлее, без тени */
+  .ggg.ggg.view-cards .rt tr.cyc, .ggg.ggg.view-cards .rt tr.cyc:hover { background: linear-gradient(#1a1916, #0e1014 55%, #0b0d11); border: 1px solid #34302a; border-radius: 4px; box-shadow: none; }
+  .ggg.ggg.view-cards .rt tr.cyc:hover { border-color: #5a4d36; }
+  .ggg.ggg.view-cards .rt tr.cyc.sel { background: linear-gradient(#24211b, #14161a 55%, #101216); border: 2px solid #b8975a; box-shadow: none; padding: 0 15px 13px; }
+  .ggg.ggg.view-cards .rt tr.cyc.sel td.wide:first-child { margin: 0 -15px; }
+  .ggg.ggg.view-cards .rt td.wide:first-child { background: none; border-bottom: 0; padding-bottom: 4px; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1714,6 +1720,11 @@
   .ggg.ggg[data-theme=light].view-cards .rt .c-hero .dtrend { flex-basis: 100%; flex-direction: row; align-items: center; justify-content: space-between; margin: 6px 0 0; }
   .ggg.ggg[data-theme=light].view-cards .rt td[data-label]::before { font-size: 14px; }
   .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child .path { position: static; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.cyc, .ggg.ggg[data-theme=light].view-cards .rt tr.cyc:hover { background: linear-gradient(#f1eadd, #f5f0e7 55%, #f7f3eb); border: 1px solid #e4d7bc; border-radius: 4px; box-shadow: none; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.cyc:hover { border-color: #cdbea1; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.cyc.sel { background: linear-gradient(#ede4d2, #f2ebde 55%, #f4efe4); border: 2px solid #a58447; box-shadow: none; padding: 0 15px 13px; }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.cyc.sel td.wide:first-child { margin: 0 -15px; }
+  .ggg.ggg[data-theme=light].view-cards .rt td.wide:first-child { background: none; border-bottom: 0; padding-bottom: 4px; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
