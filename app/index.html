@@ -3838,7 +3838,7 @@ function renderCycles() {
     const id = c.nodes.join(">");
     html += `<tr class="cyc${drawer.id === id ? " sel" : ""}" data-id="${esc(id)}" data-i="${i}">
       <td class="wide"><div class="path">${favBtn(id)}${pathHtml}</div></td>
-      <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${amt(c.gain)} ${tn}</span><span class="hp good">+${(c.pct * 100).toFixed(2)}%</span>${newBadge(c)}${
+      <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${(c.pct * 100).toFixed(2)}%</span><span class="hp good">+${amt(c.gain)} ${tn}</span>${newBadge(c)}${
         c.volatile ? `<span class="warn" title="${t("volatileTitle")}">${t("volatile")}</span>` : ""}${cardsView() ? pathTrend(c) : ""}</div></td>
       <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%<div class="pamt">${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b> ${tn}${isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${
         c.capped ? `<div class="warn pamt" title="${t("cappedTitle")}">${t("capped")}</div>` : ""}${newBadge(c) ? `<div>${newBadge(c)}</div>` : ""}${c.volatile
