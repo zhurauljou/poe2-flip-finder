@@ -586,8 +586,17 @@ def tidy_old_layout():
             pass
     shutil.rmtree(os.path.join(ROOT, "__pycache__"), ignore_errors=True)
     old_cache = os.path.join(ROOT, "cache")
-    if os.path.isdir(old_cache) and not os.path.exists(CACHE_DIR):
+    if not os.path.isdir(old_cache):
+        return
+    for name in PRIVATE_FILES:  # личное (если старая версия держала его в cache) — в папку личных данных
+        src, dst = os.path.join(old_cache, name), os.path.join(DATA_DIR, name)
+        if os.path.exists(src) and not os.path.exists(dst):
+            os.makedirs(DATA_DIR, exist_ok=True)
+            shutil.move(src, dst)
+    if not os.path.exists(CACHE_DIR):
         shutil.move(old_cache, CACHE_DIR)  # скачанные курсы переезжают вместе с программой
+    else:
+        shutil.rmtree(old_cache, ignore_errors=True)  # в app/cache уже есть свои — старые скачаются заново при нужде
 
 
 def main():
