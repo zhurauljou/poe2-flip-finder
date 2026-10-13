@@ -1681,6 +1681,21 @@
     .ggg.ggg body > header .hleague { font-size: 17px; }
     .ggg.ggg body > header #status { font-size: 13px; }
   }
+  /* верхняя панель — одна шкала размеров: название 22 · лига 16 · всё остальное 14; ровные промежутки */
+  .ggg.ggg body > header { column-gap: 22px; }
+  .ggg.ggg body > header h1 { font-size: 22px; letter-spacing: 1px; gap: 10px; }
+  .ggg.ggg body > header h1 .logo { width: 28px; height: 28px; }
+  .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:hover { font-size: 16px; }
+  .ggg.ggg body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 14px; line-height: 1.3; }
+  .ggg.ggg body > header #status { color: #8c8c8c; }
+  @media (max-width: 800px) {
+    .ggg.ggg body > header { row-gap: 8px; }
+    .ggg.ggg body > header h1 { font-size: 16px; letter-spacing: .5px; gap: 8px; }
+    .ggg.ggg body > header h1 .logo { width: 24px; height: 24px; }
+    .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:hover { font-size: 16px; }
+    .ggg.ggg body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 13px; }
+    .ggg.ggg body > header #status { margin-top: -6px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2486,6 +2501,20 @@
   @media (max-width: 800px) {
     .ggg.ggg[data-theme=light] body > header .hleague { font-size: 17px; }
     .ggg.ggg[data-theme=light] body > header #status { font-size: 13px; }
+  }
+  .ggg.ggg[data-theme=light] body > header { column-gap: 22px; }
+  .ggg.ggg[data-theme=light] body > header h1 { font-size: 22px; letter-spacing: 1px; gap: 10px; }
+  .ggg.ggg[data-theme=light] body > header h1 .logo { width: 28px; height: 28px; }
+  .ggg.ggg[data-theme=light] body > header .hleague, .ggg.ggg[data-theme=light] body > header .hleague:hover { font-size: 16px; }
+  .ggg.ggg[data-theme=light] body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 14px; line-height: 1.3; }
+  .ggg.ggg[data-theme=light] body > header #status { color: #8a7b5c; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] body > header { row-gap: 8px; }
+    .ggg.ggg[data-theme=light] body > header h1 { font-size: 16px; letter-spacing: .5px; gap: 8px; }
+    .ggg.ggg[data-theme=light] body > header h1 .logo { width: 24px; height: 24px; }
+    .ggg.ggg[data-theme=light] body > header .hleague, .ggg.ggg[data-theme=light] body > header .hleague:hover { font-size: 16px; }
+    .ggg.ggg[data-theme=light] body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 13px; }
+    .ggg.ggg[data-theme=light] body > header #status { margin-top: -6px; }
   }
 
   /* ---------- светлая тема: ручные правки ---------- */
