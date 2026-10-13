@@ -4059,6 +4059,8 @@ function suggestCapital() {
     }
   }, 30);
 }
+// Короткое имя валюты для подписей: «Divine Orb» → «Divine».
+const shortCur = id => name(id).replace(/ Orb$/, "");
 // Целые суммы печатаем без копеек.
 function amt(x) {
   return Number.isInteger(x) ? x.toLocaleString(locale()) : fmt(x);
@@ -4661,7 +4663,7 @@ function scanBestCaps(cap, now, countAt, token) {
       .sort((a, b) => b.n - a.n || Math.abs(a.c - cap) - Math.abs(b.c - cap)).slice(0, 4)
       .sort((a, b) => a.c - b.c);
     $("#capBest").innerHTML = best.length ? `<span class="muted">${t("capBest")}</span>` + best.map(x =>
-      `<button type="button" data-cap="${x.c}" title="${esc(t("capPrevTitle", { c: amt(x.c) }))}">${amt(x.c)} · ${x.n} <b>+${x.n - now}</b></button>`).join("") : "";
+      `<button type="button" data-cap="${x.c}" title="${esc(t("capPrevTitle", { c: amt(x.c) }) + ": " + x.n)}">${amt(x.c)} ${esc(shortCur($("#base").value))} <b>(+${x.n - now})</b></button>`).join("") : "";
     $("#capBest").querySelectorAll("button").forEach(b => b.onclick = () => setCapital(+b.dataset.cap));
   };
   setTimeout(chunk, 0);
