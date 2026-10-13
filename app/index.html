@@ -1398,6 +1398,27 @@
   .ggg.ggg #tab-journal > h3.jh { order: 3; margin-top: 24px; }
   .ggg.ggg #tab-journal > h3.jh + table { order: 4; }
   .ggg.ggg #tab-journal > .jhead .jh { margin-top: 0; }
+  /* ===== Верхняя панель полегче: лига — просто текст со стрелкой, онлайн — без контейнера, всё одной высоты (36 px) ===== */
+  .ggg.ggg body > header { align-items: center; }
+  .ggg.ggg .hleague, .ggg.ggg .hleague:hover, .ggg.ggg .hleague:focus { height: 36px; width: auto; padding: 0 26px 0 6px; border: 0; border-radius: 2px; box-shadow: none;
+    background-color: transparent; background-position: right 6px center; color: #f1e4c2; }
+  .ggg.ggg .hleague:hover { background-color: rgba(241, 228, 194, .06); }
+  .ggg.ggg .hleague:focus-visible { box-shadow: 0 0 0 1px #8a7a52; }
+  .ggg.ggg .hplayers, .ggg.ggg .hplayers:hover { height: 36px; padding: 0 4px; border: 0; background: none; border-radius: 0; align-items: center; }
+  .ggg.ggg .hplayers:hover b { color: #fff; }
+  .ggg.ggg .hctl button, .ggg.ggg .hctl select { height: 36px; }
+  .ggg.ggg .hctl button { width: 36px; }
+  .ggg.ggg .hctl select { margin: 0; }
+  @media (max-width: 800px) {
+    .ggg.ggg .hctl button, .ggg.ggg .hctl select { height: 36px; }
+    .ggg.ggg .hctl button { width: 36px; }
+    .ggg.ggg .hplayers, .ggg.ggg .hplayers:hover { height: 28px; padding: 0 2px; }
+    .ggg.ggg .hleague, .ggg.ggg .hleague:hover { flex-basis: auto; height: 36px; font-size: 18px; padding-left: 2px; }
+    .ggg.ggg #status { flex-basis: 100%; text-align: left; margin-top: -4px; }
+  }
+  /* лига: только стрелка, без фона-поля */
+  .ggg.ggg .hleague, .ggg.ggg .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
+  .ggg.ggg .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(241, 228, 194, .06); }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1984,6 +2005,24 @@
   .ggg.ggg[data-theme=light] #tab-journal > h3.jh { order: 3; margin-top: 24px; }
   .ggg.ggg[data-theme=light] #tab-journal > h3.jh + table { order: 4; }
   .ggg.ggg[data-theme=light] #tab-journal > .jhead .jh { margin-top: 0; }
+  .ggg.ggg[data-theme=light] body > header { align-items: center; }
+  .ggg.ggg[data-theme=light] .hleague, .ggg.ggg[data-theme=light] .hleague:hover, .ggg.ggg[data-theme=light] .hleague:focus { height: 36px; width: auto; padding: 0 26px 0 6px; border: 0; border-radius: 2px; box-shadow: none; background-color: transparent; background-position: right 6px center; color: #70581a; }
+  .ggg.ggg[data-theme=light] .hleague:hover { background-color: rgba(112, 88, 26, 0.06); }
+  .ggg.ggg[data-theme=light] .hleague:focus-visible { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.80); }
+  .ggg.ggg[data-theme=light] .hplayers, .ggg.ggg[data-theme=light] .hplayers:hover { height: 36px; padding: 0 4px; border: 0; background: none; border-radius: 0; align-items: center; }
+  .ggg.ggg[data-theme=light] .hplayers:hover b { color: #000000; }
+  .ggg.ggg[data-theme=light] .hctl button, .ggg.ggg[data-theme=light] .hctl select { height: 36px; }
+  .ggg.ggg[data-theme=light] .hctl button { width: 36px; }
+  .ggg.ggg[data-theme=light] .hctl select { margin: 0; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .hctl button, .ggg.ggg[data-theme=light] .hctl select { height: 36px; }
+    .ggg.ggg[data-theme=light] .hctl button { width: 36px; }
+    .ggg.ggg[data-theme=light] .hplayers, .ggg.ggg[data-theme=light] .hplayers:hover { height: 28px; padding: 0 2px; }
+    .ggg.ggg[data-theme=light] .hleague, .ggg.ggg[data-theme=light] .hleague:hover { flex-basis: auto; height: 36px; font-size: 18px; padding-left: 2px; }
+    .ggg.ggg[data-theme=light] #status { flex-basis: 100%; text-align: left; margin-top: -4px; }
+  }
+  .ggg.ggg[data-theme=light] .hleague, .ggg.ggg[data-theme=light] .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
+  .ggg.ggg[data-theme=light] .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(112, 88, 26, 0.06); }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
