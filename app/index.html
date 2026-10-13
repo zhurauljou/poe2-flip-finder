@@ -1266,6 +1266,30 @@
       background: linear-gradient(90deg, transparent, rgba(201, 162, 86, .38) 12%, rgba(201, 162, 86, .38) 88%, transparent) left bottom / 100% 1px no-repeat; }
     .ggg.ggg .toolbar.stuck::before, .ggg.ggg .toolbar.stuck::after { bottom: -26px; }
   }
+  /* телефон: верх страницы аккуратнее — одна сетка отступов, элементы одной высоты, онлайн на всю ширину, одна линия вместо трёх */
+  @media (max-width: 800px) {
+    .ggg.ggg body > header { padding: 12px 12px 10px; gap: 10px; background: none; border-bottom: 0; box-shadow: none; }
+    .ggg.ggg header h1 { font-size: 17px; gap: 8px; }
+    .ggg.ggg header h1 .logo { width: 28px; height: 28px; }
+    .ggg.ggg .hctl { gap: 8px; }
+    .ggg.ggg .hctl button, .ggg.ggg .hctl select { height: 40px; }
+    .ggg.ggg .hctl button { width: 40px; }
+    .ggg.ggg .hctl select { width: 70px; }
+    .ggg.ggg .hplayers { order: 2; flex-basis: 100%; height: 40px; padding: 0 12px; justify-content: flex-start; align-items: center; }
+    .ggg.ggg .hplayers .sep { display: none; }
+    .ggg.ggg .hplayers .pk { margin-left: auto; }
+    .ggg.ggg .hleague { order: 2; height: 44px; font-size: 18px; }
+    .ggg.ggg #status { order: 3; margin-top: -2px; font-size: 13px; text-align: center; }
+    .ggg.ggg .toolbar { margin-top: 0; }
+  }
+  @media (max-width: 800px) {
+    .ggg.ggg body > header { column-gap: 8px; }
+    .ggg.ggg header h1 { font-size: 15.5px; letter-spacing: .4px; gap: 7px; white-space: nowrap; }
+    .ggg.ggg header h1 .logo { width: 24px; height: 24px; }
+    .ggg.ggg .hctl { gap: 6px; flex: none; }
+    .ggg.ggg .hctl button { width: 38px; height: 38px; }
+    .ggg.ggg .hctl select { width: 62px; height: 38px; padding-left: 9px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -1748,6 +1772,29 @@
     .ggg.ggg[data-theme=light] .toolbar:not(.stuck)::before { background: rgba(var(--shade), .55); -webkit-mask-image: none; mask-image: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
     .ggg.ggg[data-theme=light] .toolbar:not(.stuck)::after { -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; background: linear-gradient(90deg, transparent, rgba(169, 130, 54, 0.38) 12%, rgba(169, 130, 54, 0.38) 88%, transparent) left bottom / 100% 1px no-repeat; }
     .ggg.ggg[data-theme=light] .toolbar.stuck::before, .ggg.ggg[data-theme=light] .toolbar.stuck::after { bottom: -26px; }
+  }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] body > header { padding: 12px 12px 10px; gap: 10px; background: none; border-bottom: 0; box-shadow: none; }
+    .ggg.ggg[data-theme=light] header h1 { font-size: 17px; gap: 8px; }
+    .ggg.ggg[data-theme=light] header h1 .logo { width: 28px; height: 28px; }
+    .ggg.ggg[data-theme=light] .hctl { gap: 8px; }
+    .ggg.ggg[data-theme=light] .hctl button, .ggg.ggg[data-theme=light] .hctl select { height: 40px; }
+    .ggg.ggg[data-theme=light] .hctl button { width: 40px; }
+    .ggg.ggg[data-theme=light] .hctl select { width: 70px; }
+    .ggg.ggg[data-theme=light] .hplayers { order: 2; flex-basis: 100%; height: 40px; padding: 0 12px; justify-content: flex-start; align-items: center; }
+    .ggg.ggg[data-theme=light] .hplayers .sep { display: none; }
+    .ggg.ggg[data-theme=light] .hplayers .pk { margin-left: auto; }
+    .ggg.ggg[data-theme=light] .hleague { order: 2; height: 44px; font-size: 18px; }
+    .ggg.ggg[data-theme=light] #status { order: 3; margin-top: -2px; font-size: 13px; text-align: center; }
+    .ggg.ggg[data-theme=light] .toolbar { margin-top: 0; }
+  }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] body > header { column-gap: 8px; }
+    .ggg.ggg[data-theme=light] header h1 { font-size: 15.5px; letter-spacing: .4px; gap: 7px; white-space: nowrap; }
+    .ggg.ggg[data-theme=light] header h1 .logo { width: 24px; height: 24px; }
+    .ggg.ggg[data-theme=light] .hctl { gap: 6px; flex: none; }
+    .ggg.ggg[data-theme=light] .hctl button { width: 38px; height: 38px; }
+    .ggg.ggg[data-theme=light] .hctl select { width: 62px; height: 38px; padding-left: 9px; }
   }
 
   /* ---------- светлая тема: ручные правки ---------- */
