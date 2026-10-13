@@ -1456,6 +1456,19 @@
     .ggg.ggg .hctl select { width: 54px; height: 34px; padding-left: 7px; padding-right: 18px; background-position: right 5px center; }
   }
   .ggg.ggg .jsum .mi { background: #101318; }
+  /* итоги журнала: без плашек — колонки, разделённые вертикальными линиями */
+  .ggg.ggg .jsum { gap: 0; margin-bottom: 22px; }
+  .ggg.ggg .jsum .mi { background: none; border: 0; border-radius: 0; padding: 4px 22px 6px; border-left: 1px solid #2c2a25; }
+  .ggg.ggg .jsum .mi:first-child { border-left: 0; padding-left: 4px; }
+  @media (max-width: 800px) {
+    .ggg.ggg .jsum { row-gap: 14px; }
+    .ggg.ggg .jsum .mi { padding: 2px 14px 4px; }
+    .ggg.ggg .jsum .mi:nth-child(odd) { border-left: 0; padding-left: 4px; }
+  }
+  /* карточки журнала (сделки и пары) — без фона, только рамка */
+  .ggg.ggg.view-cards .rt tr.jrow, .ggg.ggg.view-cards .rt tr.jrow:hover { background: none; }
+  /* в виде карточек у таблицы нет своего фона и рамки (раньше проступал тёмный прямоугольник за карточками) */
+  .ggg.ggg.view-cards table.rt { background: none; outline: 0; box-shadow: none; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2088,6 +2101,16 @@
     .ggg.ggg[data-theme=light] .hctl select { width: 54px; height: 34px; padding-left: 7px; padding-right: 18px; background-position: right 5px center; }
   }
   .ggg.ggg[data-theme=light] .jsum .mi { background: #f3eee3; }
+  .ggg.ggg[data-theme=light] .jsum { gap: 0; margin-bottom: 22px; }
+  .ggg.ggg[data-theme=light] .jsum .mi { background: none; border: 0; border-radius: 0; padding: 4px 22px 6px; border-left: 1px solid #e8dcc5; }
+  .ggg.ggg[data-theme=light] .jsum .mi:first-child { border-left: 0; padding-left: 4px; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .jsum { row-gap: 14px; }
+    .ggg.ggg[data-theme=light] .jsum .mi { padding: 2px 14px 4px; }
+    .ggg.ggg[data-theme=light] .jsum .mi:nth-child(odd) { border-left: 0; padding-left: 4px; }
+  }
+  .ggg.ggg[data-theme=light].view-cards .rt tr.jrow, .ggg.ggg[data-theme=light].view-cards .rt tr.jrow:hover { background: none; }
+  .ggg.ggg[data-theme=light].view-cards table.rt { background: none; outline: 0; box-shadow: none; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
