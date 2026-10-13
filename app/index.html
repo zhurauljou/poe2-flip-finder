@@ -1571,6 +1571,12 @@
   @media (max-width: 1600px) {
     .ggg.ggg:not(.view-cards) #tab-cycles .rt :is(th, td):last-child { display: table-cell; }
   }
+  /* объединённая «Прибыль»: отдельная колонка суммы в таблице не нужна; в карточках — наоборот, сумма своей ячейкой */
+  .ggg.ggg:not(.view-cards) #tab-cycles .rt .c-amt { display: none; }
+  .ggg.ggg .rt .pamt { margin-top: 3px; font: 500 14px var(--body); color: #8f846c; white-space: nowrap; }
+  .ggg.ggg .rt .pamt b { color: #d8cdb2; font-weight: 700; }
+  .ggg.ggg.view-cards .rt .pamt { display: none; }
+  .ggg.ggg:not(.view-cards) #tab-cycles .rt td.good.big .warn { margin-top: 3px; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2292,6 +2298,11 @@
   @media (max-width: 1600px) {
     .ggg.ggg[data-theme=light]:not(.view-cards) #tab-cycles .rt :is(th, td):last-child { display: table-cell; }
   }
+  .ggg.ggg[data-theme=light]:not(.view-cards) #tab-cycles .rt .c-amt { display: none; }
+  .ggg.ggg[data-theme=light] .rt .pamt { margin-top: 3px; font: 500 14px var(--body); color: #9b8a68; white-space: nowrap; }
+  .ggg.ggg[data-theme=light] .rt .pamt b { color: #5b4e2e; font-weight: 700; }
+  .ggg.ggg[data-theme=light].view-cards .rt .pamt { display: none; }
+  .ggg.ggg[data-theme=light]:not(.view-cards) #tab-cycles .rt td.good.big .warn { margin-top: 3px; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -3814,7 +3825,7 @@ function renderCycles() {
   <table class="rt"><thead><tr>
     <th data-sort="len">${t("thPath")}${arrowTh("len")}</th>
     <th class="num" data-sort="profit">${t("thProfit")}${arrowTh("profit")}</th>
-    <th class="num" title="${whole ? t("thAmtTitle") : ""}">${bn} → ${tn}</th>
+    <th class="num c-amt" title="${whole ? t("thAmtTitle") : ""}">${bn} → ${tn}</th>
     <th class="num" data-sort="time" title="${t("thTimeTitle")}">${t("thTime")}${arrowTh("time")}</th>
     ${g.on ? `<th class="num" data-sort="gold" title="${t("thGoldTitle")}">${t("thGold")}${arrowTh("gold")}</th>` : ""}
     <th class="num" data-sort="perHour" title="${t("thPerHourTitle", { t: tn })}">${t("thPerHour")}${arrowTh("perHour")}</th>
@@ -3829,7 +3840,8 @@ function renderCycles() {
       <td class="wide"><div class="path">${favBtn(id)}${pathHtml}</div></td>
       <td class="c-hero"><div class="dprofit"><span class="mk">${t("thProfit")}</span><span class="hg good">+${amt(c.gain)} ${tn}</span><span class="hp good">+${(c.pct * 100).toFixed(2)}%</span>${newBadge(c)}${
         c.volatile ? `<span class="warn" title="${t("volatileTitle")}">${t("volatile")}</span>` : ""}${cardsView() ? pathTrend(c) : ""}</div></td>
-      <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%${newBadge(c) ? `<div>${newBadge(c)}</div>` : ""}${c.volatile
+      <td class="num good big"${L("thProfit")}>+${(c.pct * 100).toFixed(2)}%<div class="pamt">${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b> ${tn}${isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${
+        c.capped ? `<div class="warn pamt" title="${t("cappedTitle")}">${t("capped")}</div>` : ""}${newBadge(c) ? `<div>${newBadge(c)}</div>` : ""}${c.volatile
         ? `<div class="warn" title="${t("volatileTitle")}">${t("volatile")}</div>` : ""}</td>
       <td class="num c-amt"${L("thAmt")}>${amt(c.inAmt)} → <b>${amt(c.outAmt)}</b><div class="muted">+${amt(c.gain)} ${tn}${
         isCycle ? "" : ` · ${t("direct")} ${amt(c.direct)}`}</div>${c.capped
