@@ -1577,6 +1577,42 @@
   .ggg.ggg .rt .pamt b { color: #d8cdb2; font-weight: 700; }
   .ggg.ggg.view-cards .rt .pamt { display: none; }
   .ggg.ggg:not(.view-cards) #tab-cycles .rt td.good.big .warn { margin-top: 3px; }
+  /* ===== Фильтры: «Дополнительно», точки «изменено», сброс, счётчик; панель уведомлений ===== */
+  .ggg.ggg .fhead { display: flex; justify-content: flex-end; margin: -6px 0 6px; min-height: 0; }
+  .ggg.ggg .fhead #fReset { font: 600 14px var(--body); color: #c9a256; }
+  .ggg.ggg .fhead #fReset:hover { color: #fff0c0; }
+  /* изменённый фильтр — золотая точка перед подписью */
+  .ggg.ggg .fchg > .lh > span:first-child::before, .ggg.ggg .fchg > span[data-i18n]:first-child::before, .ggg.ggg label.check.fchg > span[data-i18n]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 6px 2px 0; border-radius: 50%; background: #e6c47a;
+    box-shadow: 0 0 6px rgba(230, 196, 122, .6); vertical-align: middle; }
+  /* счётчик изменённых на кнопке «Фильтры» */
+  .ggg.ggg .fcount { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px;
+    border-radius: 10px; background: #e6c47a; color: #1a1408; font: 700 12px/1 var(--body); text-shadow: none; }
+  .ggg.ggg .fcount[hidden] { display: none; }
+  /* «Дополнительно» — сворачиваемый блок */
+  .ggg.ggg .fadv { margin: 6px 0 14px; border-top: 1px solid #2c2a25; }
+  .ggg.ggg .fadv > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none;
+    font: 700 16px "Cormorant SC", var(--sc); letter-spacing: .4px; color: #b9ad85; }
+  .ggg.ggg .fadv > summary::-webkit-details-marker { display: none; }
+  .ggg.ggg .fadv > summary::after { content: ""; width: 7px; height: 7px; margin-left: auto; border: solid currentColor; border-width: 0 1.6px 1.6px 0;
+    transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s; }
+  .ggg.ggg .fadv[open] > summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+  .ggg.ggg .fadv > summary:hover { color: #f1e4c2; }
+  .ggg.ggg #fadvN { color: #e6c47a; font-family: var(--body); font-size: 14px; }
+  .ggg.ggg .fadv[open] { padding-bottom: 4px; }
+  /* колокольчик: включены уведомления — золотой */
+  .ggg.ggg #notifyBtn.on { color: #ffe08a; border-color: #b8975a; }
+  /* панель уведомлений — как «Доступ с телефона» */
+  #notifyPanel { position: fixed; right: 20px; top: 52px; z-index: 40; width: min(400px, calc(100vw - 24px)); max-height: calc(100vh - 80px); overflow-y: auto;
+                 background: var(--panel); border: 1px solid var(--btn-line); box-shadow: var(--shadow); }
+  #notifyPanel[hidden] { display: none; }
+  #notifyPanel .npin { padding: 12px 14px 14px; display: grid; gap: 10px; }
+  #notifyPanel .nsec { margin: 0; }
+  #notifyPanel .tg { margin-top: 0; }
+  .ggg.ggg #notifyPanel { border-radius: 0; background: #0e131b; border-color: #4a3f2c; box-shadow: var(--frame), var(--shadow); }
+  .ggg.ggg #notifyPanel .lanhead b { font: 700 18px var(--sc); color: var(--gold); letter-spacing: .4px; }
+  @media (max-width: 800px) {
+    #notifyPanel { right: 12px; left: 12px; width: auto; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2303,6 +2339,31 @@
   .ggg.ggg[data-theme=light] .rt .pamt b { color: #5b4e2e; font-weight: 700; }
   .ggg.ggg[data-theme=light].view-cards .rt .pamt { display: none; }
   .ggg.ggg[data-theme=light]:not(.view-cards) #tab-cycles .rt td.good.big .warn { margin-top: 3px; }
+  .ggg.ggg[data-theme=light] .fhead { display: flex; justify-content: flex-end; margin: -6px 0 6px; min-height: 0; }
+  .ggg.ggg[data-theme=light] .fhead #fReset { font: 600 14px var(--body); color: #a98236; }
+  .ggg.ggg[data-theme=light] .fhead #fReset:hover { color: #8a6900; }
+  .ggg.ggg[data-theme=light] .fchg > .lh > span:first-child::before, .ggg.ggg[data-theme=light] .fchg > span[data-i18n]:first-child::before, .ggg.ggg[data-theme=light] label.check.fchg > span[data-i18n]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 6px 2px 0; border-radius: 50%; background: #856319; box-shadow: 0 0 6px rgba(255, 255, 255, 0.48); vertical-align: middle; }
+  .ggg.ggg[data-theme=light] .fcount { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #856319; color: #f5f0e7; font: 700 12px/1 var(--body); text-shadow: none; }
+  .ggg.ggg[data-theme=light] .fcount[hidden] { display: none; }
+  .ggg.ggg[data-theme=light] .fadv { margin: 6px 0 14px; border-top: 1px solid #e8dcc5; }
+  .ggg.ggg[data-theme=light] .fadv > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font: 700 16px "Cormorant SC", var(--sc); letter-spacing: .4px; color: #73664d; }
+  .ggg.ggg[data-theme=light] .fadv > summary::-webkit-details-marker { display: none; }
+  .ggg.ggg[data-theme=light] .fadv > summary::after { content: ""; width: 7px; height: 7px; margin-left: auto; border: solid currentColor; border-width: 0 1.6px 1.6px 0; transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s; }
+  .ggg.ggg[data-theme=light] .fadv[open] > summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+  .ggg.ggg[data-theme=light] .fadv > summary:hover { color: #70581a; }
+  .ggg.ggg[data-theme=light] #fadvN { color: #856319; font-family: var(--body); font-size: 14px; }
+  .ggg.ggg[data-theme=light] .fadv[open] { padding-bottom: 4px; }
+  .ggg.ggg[data-theme=light] #notifyBtn.on { color: #8a6500; border-color: #a58447; }
+  #notifyPanel { position: fixed; right: 20px; top: 52px; z-index: 40; width: min(400px, calc(100vw - 24px)); max-height: calc(100vh - 80px); overflow-y: auto; background: var(--panel); border: 1px solid var(--btn-line); box-shadow: var(--shadow); }
+  #notifyPanel[hidden] { display: none; }
+  #notifyPanel .npin { padding: 12px 14px 14px; display: grid; gap: 10px; }
+  #notifyPanel .nsec { margin: 0; }
+  #notifyPanel .tg { margin-top: 0; }
+  .ggg.ggg[data-theme=light] #notifyPanel { border-radius: 0; background: #f3ede2; border-color: #d6cab2; box-shadow: var(--frame), var(--shadow); }
+  .ggg.ggg[data-theme=light] #notifyPanel .lanhead b { font: 700 18px var(--sc); color: var(--gold); letter-spacing: .4px; }
+  @media (max-width: 800px) {
+    #notifyPanel { right: 12px; left: 12px; width: auto; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2322,79 +2383,14 @@
     <select id="lang" aria-label="Language">
       <option value="ru">RU</option><option value="en">EN</option><option value="zh">中文</option>
     </select>
+    <button id="notifyBtn" type="button" data-i18n-title="notifyTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
     <button id="refresh" type="button" data-i18n-title="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></svg></button>
     <button id="lanBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg></button>
     <button id="theme" type="button"></button>
   </div>
 </header>
 <div id="lanPanel" hidden></div>
-<div id="updBar" hidden></div>
-<main>
-  <aside id="filters">
-    <div id="resizer"></div>
-    <div class="mhead"><b data-i18n="filters"></b><button id="filtersClose" type="button">×</button></div>
-    <div class="row">
-      <label><span data-i18n="source"></span><select id="source">
-        <option value="ggg" selected data-i18n="srcGgg"></option>
-        <option value="ninja">poe.ninja</option>
-      </select></label>
-      <label><span class="lh"><span data-i18n="window"></span><span class="tip" data-tip="hWindow"></span></span><select id="window">
-        <option value="1" data-i18n="w1"></option><option value="3" selected data-i18n="w3"></option>
-        <option value="6" data-i18n="w6"></option><option value="24" data-i18n="w24"></option>
-      </select></label>
-    </div>
-    <div class="lbl"><span data-i18n="base"></span><div class="seg" id="baseSeg" role="group"></div></div>
-    <label class="check"><input id="same" type="checkbox" checked><span data-i18n="sameTarget"></span><span class="tip" data-tip="hTarget"></span></label>
-    <div class="lbl" id="targetBox" hidden><span data-i18n="target"></span><div class="seg" id="targetSeg" role="group"></div></div>
-    <!-- Сами значения живут в скрытых списках: их читают расчёты и сохранение настроек. -->
-    <select id="base" hidden></select><select id="target" hidden></select>
-    <div class="lbl"><span class="lh"><span data-i18n="capital"></span><span class="tip" data-tip="hCapital"></span></span>
-      <span class="stepper full" id="capitalStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="capital" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="10"><button type="button" tabindex="-1" data-d="1">+</button></span>
-      <div id="capPrev" class="cap-prev"></div>
-      <div id="capBest" class="cap-best"></div>
-    </div>
-    <label class="check"><input id="round" type="checkbox"><span data-i18n="round"></span><span class="tip" data-tip="hRound"></span></label>
-    <div class="row">
-      <div class="lbl"><span data-i18n="maxLen"></span>
-        <div class="seg" id="maxLenSeg" role="group"><button type="button" data-v="3">3</button><button type="button" data-v="4">4</button><button type="button" data-v="5">5</button></div>
-        <select id="maxLen" hidden><option selected>3</option><option>4</option><option>5</option></select>
-      </div>
-      <label><span class="lh"><span data-i18n="fee"></span><span class="tip" data-tip="hFee"></span></span><input id="fee" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="1"></label>
-    </div>
-    <div class="lbl"><span class="lh"><span data-i18n="adaptive"></span><span class="tip" data-tip="hAdaptive"></span></span>
-      <div class="seg seg-text" id="noiseSeg" role="group">
-        <button type="button" data-v="0"><span class="sl" data-i18n="nOff"></span><span class="ss">0</span></button>
-        <button type="button" data-v="0.5"><span class="sl" data-i18n="nSoft"></span><span class="ss">×0.5</span></button>
-        <button type="button" data-v="1"><span class="sl" data-i18n="nNorm"></span><span class="ss">×1</span></button>
-        <button type="button" data-v="1.5"><span class="sl" data-i18n="nStrict"></span><span class="ss">×1.5</span></button>
-      </div>
-      <!-- Значение живёт в скрытом списке: его читают расчёты и сохранение настроек. -->
-      <select id="noise" hidden><option value="0"></option><option value="0.5"></option><option value="1" selected></option><option value="1.5"></option></select>
-    </div>
-    <div class="row">
-      <label><span class="lh"><span data-i18n="goldBudget"></span><span class="tip" data-tip="hGoldBudget"></span></span><input id="goldBudget" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="noLimit"></label>
-      <label><span class="lh"><span data-i18n="goldEff"></span><span class="tip" data-tip="hGoldEff"></span></span><input id="goldEff" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="anyEff"></label>
-    </div>
-    <label><span class="lh"><span data-i18n="minVol"></span><span class="tip" data-tip="hMinVol"></span></span><input id="minVol" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="100"></label>
-    <div class="row">
-      <label><span data-i18n="minProfit"></span><input id="minProfit" type="text" inputmode="decimal" autocomplete="off" step="0.1" value="1"></label>
-      <label><span class="lh"><span data-i18n="maxProfit"></span><span class="tip" data-tip="hMaxProfit"></span></span><input id="maxProfit" type="text" inputmode="decimal" autocomplete="off" step="1" value="30"></label>
-    </div>
-    <div class="row">
-      <label><span class="lh"><span data-i18n="share"></span><span class="tip" data-tip="hShare"></span></span><input id="share" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="25"></label>
-      <label><span class="lh"><span data-i18n="overhead"></span><span class="tip" data-tip="hOverhead"></span></span><input id="overhead" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="2"></label>
-    </div>
-    <div class="lbl"><span class="lh"><span data-i18n="maxHours"></span><span class="tip" data-tip="hMaxHours"></span></span>
-      <span class="stepper full" id="maxHoursStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="maxHours" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="" data-i18n-ph="noLimit"><button type="button" tabindex="-1" data-d="1">+</button></span>
-    </div>
-    <div class="lbl"><span class="lh"><span data-i18n="minStreak"></span><span class="tip" data-tip="hMinStreak"></span></span>
-      <span class="stepper full" id="minStreakStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="minStreak" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" value="" data-i18n-ph="anyStreak"><button type="button" tabindex="-1" data-d="1">+</button></span>
-    </div>
-    <div class="lbl xsec"><span class="lh"><span data-i18n="exclude"></span><span class="tip" data-tip="hExclude"></span></span>
-      <div id="exCats" class="xchips"></div>
-      <div id="exItems" class="xchips"></div>
-    </div>
-    <label class="check"><input id="auto" type="checkbox"><span data-i18n="auto"></span><span class="tip" data-tip="hAuto"></span></label>
+<div id="notifyPanel" hidden><div class="npin"><div class="lanhead"><b data-i18n="notifyTitle"></b><button type="button" class="lanx" id="notifyClose">×</button></div>
     <div class="nsec">
       <label class="check"><input id="notifyOn" type="checkbox"><span data-i18n="notifyOn"></span><span class="tip" data-tip="hNotify"></span></label>
       <div id="notifyOpts" hidden>
@@ -2407,6 +2403,77 @@
       </div>
     </div>
     <div class="tg" id="tgBox"></div>
+</div></div>
+<div id="updBar" hidden></div>
+<main>
+  <aside id="filters">
+    <div id="resizer"></div>
+    <div class="mhead"><b data-i18n="filters"></b><button id="filtersClose" type="button">×</button></div>
+    <div class="fhead"><button type="button" id="fReset" class="linkbtn" data-i18n="fReset" hidden></button></div>
+    <div class="lbl"><span data-i18n="base"></span><div class="seg" id="baseSeg" role="group"></div></div>
+    <label class="check"><input id="same" type="checkbox" checked><span data-i18n="sameTarget"></span><span class="tip" data-tip="hTarget"></span></label>
+    <div class="lbl" id="targetBox" hidden><span data-i18n="target"></span><div class="seg" id="targetSeg" role="group"></div></div>
+    <!-- Сами значения живут в скрытых списках: их читают расчёты и сохранение настроек. -->
+    <select id="base" hidden></select><select id="target" hidden></select>
+    <div class="lbl"><span class="lh"><span data-i18n="capital"></span><span class="tip" data-tip="hCapital"></span></span>
+      <span class="stepper full" id="capitalStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="capital" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="10"><button type="button" tabindex="-1" data-d="1">+</button></span>
+      <div id="capPrev" class="cap-prev"></div>
+      <div id="capBest" class="cap-best"></div>
+    </div>
+    <div class="row">
+      <div class="lbl"><span data-i18n="maxLen"></span>
+        <div class="seg" id="maxLenSeg" role="group"><button type="button" data-v="3">3</button><button type="button" data-v="4">4</button><button type="button" data-v="5">5</button></div>
+        <select id="maxLen" hidden><option selected>3</option><option>4</option><option>5</option></select>
+      </div>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="adaptive"></span><span class="tip" data-tip="hAdaptive"></span></span>
+      <div class="seg seg-text" id="noiseSeg" role="group">
+        <button type="button" data-v="0"><span class="sl" data-i18n="nOff"></span><span class="ss">0</span></button>
+        <button type="button" data-v="0.5"><span class="sl" data-i18n="nSoft"></span><span class="ss">×0.5</span></button>
+        <button type="button" data-v="1"><span class="sl" data-i18n="nNorm"></span><span class="ss">×1</span></button>
+        <button type="button" data-v="1.5"><span class="sl" data-i18n="nStrict"></span><span class="ss">×1.5</span></button>
+      </div>
+      <!-- Значение живёт в скрытом списке: его читают расчёты и сохранение настроек. -->
+      <select id="noise" hidden><option value="0"></option><option value="0.5"></option><option value="1" selected></option><option value="1.5"></option></select>
+    </div>
+    <label><span class="lh"><span data-i18n="minVol"></span><span class="tip" data-tip="hMinVol"></span></span><input id="minVol" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="100"></label>
+    <div class="row">
+      <label><span data-i18n="minProfit"></span><input id="minProfit" type="text" inputmode="decimal" autocomplete="off" step="0.1" value="1"></label>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="minStreak"></span><span class="tip" data-tip="hMinStreak"></span></span>
+      <span class="stepper full" id="minStreakStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="minStreak" type="text" inputmode="decimal" autocomplete="off" min="0" step="1" value="" data-i18n-ph="anyStreak"><button type="button" tabindex="-1" data-d="1">+</button></span>
+    </div>
+    <div class="lbl xsec"><span class="lh"><span data-i18n="exclude"></span><span class="tip" data-tip="hExclude"></span></span>
+      <div id="exCats" class="xchips"></div>
+      <div id="exItems" class="xchips"></div>
+    </div>
+    <details class="fadv" id="fAdv"><summary><span data-i18n="fAdv"></span><span id="fadvN"></span></summary>
+    <div class="row">
+      <label><span data-i18n="source"></span><select id="source">
+        <option value="ggg" selected data-i18n="srcGgg"></option>
+        <option value="ninja">poe.ninja</option>
+      </select></label>
+      <label><span class="lh"><span data-i18n="window"></span><span class="tip" data-tip="hWindow"></span></span><select id="window">
+        <option value="1" data-i18n="w1"></option><option value="3" selected data-i18n="w3"></option>
+        <option value="6" data-i18n="w6"></option><option value="24" data-i18n="w24"></option>
+      </select></label>
+    </div>
+    <label class="check"><input id="round" type="checkbox"><span data-i18n="round"></span><span class="tip" data-tip="hRound"></span></label>
+      <label><span class="lh"><span data-i18n="fee"></span><span class="tip" data-tip="hFee"></span></span><input id="fee" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.1" value="1"></label>
+    <div class="row">
+      <label><span class="lh"><span data-i18n="goldBudget"></span><span class="tip" data-tip="hGoldBudget"></span></span><input id="goldBudget" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="noLimit"></label>
+      <label><span class="lh"><span data-i18n="goldEff"></span><span class="tip" data-tip="hGoldEff"></span></span><input id="goldEff" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" data-i18n-ph="anyEff"></label>
+    </div>
+      <label><span class="lh"><span data-i18n="maxProfit"></span><span class="tip" data-tip="hMaxProfit"></span></span><input id="maxProfit" type="text" inputmode="decimal" autocomplete="off" step="1" value="30"></label>
+    <div class="row">
+      <label><span class="lh"><span data-i18n="share"></span><span class="tip" data-tip="hShare"></span></span><input id="share" type="text" inputmode="decimal" autocomplete="off" min="1" max="100" step="1" value="25"></label>
+      <label><span class="lh"><span data-i18n="overhead"></span><span class="tip" data-tip="hOverhead"></span></span><input id="overhead" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="2"></label>
+    </div>
+    <div class="lbl"><span class="lh"><span data-i18n="maxHours"></span><span class="tip" data-tip="hMaxHours"></span></span>
+      <span class="stepper full" id="maxHoursStep"><button type="button" tabindex="-1" data-d="-1">−</button><input id="maxHours" type="text" inputmode="decimal" autocomplete="off" min="0" step="0.5" value="" data-i18n-ph="noLimit"><button type="button" tabindex="-1" data-d="1">+</button></span>
+    </div>
+    <label class="check"><input id="auto" type="checkbox"><span data-i18n="auto"></span><span class="tip" data-tip="hAuto"></span></label>
+    </details>
     <div class="bar" id="bar"><div></div></div>
     <div class="verline"><span id="verText"></span><button type="button" id="updCheck" class="linkbtn" data-i18n="updCheck"></button>
       · <button type="button" id="clOpen" class="linkbtn" data-i18n="updNotes"></button>
@@ -2417,7 +2484,7 @@
     <div class="toolbar">
       <button id="filtersBtn" type="button" aria-controls="filters">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
-        <span data-i18n="filters"></span><span id="fsum" class="muted"></span>
+        <span data-i18n="filters"></span><span id="fcount" class="fcount" hidden></span><span id="fsum" class="muted"></span>
       </button>
       <div class="tabs">
         <button data-tab="cycles" class="on"><span class="tl" data-i18n="tabCycles"></span><span class="ts" data-i18n="tabCyclesS"></span></button>
@@ -2446,6 +2513,10 @@
 <script>
 const $ = s => document.querySelector(s);
 const IMG = "https://web.poecdn.com";
+// Фильтры и их значения по умолчанию (как в разметке, до восстановления сохранённых) — для «Сбросить» и точек «изменено».
+const FILTER_KEYS = ["source", "window", "round", "fee", "noise", "goldBudget", "goldEff", "maxLen", "minVol", "minProfit", "maxProfit",
+                     "share", "overhead", "maxHours", "minStreak"];
+const FILTER_DEF = Object.fromEntries(FILTER_KEYS.map(k => { const el = document.getElementById(k); return [k, el.type === "checkbox" ? el.checked : el.value]; }));
 const SETTINGS = ["league", "source", "window", "base", "target", "round", "capital", "goldBudget", "goldEff", "maxLen", "fee", "minVol", "minProfit", "maxProfit",
                   "share", "overhead", "maxHours", "minStreak", "noise", "auto", "notifyOn", "notifyPct", "notifyStreak", "notifySound"];
 let typingTimer = null;
@@ -2878,7 +2949,7 @@ const I18N = {
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
     tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (качается только недостающий час), poe.ninja — каждые 30 минут.",
-    refresh: "Обновить данные",
+    refresh: "Обновить данные", fReset: "Сбросить фильтры", fAdv: "Дополнительно", notifyTitle: "Уведомления",
     tabCycles: "Циклы флипа", tabRates: "Курсы валюты", searchPh: "Название валюты, напр. Chaos Orb или Greater Rune",
     noData: "Нет данных. Нажми «Обновить данные».",
     whatCycles: "циклов", whatPaths: "путей",
@@ -3026,7 +3097,7 @@ const I18N = {
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
     tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded), poe.ninja — every 30 minutes.",
-    refresh: "Refresh data",
+    refresh: "Refresh data", fReset: "Reset filters", fAdv: "Advanced", notifyTitle: "Notifications",
     tabCycles: "Flip cycles", tabRates: "Currency rates", searchPh: "Currency name, e.g. Chaos Orb or Greater Rune",
     noData: "No data. Press “Refresh data”.",
     whatCycles: "cycles", whatPaths: "paths",
@@ -3174,7 +3245,7 @@ const I18N = {
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
     tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG 每 5 分钟检查一次（只下载缺少的小时），poe.ninja 每 30 分钟一次。",
-    refresh: "刷新数据",
+    refresh: "刷新数据", fReset: "重置筛选", fAdv: "更多选项", notifyTitle: "通知",
     tabCycles: "套利循环", tabRates: "货币汇率", searchPh: "货币名称，如 Chaos Orb 或 Greater Rune",
     noData: "没有数据。请点击“刷新数据”。",
     whatCycles: "循环", whatPaths: "路径",
@@ -3416,6 +3487,7 @@ function save() {
     for (const k of SETTINGS) { const el = $("#" + k); o[k] = el.type === "checkbox" ? el.checked : el.value; }
     localStorage.setItem("poe2flip", JSON.stringify(o));
   } catch (e) {}
+  updateFilterMarks();
   scheduleTgSync();
 }
 function load() {
@@ -5298,7 +5370,39 @@ document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
   for (const n of ["cycles", "flips", "journal"]) $("#tab-" + n).hidden = b.dataset.tab !== n;
   updateFilterUi(); scheduleCapPreview(); updateFavBtn();
 });
+function updateFilterMarks() {
+  let n = 0, nAdv = 0;
+  for (const k of FILTER_KEYS) {
+    const el = $("#" + k), ch = (el.type === "checkbox" ? el.checked : el.value) !== FILTER_DEF[k];
+    el.closest(".lbl, label")?.classList.toggle("fchg", ch);
+    if (ch) { n++; if (el.closest(".fadv")) nAdv++; }
+  }
+  $("#fcount").textContent = n; $("#fcount").hidden = !n;
+  $("#fReset").hidden = !n;
+  $("#fadvN").textContent = nAdv ? ` · ${nAdv}` : "";
+  $("#notifyBtn").classList.toggle("on", $("#notifyOn").checked);
+}
+$("#fReset").onclick = () => {
+  const reload = ["source", "window"].some(k => $("#" + k).value !== FILTER_DEF[k]);
+  for (const k of FILTER_KEYS) { const el = $("#" + k); if (el.type === "checkbox") el.checked = FILTER_DEF[k]; else el.value = FILTER_DEF[k]; }
+  renderSegs(); save(); listN.cycles = listN.flips = PAGE;
+  if (reload) loadMarket(); else { renderCycles(); renderFlips(); }
+};
+// Уведомления и Telegram — панель под колокольчиком.
+{
+  const p = $("#notifyPanel"), b = $("#notifyBtn");
+  b.onclick = e => {
+    e.stopPropagation();
+    p.hidden = !p.hidden;
+    if (!p.hidden) { $("#lanPanel").hidden = true; p.style.top = Math.round(b.getBoundingClientRect().bottom + 6) + "px"; }
+  };
+  $("#notifyClose").onclick = () => { p.hidden = true; };
+  document.addEventListener("click", e => { if (!p.hidden && !p.contains(e.target) && !b.contains(e.target)) p.hidden = true; });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") p.hidden = true; });
+  $("#notifyOn").addEventListener("change", updateFilterMarks);
+}
 init();
+updateFilterMarks();
 </script>
 </body>
 </html>
