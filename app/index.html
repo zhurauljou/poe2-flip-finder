@@ -1661,6 +1661,17 @@
   /* кнопка-подсказка в пустой выдаче — по центру, по ширине текста */
   .ggg.ggg .capsug { display: flex; justify-content: center; margin-top: -10px; }
   .ggg.ggg .capsug button.more { width: auto; padding: 0 22px; }
+  /* «Сбросить» рядом с «Фильтры» — призрачная кнопка */
+  .ggg.ggg .toolbar #fReset { width: auto; min-height: 40px; margin: 0; padding: 0 12px; border: 0; border-radius: 2px; background: none; box-shadow: none;
+    color: #c9a256; font: 700 15px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 #000; }
+  .ggg.ggg .toolbar #fReset:hover { background: rgba(241, 228, 194, .07); color: #fff0c0; }
+  .ggg.ggg .toolbar #fReset[hidden] { display: none; }
+  .ggg.ggg .presets button { white-space: nowrap; }
+  @media (max-width: 800px) {
+    .ggg.ggg .toolbar { grid-template-columns: minmax(0, 1fr) auto auto; }
+    .ggg.ggg .toolbar #fReset { grid-column: 2; grid-row: 1; min-height: 44px; padding: 0 8px; }
+    .ggg.ggg .toolbar .favtoggle { grid-column: 3; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2450,6 +2461,15 @@
   }
   .ggg.ggg[data-theme=light] .capsug { display: flex; justify-content: center; margin-top: -10px; }
   .ggg.ggg[data-theme=light] .capsug button.more { width: auto; padding: 0 22px; }
+  .ggg.ggg[data-theme=light] .toolbar #fReset { width: auto; min-height: 40px; margin: 0; padding: 0 12px; border: 0; border-radius: 2px; background: none; box-shadow: none; color: #a98236; font: 700 15px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.30); }
+  .ggg.ggg[data-theme=light] .toolbar #fReset:hover { background: rgba(112, 88, 26, 0.07); color: #8a6900; }
+  .ggg.ggg[data-theme=light] .toolbar #fReset[hidden] { display: none; }
+  .ggg.ggg[data-theme=light] .presets button { white-space: nowrap; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .toolbar { grid-template-columns: minmax(0, 1fr) auto auto; }
+    .ggg.ggg[data-theme=light] .toolbar #fReset { grid-column: 2; grid-row: 1; min-height: 44px; padding: 0 8px; }
+    .ggg.ggg[data-theme=light] .toolbar .favtoggle { grid-column: 3; }
+  }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -2498,7 +2518,6 @@
     <div id="resizer"></div>
     <div class="mhead"><b data-i18n="filters"></b><button id="filtersClose" type="button">×</button></div>
     <div class="presets" id="presets" role="group"></div>
-    <div class="fhead"><button type="button" id="fReset" class="linkbtn" data-i18n="fReset" hidden></button></div>
     <div class="lbl"><span data-i18n="base"></span><div class="seg" id="baseSeg" role="group"></div></div>
     <label class="check"><input id="same" type="checkbox" checked><span data-i18n="sameTarget"></span><span class="tip" data-tip="hTarget"></span></label>
     <div class="lbl" id="targetBox" hidden><span data-i18n="target"></span><div class="seg" id="targetSeg" role="group"></div></div>
@@ -2576,6 +2595,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
         <span data-i18n="filters"></span><span id="fcount" class="fcount" hidden></span><span id="fsum" class="muted"></span>
       </button>
+      <button type="button" id="fReset" class="freset" data-i18n="fResetS" hidden></button>
       <div class="tabs">
         <button data-tab="cycles" class="on"><span class="tl" data-i18n="tabCycles"></span><span class="ts" data-i18n="tabCyclesS"></span></button>
         <button data-tab="flips"><span class="tl" data-i18n="tabFlips"></span><span class="ts" data-i18n="tabFlips"></span></button>
@@ -3039,7 +3059,7 @@ const I18N = {
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
     tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (качается только недостающий час), poe.ninja — каждые 30 минут.",
-    refresh: "Обновить данные", fReset: "Сбросить фильтры", capSuggest: "Увеличить капитал до {c} {cur} · найдётся {n}", menu: "Меню", pre_safe: "Надёжные", pre_fast: "Быстрые", pre_max: "Максимум прибыли", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
+    refresh: "Обновить данные", fReset: "Сбросить фильтры", capSuggest: "Увеличить капитал до {c} {cur} · найдётся {n}", menu: "Меню", pre_safe: "Надёжно", pre_fast: "Быстро", pre_max: "Прибыльно", fResetS: "Сбросить", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
     tabCycles: "Циклы флипа", tabRates: "Курсы валюты", searchPh: "Название валюты, напр. Chaos Orb или Greater Rune",
     noData: "Нет данных. Нажми «Обновить данные».",
     whatCycles: "циклов", whatPaths: "путей",
@@ -3187,7 +3207,7 @@ const I18N = {
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
     tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded), poe.ninja — every 30 minutes.",
-    refresh: "Refresh data", fReset: "Reset filters", capSuggest: "Raise capital to {c} {cur} · {n} found", menu: "Menu", pre_safe: "Reliable", pre_fast: "Fast", pre_max: "Max profit", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
+    refresh: "Refresh data", fReset: "Reset filters", capSuggest: "Raise capital to {c} {cur} · {n} found", menu: "Menu", pre_safe: "Safe", pre_fast: "Fast", pre_max: "Profit", fResetS: "Reset", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
     tabCycles: "Flip cycles", tabRates: "Currency rates", searchPh: "Currency name, e.g. Chaos Orb or Greater Rune",
     noData: "No data. Press “Refresh data”.",
     whatCycles: "cycles", whatPaths: "paths",
@@ -3335,7 +3355,7 @@ const I18N = {
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
     tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG 每 5 分钟检查一次（只下载缺少的小时），poe.ninja 每 30 分钟一次。",
-    refresh: "刷新数据", fReset: "重置筛选", capSuggest: "将本金提高到 {c} {cur} · 可找到 {n} 个", menu: "菜单", pre_safe: "稳健", pre_fast: "快速", pre_max: "最大利润", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
+    refresh: "刷新数据", fReset: "重置筛选", capSuggest: "将本金提高到 {c} {cur} · 可找到 {n} 个", menu: "菜单", pre_safe: "稳健", pre_fast: "快速", pre_max: "高利润", fResetS: "重置", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
     tabCycles: "套利循环", tabRates: "货币汇率", searchPh: "货币名称，如 Chaos Orb 或 Greater Rune",
     noData: "没有数据。请点击“刷新数据”。",
     whatCycles: "循环", whatPaths: "路径",
