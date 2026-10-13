@@ -1551,6 +1551,9 @@
   .ggg.ggg :is(.fav.on, #dFav.on) .star { fill: currentColor; }
   .ggg.ggg #dFav .star, .ggg.ggg.view-cards .rt .path > .fav .star { width: 22px; height: 22px; }
   .ggg.ggg #drawer #dFav, .ggg.ggg #drawer #dFav.on, .ggg.ggg #drawer #dFav:hover { border: 0; background: none; box-shadow: none; }
+  /* строки «Пар» не кликабельны — без подсветки и курсора-руки */
+  .ggg.ggg #flipsBox tr.cyc { cursor: default; }
+  .ggg.ggg #flipsBox tr.cyc:hover { background: none; }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2258,6 +2261,8 @@
   .ggg.ggg[data-theme=light] :is(.fav.on, #dFav.on) .star { fill: currentColor; }
   .ggg.ggg[data-theme=light] #dFav .star, .ggg.ggg[data-theme=light].view-cards .rt .path > .fav .star { width: 22px; height: 22px; }
   .ggg.ggg[data-theme=light] #drawer #dFav, .ggg.ggg[data-theme=light] #drawer #dFav.on, .ggg.ggg[data-theme=light] #drawer #dFav:hover { border: 0; background: none; box-shadow: none; }
+  .ggg.ggg[data-theme=light] #flipsBox tr.cyc { cursor: default; }
+  .ggg.ggg[data-theme=light] #flipsBox tr.cyc:hover { background: none; }
 
   /* ---------- светлая тема: ручные правки ---------- */
   .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
@@ -5068,7 +5073,7 @@ function renderFlips() {
   const total = list.length;
   counts.flips = total; updateFilterUi(); scheduleCapPreview();
   list = list.slice(0, listN.flips);
-  const intro = `<div class="muted" style="margin-bottom:8px">${t("flipsIntro", { b: bn, n: total })}<span class="tip" data-tip="hFlips"></span></div>`;
+  const intro = "";
   if (!total) { box.innerHTML = intro + `<div class="empty">${fq ? t("flipsNoMatch", { q: esc(fq) }) : t(ui.favOnly ? "favNone" : "flipsNone")}</div>`; prepTips(box); wireFav(box); return; }
   const arrowTh = k => flipSort === k ? " ▾" : "";
   const L = k => ` data-label="${esc(t(k))}"`;
@@ -5107,10 +5112,6 @@ function renderFlips() {
   box.querySelectorAll("th[data-sort]").forEach(th => th.onclick = () => { flipSort = th.dataset.sort; listN.flips = PAGE; renderFlips(); });
   $("#flipSort").onchange = e => { flipSort = e.target.value; listN.flips = PAGE; renderFlips(); };
   wireFav(box);
-  const byId = new Map(list.map(c => [c.nodes.join(">"), c]));
-  box.querySelectorAll("tr.cyc").forEach(tr => tr.onclick = () => {
-    if (drawer.id === tr.dataset.id) closeDrawer(); else openDrawer(byId.get(tr.dataset.id));
-  });
 }
 
 // ---------- вкладка «курсы» ----------
