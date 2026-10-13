@@ -1,9 +1,10 @@
 @echo off
 chcp 65001 >nul
 setlocal
-cd /d "%~dp0"
+rem Скрипт лежит в tools — работаем из корня программы.
+cd /d "%~dp0.."
 
-if not exist "server.py" (
+if not exist "app\server.py" (
   echo [!] Не найден server.py рядом с этим файлом.
   echo     Скорее всего, программа запущена прямо из архива.
   echo     Закройте окно, нажмите на архив правой кнопкой - "Извлечь все",
@@ -29,8 +30,8 @@ if not defined PY (
   exit /b 1
 )
 
-echo Собираю архив для передачи другому человеку...
-%PY% server.py --pack
+echo Собираю архив для релиза на GitHub...
+%PY% app\server.py --pack
 echo.
-echo Отправляй файл poe2-flip.zip из этой папки. Твои журнал сделок, токен бота и подписчики в архив не попадают.
+echo Файл poe2-flip.zip — в корне папки программы. Прикрепи его к релизу на GitHub (см. RELEASING.md).
 pause

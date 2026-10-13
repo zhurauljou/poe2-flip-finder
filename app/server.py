@@ -22,6 +22,9 @@ import notify
 import update
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+# Корень папки программы — там запускаторы и инструкция; сама программа лежит в app/.
+# (Версия 1.0 лежала прямо в корне — тогда корень и есть папка программы.)
+ROOT = os.path.dirname(HERE) if os.path.basename(HERE) == "app" else HERE
 CACHE_DIR = os.path.join(HERE, "cache")
 
 
@@ -49,9 +52,10 @@ def migrate_private():
             shutil.move(old, new)
 PORT = int(os.environ.get("POE2FLIP_PORT", "8765"))
 # 127.0.0.1 — только этот компьютер; 0.0.0.0 — ещё и телефон/планшет в той же Wi-Fi сети.
-HOST = os.environ.get("POE2FLIP_HOST", "127.0.0.1")
+# Переключается кнопкой 📱 на странице без перезапуска; выбор запоминается в настройках (app.json).
+LOCAL, LAN = "127.0.0.1", "0.0.0.0"
 
-VERSION = "1.0"
+VERSION = "1.1"
 API = "https://poe.ninja/poe2/api"
 UA = "poe2-flip-finder/%s (personal desktop tool)" % VERSION
 
@@ -235,9 +239,9 @@ AUTO_EVERY = 300
 
 
 def link_base():
-    """Ссылка «Открыть в программе»: с телефона работает, если сервер запущен в режиме для телефона."""
+    """Ссылка «Открыть в программе»: с телефона работает, если включён доступ с телефона."""
     host = "127.0.0.1"
-    if HOST != "127.0.0.1":
+    if net["host"] != LOCAL:
         ips = lan_ips()
         host = ips[0] if ips else host
     return "http://%s:%d/" % (host, PORT)
@@ -398,6 +402,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(journal_read())
         elif url.path == "/api/update":
             self.send_json(update.status(VERSION))
+        elif url.path == "/api/lan":
+            self.send_json(lan_status())
         elif url.path == "/api/notify":
             self.send_json(notify.public_status(DATA_DIR))
         elif url.path == "/api/status":
@@ -437,7 +443,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = urllib.parse.urlparse(self.path).path
-        if path not in ("/api/journal", "/api/notify", "/api/update"):
+        if path not in ("/api/journal", "/api/notify", "/api/update", "/api/lan"):
             self.send_error(404)
             return
         size = int(self.headers.get("Content-Length") or 0)
@@ -448,9 +454,11 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(size).decode("utf-8"))
             if path == "/api/journal":
                 self.send_json(journal_change(body))
+            elif path == "/api/lan":
+                self.send_json(set_lan(bool(body.get("enabled"))))
             elif path == "/api/update":
                 if body.get("op") == "install":
-                    self.send_json(update.install(HERE, PACK_FILES, VERSION, UA))
+                    self.send_json(update.install(ROOT, PACK_FILES, VERSION, UA))
                 else:
                     update.check(UA)
                     self.send_json(update.status(VERSION))
@@ -458,6 +466,70 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(notify.handle(DATA_DIR, body))
         except (ValueError, AttributeError, RuntimeError) as e:
             self.send_json({"error": str(e)}, 400)
+
+
+# ---------- доступ с телефона ----------
+def app_settings():
+    try:
+        with open(os.path.join(DATA_DIR, "app.json"), encoding="utf-8") as fh:
+            d = json.load(fh)
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def save_app_settings(d):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(os.path.join(DATA_DIR, "app.json"), "w", encoding="utf-8") as fh:
+        json.dump(d, fh)
+
+
+net = {"host": LOCAL, "srv": None, "rebind": False, "error": None}
+
+
+def lan_status():
+    on = net["host"] != LOCAL
+    return {"enabled": on, "port": PORT, "urls": ["http://%s:%d/" % (ip, PORT) for ip in lan_ips()] if on else [],
+            "error": net["error"]}
+
+
+def set_lan(on):
+    """Включить/выключить доступ с телефона: сервер переоткрывается на другом адресе, программа не перезапускается."""
+    want = LAN if on else LOCAL
+    d = app_settings()
+    d["lan"] = bool(on)
+    save_app_settings(d)
+    if want != net["host"] and net["srv"]:
+        net.update(host=want, rebind=True, error=None)
+        threading.Timer(0.3, net["srv"].shutdown).start()  # ответ на запрос успеет уйти
+    st = lan_status()
+    st.update(enabled=on, urls=["http://%s:%d/" % (ip, PORT) for ip in lan_ips()] if on else [])
+    return st
+
+
+def bind(host):
+    """Открыть сервер на адресе; сразу после закрытия прежнего порт может быть занят — пробуем несколько раз."""
+    err = None
+    for _ in range(40):
+        try:
+            return Server((host, PORT), Handler)
+        except OSError as e:
+            err = e
+            time.sleep(0.25)
+    raise err
+
+
+def print_lan():
+    ips = lan_ips() or ["<IP компьютера>"]
+    print()
+    print("  Доступ с телефона включён. На телефоне (в той же Wi-Fi сети) откройте:")
+    for ip in ips:
+        print("    http://%s:%d/" % (ip, PORT))
+    if len(ips) > 1:
+        print("  (если адресов несколько — нужен тот, что от Wi-Fi роутера, обычно 192.168.x.x)")
+    print("  Не открывается — разрешите Python в брандмауэре Windows и отключите VPN")
+    print("  или включите в нём доступ к локальной сети.")
+    print()
 
 
 def lan_ips():
@@ -474,20 +546,20 @@ def lan_ips():
     return sorted((ip for ip in found if private(ip)), key=lambda ip: (not ip.startswith("192.168."), ip))
 
 
-# Что кладётся в архив для передачи: только программа. Без cache/ и без личных файлов (они и так не в папке программы).
-PACK_FILES = ["index.html", "server.py", "ggg.py", "notify.py", "update.py", "Как запустить.txt",
-              "Запустить (Windows).bat", "Запустить для телефона (Windows).bat", "Собрать архив для передачи (Windows).bat",
-              "Запустить (Mac).command", "Запустить для телефона (Mac).command", "Собрать архив для передачи (Mac).command"]
+# Что кладётся в архив для людей (и в обновление): запускаторы и инструкция в корне, программа — в app/.
+# Без кэша и личных файлов (они и так не в папке программы). Пути — относительно корня.
+PACK_FILES = ["Запустить (Windows).bat", "Запустить (Mac).command", "Как запустить.txt",
+              "app/index.html", "app/server.py", "app/ggg.py", "app/notify.py", "app/update.py"]
 
 
 def pack():
     import zipfile
-    out = os.path.join(HERE, "poe2-flip.zip")
+    out = os.path.join(ROOT, "poe2-flip.zip")
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         for name in PACK_FILES:
-            path = os.path.join(HERE, name)
+            path = os.path.join(ROOT, name)
             if not os.path.exists(path):
-                continue
+                raise SystemExit("Нет файла %s — архив не собран" % name)
             info = zipfile.ZipInfo("poe2-flip/" + name, time.localtime(os.path.getmtime(path))[:6])
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = (0o755 if name.endswith(".command") else 0o644) << 16  # Mac: запускаемый файл
@@ -497,31 +569,44 @@ def pack():
     print("В архиве только файлы программы — без кэша, журнала, токена бота и подписчиков.")
 
 
+# Файлы версии 1.0, которые лежали в корне. После перехода в app/ они не нужны — убираем, чтобы не путали.
+OLD_ROOT_FILES = ["index.html", "server.py", "ggg.py", "notify.py", "update.py",
+                  "Запустить для телефона (Windows).bat", "Запустить для телефона (Mac).command",
+                  "Собрать архив для передачи (Windows).bat", "Собрать архив для передачи (Mac).command"]
+
+
+def tidy_old_layout():
+    if ROOT == HERE:
+        return
+    import shutil
+    for name in OLD_ROOT_FILES:
+        try:
+            os.remove(os.path.join(ROOT, name))
+        except OSError:
+            pass
+    shutil.rmtree(os.path.join(ROOT, "__pycache__"), ignore_errors=True)
+    old_cache = os.path.join(ROOT, "cache")
+    if os.path.isdir(old_cache) and not os.path.exists(CACHE_DIR):
+        shutil.move(old_cache, CACHE_DIR)  # скачанные курсы переезжают вместе с программой
+
+
 def main():
     if "--pack" in sys.argv:
         pack()
         return
     url = "http://127.0.0.1:%d/" % PORT
+    host = os.environ.get("POE2FLIP_HOST") or (LAN if app_settings().get("lan") else LOCAL)
     try:
-        srv = Server((HOST, PORT), Handler)
+        srv = Server((host, PORT), Handler)
     except OSError:
         # Уже запущен — просто открываем окно.
         print("Сервер уже работает, открываю %s" % url)
         webbrowser.open(url)
         return
+    net["host"] = host
     print("PoE 2 Flip Finder %s запущен: %s" % (VERSION, url))
-    if HOST != "127.0.0.1":
-        ips = lan_ips() or ["<IP компьютера>"]
-        print()
-        print("  На телефоне (в той же Wi-Fi сети) откройте:")
-        for ip in ips:
-            print("    http://%s:%d/" % (ip, PORT))
-        if len(ips) > 1:
-            print("  (если адресов несколько — нужен тот, что от Wi-Fi роутера, обычно 192.168.x.x)")
-        print("  Не открывается — разрешите Python в брандмауэре Windows и отключите VPN")
-        print("  или включите в нём доступ к локальной сети.")
-        print()
     print("Закройте это окно, чтобы остановить.")
+    tidy_old_layout()
     migrate_private()
     threading.Thread(target=background, daemon=True).start()
     threading.Thread(target=update_loop, daemon=True).start()
@@ -529,10 +614,25 @@ def main():
                      args=(DATA_DIR, {"leagues": leagues_list, "default_league": default_league, "market": market_dict})).start()
     if "--no-browser" not in sys.argv:
         threading.Timer(0.5, lambda: webbrowser.open(url)).start()
-    try:
-        srv.serve_forever()
-    except KeyboardInterrupt:
-        pass
+    while True:
+        net["srv"] = srv
+        if net["host"] != LOCAL:
+            print_lan()
+        try:
+            srv.serve_forever()
+        except KeyboardInterrupt:
+            break
+        srv.server_close()
+        if not net["rebind"]:
+            break
+        net["rebind"] = False
+        try:
+            srv = bind(net["host"])
+            if net["host"] == LOCAL:
+                print("Доступ с телефона выключен.")
+        except OSError as e:
+            net.update(error=str(e), host=LOCAL)
+            srv = bind(LOCAL)
 
 
 if __name__ == "__main__":

@@ -63,8 +63,9 @@ def status(current):
     return s
 
 
-def install(here, files, current, ua):
-    """Скачивает архив релиза и заменяет файлы программы. Возвращает, что изменилось."""
+def install(root, files, current, ua):
+    """Скачивает архив релиза и заменяет файлы программы. files — пути относительно корня программы
+    («app/server.py», «Запустить (Windows).bat»). Возвращает, что изменилось."""
     s = status(current)
     if not s["available"]:
         raise RuntimeError("обновлений нет")
@@ -75,17 +76,18 @@ def install(here, files, current, ua):
         z = zipfile.ZipFile(io.BytesIO(data))
     except zipfile.BadZipFile:
         raise RuntimeError("скачанный файл — не архив")
-    # В архиве файлы лежат в папке poe2-flip/ — берём только известные файлы программы, без путей из архива.
+    # В архиве всё лежит в папке poe2-flip/ — берём только известные файлы программы по их месту в архиве.
     new = {}
     for info in z.infolist():
-        name = info.filename.replace("\\", "/").split("/")[-1]
-        if name in files and not info.is_dir():
-            new[name] = (z.read(info), info.external_attr >> 16)
-    if "server.py" not in new or "index.html" not in new:
+        rel = info.filename.replace(chr(92), "/").split("/", 1)[-1]
+        if rel in files and not info.is_dir():
+            new[rel] = (z.read(info), info.external_attr >> 16)
+    if not any(r.endswith("server.py") for r in new) or not any(r.endswith("index.html") for r in new):
         raise RuntimeError("в архиве нет файлов программы")
     changed = []
     for name, (content, mode) in new.items():
-        path = os.path.join(here, name)
+        path = os.path.join(root, *name.split("/"))
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         try:
             with open(path, "rb") as fh:
                 if fh.read() == content:

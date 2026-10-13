@@ -293,6 +293,20 @@
   .fav.on { color: var(--gold); }
   .dhead .fav { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 17px; }
   .dhide { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 10px; font-size: 12.5px; }
+  /* ---- доступ с телефона ---- */
+  #lanBtn.on { color: var(--gold); border-color: var(--btn-line); background: var(--panel2); }
+  #lanPanel { position: fixed; right: 20px; top: 52px; z-index: 40; width: min(380px, calc(100vw - 24px));
+              background: var(--panel); border: 1px solid var(--btn-line); border-radius: 10px; box-shadow: var(--shadow); }
+  #lanPanel[hidden] { display: none; }
+  .lanin { padding: 12px 14px; display: grid; gap: 8px; font-size: 13px; }
+  .lanin .check { margin: 0; font-size: 13.5px; }
+  .lanhead { display: flex; align-items: center; justify-content: space-between; }
+  .lanx { width: 28px; height: 28px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 16px; }
+  .lanin code.dim { color: var(--muted); cursor: pointer; }
+  .qrbox { display: flex; justify-content: center; }
+  .qrbox .qr { border-radius: 8px; width: min(200px, 60vw); height: auto; }
+  .lanin .small { font-size: 12px; line-height: 1.5; }
+  @media (max-width: 800px) { #lanPanel { right: 12px; left: 12px; width: auto; } }
   /* ---- полоска обновления ---- */
   #updBar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 20px; border-bottom: 1px solid var(--btn-line);
             background: color-mix(in srgb, var(--gold) 10%, var(--bg)); font-size: 13.5px; }
@@ -447,9 +461,11 @@
     <select id="lang" aria-label="Language">
       <option value="ru">RU</option><option value="en">EN</option><option value="zh">中文</option>
     </select>
+    <button id="lanBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg></button>
     <button id="theme" type="button"></button>
   </div>
 </header>
+<div id="lanPanel" hidden></div>
 <div id="updBar" hidden></div>
 <main>
   <aside id="filters">
@@ -575,6 +591,201 @@ const SETTINGS = ["league", "source", "window", "base", "target", "round", "capi
                   "share", "overhead", "maxHours", "minStreak", "noise", "auto", "notifyOn", "notifyPct", "notifyStreak", "notifySound"];
 let typingTimer = null;
 let market = null, sortKey = "score", flipSort = "volume", autoTimer = null;
+
+// ---------- QR-код (для адреса «открыть с телефона») ----------
+// Свой небольшой генератор, чтобы не зависеть от внешних библиотек и сервисов (адрес никуда не уходит).
+// Стандарт QR: байтовый режим, уровень коррекции M, версии 1–10 (хватает на адрес до ~200 символов).
+const QR_ECC_M = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26];  // байтов коррекции на блок, по версиям
+const QR_BLOCKS_M = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5];         // блоков, по версиям
+function qrMatrix(text) {
+  const data = [...new TextEncoder().encode(text)];
+  const rawModules = v => {
+    let r = (16 * v + 128) * v + 64;
+    if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; }
+    return r;
+  };
+  const dataCodewords = v => Math.floor(rawModules(v) / 8) - QR_ECC_M[v] * QR_BLOCKS_M[v];
+  let ver = 1;
+  while (ver <= 10 && 4 + (ver < 10 ? 8 : 16) + 8 * data.length > dataCodewords(ver) * 8) ver++;
+  if (ver > 10) return null;
+  // биты: режим «байты», длина, данные, терминатор, добивка
+  const bits = [];
+  const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+  put(4, 4); put(data.length, ver < 10 ? 8 : 16); data.forEach(b => put(b, 8));
+  const cap = dataCodewords(ver) * 8;
+  put(0, Math.min(4, cap - bits.length));
+  put(0, (8 - bits.length % 8) % 8);
+  for (let pad = 0xEC; bits.length < cap; pad ^= 0xEC ^ 0x11) put(pad, 8);
+  const cw = [];
+  for (let i = 0; i < bits.length; i += 8) cw.push(parseInt(bits.slice(i, i + 8).join(""), 2));
+  // Рида — Соломона в GF(256), блоки и чередование
+  const mul = (x, y) => { let z = 0; for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z; };
+  const eccLen = QR_ECC_M[ver], nBlocks = QR_BLOCKS_M[ver], raw = Math.floor(rawModules(ver) / 8);
+  const div = new Array(eccLen).fill(0); div[eccLen - 1] = 1;
+  for (let i = 0, root = 1; i < eccLen; i++, root = mul(root, 2))
+    for (let j = 0; j < eccLen; j++) { div[j] = mul(div[j], root); if (j + 1 < eccLen) div[j] ^= div[j + 1]; }
+  const rem = dat => { const r = div.map(() => 0); for (const b of dat) { const f = b ^ r.shift(); r.push(0); div.forEach((c, i) => r[i] ^= mul(c, f)); } return r; };
+  const nShort = nBlocks - raw % nBlocks, shortLen = Math.floor(raw / nBlocks), blocks = [];
+  for (let i = 0, k = 0; i < nBlocks; i++) {
+    const dat = cw.slice(k, k + shortLen - eccLen + (i < nShort ? 0 : 1));
+    k += dat.length;
+    const ecc = rem(dat);
+    if (i < nShort) dat.push(0);
+    blocks.push(dat.concat(ecc));
+  }
+  const final = [];
+  for (let i = 0; i < blocks[0].length; i++)
+    blocks.forEach((b, j) => { if (i !== shortLen - eccLen || j >= nShort) final.push(b[i]); });
+  // матрица: служебные узоры
+  const size = ver * 4 + 17;
+  const mod = Array.from({ length: size }, () => new Array(size).fill(false));
+  const fn = Array.from({ length: size }, () => new Array(size).fill(false));
+  const set = (x, y, dark) => { mod[y][x] = dark; fn[y][x] = true; };
+  for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+  const finder = (x, y) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+    const d = Math.max(Math.abs(dx), Math.abs(dy)), xx = x + dx, yy = y + dy;
+    if (xx >= 0 && xx < size && yy >= 0 && yy < size) set(xx, yy, d !== 2 && d !== 4); } };
+  finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+  if (ver >= 2) {
+    const n = Math.floor(ver / 7) + 2, step = Math.ceil((ver * 4 + 4) / (n * 2 - 2)) * 2, pos = [6];
+    for (let p = size - 7; pos.length < n; p -= step) pos.splice(1, 0, p);
+    pos.forEach((a, i) => pos.forEach((b, j) => {
+      if ((i === 0 && j === 0) || (i === 0 && j === n - 1) || (i === n - 1 && j === 0)) return;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(a + dx, b + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+    }));
+  }
+  const format = mask => {
+    const d = (0 << 3) | mask;  // уровень M = 00
+    let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+    const b = ((d << 10) | r) ^ 0x5412, bit = i => ((b >>> i) & 1) === 1;
+    for (let i = 0; i <= 5; i++) set(8, i, bit(i));
+    set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+    for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
+    for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
+    set(8, size - 8, true);
+  };
+  format(0);
+  if (ver >= 7) {
+    let r = ver; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25);
+    const b = (ver << 12) | r;
+    for (let i = 0; i < 18; i++) { const c = ((b >>> i) & 1) === 1, a = size - 11 + i % 3, bb = Math.floor(i / 3); set(a, bb, c); set(bb, a, c); }
+  }
+  // данные — змейкой снизу вверх
+  for (let right = size - 1, i = 0; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let v = 0; v < size; v++) for (let j = 0; j < 2; j++) {
+      const x = right - j, y = ((right + 1) & 2) === 0 ? size - 1 - v : v;
+      if (!fn[y][x] && i < final.length * 8) { mod[y][x] = ((final[i >>> 3] >>> (7 - (i & 7))) & 1) === 1; i++; }
+    }
+  }
+  // маска — с наименьшим штрафом (длинные полосы, квадраты 2×2, перекос тёмного/светлого)
+  const masks = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, x => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+    (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0,
+    (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  const apply = m => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!fn[y][x] && masks[m](x, y)) mod[y][x] = !mod[y][x]; };
+  const penalty = () => {
+    let p = 0, dark = 0;
+    for (let a = 0; a < size; a++) for (const row of [true, false]) {
+      let run = 0, prev = null;
+      for (let b = 0; b < size; b++) {
+        const c = row ? mod[a][b] : mod[b][a];
+        if (c === prev) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else { run = 1; prev = c; }
+      }
+    }
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      if (mod[y][x]) dark++;
+      if (x < size - 1 && y < size - 1 && mod[y][x] === mod[y][x + 1] && mod[y][x] === mod[y + 1][x] && mod[y][x] === mod[y + 1][x + 1]) p += 3;
+    }
+    return p + Math.floor(Math.abs(dark * 20 - size * size * 10) / (size * size)) * 10;
+  };
+  let best = 0, bestP = Infinity;
+  for (let m = 0; m < 8; m++) { apply(m); format(m); const p = penalty(); if (p < bestP) { bestP = p; best = m; } apply(m); }
+  apply(best); format(best);
+  return mod;
+}
+// SVG: тёмные квадраты на белом поле с отступом 4 модуля — так телефон читает код в любой теме.
+function qrSvg(text, px = 180) {
+  const m = qrMatrix(text);
+  if (!m) return "";
+  const n = m.length + 8;
+  let d = "";
+  m.forEach((row, y) => row.forEach((dark, x) => { if (dark) d += `M${x + 4} ${y + 4}h1v1h-1z`; }));
+  return `<svg class="qr" viewBox="0 0 ${n} ${n}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR">` +
+    `<rect width="${n}" height="${n}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+}
+
+// ---------- доступ с телефона ----------
+// Кнопка 📱 в шапке: включить доступ из домашней Wi-Fi и показать адрес. Сервер переоткрывается сам, без перезапуска.
+let lan = null, lanBusy = false, lanSel = 0;
+async function loadLan() {
+  try {
+    const r = await fetch("/api/lan");
+    lan = r.ok ? await r.json() : null;
+  } catch (e) { if (!lanBusy) lan = null; }
+  renderLan();
+}
+function renderLan() {
+  const b = $("#lanBtn");
+  b.hidden = !lan;
+  b.classList.toggle("on", !!lan?.enabled);
+  b.title = t("lanTitle") + (lan?.enabled ? " — " + t("lanOnShort") : "");
+  b.setAttribute("aria-label", b.title);
+  const box = $("#lanPanel");
+  if (box.hidden || !lan) return;
+  // Открыли страницу с телефона — выключение отключит этот же телефон.
+  const viaLan = !["127.0.0.1", "localhost"].includes(location.hostname);
+  const urls = lan.urls || [];
+  box.innerHTML = `<div class="lanin">
+    <div class="lanhead"><b>${t("lanTitle")}</b><button type="button" class="lanx" title="${esc(t("dClose"))}">×</button></div>
+    <label class="check"><input type="checkbox" id="lanOn"${lan.enabled ? " checked" : ""}${lanBusy ? " disabled" : ""}><span>${t("lanToggle")}</span></label>
+    ${lanBusy ? `<div class="muted">${t("lanSwitching")}</div>` : ""}
+    ${lan.enabled && urls.length ? `<div class="muted">${t("lanScan")}</div>
+      <div class="qrbox">${qrSvg(urls[Math.min(lanSel, urls.length - 1)], 200)}</div>
+      <div class="muted small">${t("lanOpen")}</div>${urls.map((u, i) =>
+      `<div class="tgcode"><code class="${i === Math.min(lanSel, urls.length - 1) ? "" : "dim"}" data-sel="${i}">${esc(u)}</code><button type="button" class="ghost" data-copy="${esc(u)}">${t("tgCopy")}</button></div>`).join("")}
+      ${urls.length > 1 ? `<div class="muted small">${t("lanMany")}</div>` : ""}
+      <div class="muted small">${t("lanHint")}</div>` : ""}
+    ${lan.enabled && !urls.length ? `<div class="warn">${t("lanNoIp")}</div>` : ""}
+    ${!lan.enabled ? `<div class="muted small">${t("lanOffHint")}</div>` : ""}
+    ${viaLan && lan.enabled ? `<div class="warn small">${t("lanViaPhone")}</div>` : ""}
+    ${lan.error ? `<div class="bad small">${t("lanErr", { e: esc(lan.error) })}</div>` : ""}
+  </div>`;
+  box.querySelector(".lanx").onclick = () => { box.hidden = true; };
+  box.querySelectorAll("[data-sel]").forEach(c => c.onclick = () => { lanSel = +c.dataset.sel; renderLan(); });
+  box.querySelectorAll("[data-copy]").forEach(btn => btn.onclick = () =>
+    navigator.clipboard?.writeText(btn.dataset.copy).then(() => { btn.textContent = "✓"; setTimeout(() => btn.textContent = t("tgCopy"), 1500); }));
+  $("#lanOn").onchange = async e => {
+    lanBusy = true; renderLan();
+    try {
+      const r = await fetch("/api/lan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled: e.target.checked }) });
+      if (r.ok) lan = await r.json();
+    } catch (err) {}
+    // Сервер переоткрывается на новом адресе (обычно 1–3 с) — спрашиваем, пока не ответит.
+    for (let i = 0; i < 25; i++) {
+      await new Promise(r => setTimeout(r, 700));
+      try {
+        const r = await fetch("/api/lan");
+        if (r.ok) { lan = await r.json(); break; }
+      } catch (err) {}
+    }
+    lanBusy = false;
+    renderLan();
+  };
+}
+$("#lanBtn").onclick = e => {
+  e.stopPropagation();
+  const box = $("#lanPanel");
+  box.hidden = !box.hidden;
+  if (!box.hidden) {
+    box.style.top = Math.round($("#lanBtn").getBoundingClientRect().bottom + 6) + "px";  // под кнопкой
+    loadLan();
+  }
+};
+document.addEventListener("click", e => {
+  const box = $("#lanPanel");
+  if (!box.hidden && !box.contains(e.target) && e.target !== $("#lanBtn")) box.hidden = true;
+});
 
 // ---------- обновления ----------
 // Сервер раз в 6 часов спрашивает GitHub о новой версии; здесь — полоска «Доступна версия» и установка в один клик.
@@ -724,6 +935,14 @@ const I18N = {
     srvGold: "Загружаю комиссии в золоте…", srvHours: "Загружаю часовые сводки GGG…", srvErr: "Ошибка загрузки",
     srvDoneNinja: "Готово: {a} валют, {b} пар", srvDoneGgg: "Готово: сводок за {n} ч",
     tabFlips: "Туда-обратно", tabJournal: "Журнал",
+    lanScan: "Наведи камеру телефона на код — откроется программа:", lanTitle: "Доступ с телефона", lanOnShort: "включён", lanToggle: "Открывать программу с телефона в этой Wi-Fi сети",
+    lanSwitching: "Переключаю…", lanOpen: "Или открой адрес вручную (телефон — в той же Wi-Fi сети):",
+    lanMany: "Адресов несколько — нужен тот, что от Wi-Fi роутера, обычно 192.168.x.x.",
+    lanHint: "Не открывается? Разреши Python в брандмауэре Windows (окно с вопросом появится при первом включении), в свойствах Wi-Fi выбери «Частная сеть», а VPN отключи или разреши в нём локальную сеть.",
+    lanNoIp: "Не нашёл адрес компьютера в домашней сети — проверь, что компьютер подключён к Wi-Fi или роутеру.",
+    lanOffHint: "Сейчас программу можно открыть только на этом компьютере. Включи, чтобы открыть её с телефона — без перезапуска. Пока включено, страницу может открыть любое устройство в твоей Wi-Fi сети.",
+    lanViaPhone: "Ты открыл программу с телефона: если выключить доступ, эта страница перестанет работать.",
+    lanErr: "Не получилось включить: {e}",
     updAvail: "Доступна новая версия {v} (у тебя {cur}).", updNotes: "Что нового", updInstall: "Обновить", updBusy: "Скачиваю…",
     updDone: "Обновлено до версии {v}. Чтобы она заработала, закрой чёрное окно программы и запусти её снова.",
     updErr: "Не удалось обновить: {e}", updSkipTip: "Не напоминать об этой версии",
@@ -854,6 +1073,14 @@ const I18N = {
     srvGold: "Loading gold fees…", srvHours: "Loading GGG hourly digests…", srvErr: "Load error",
     srvDoneNinja: "Done: {a} currencies, {b} pairs", srvDoneGgg: "Done: {n} h of digests",
     tabFlips: "Round trips", tabJournal: "Journal",
+    lanScan: "Point your phone camera at the code to open the program:", lanTitle: "Phone access", lanOnShort: "on", lanToggle: "Open the program from a phone on this Wi-Fi",
+    lanSwitching: "Switching…", lanOpen: "Or type the address (phone on the same Wi-Fi):",
+    lanMany: "There are several addresses — you need the one from your Wi-Fi router, usually 192.168.x.x.",
+    lanHint: "Doesn't open? Allow Python in Windows Firewall (it asks the first time), set the Wi-Fi network to “Private”, and turn off VPN or allow local network in it.",
+    lanNoIp: "Couldn't find this computer's home network address — check it's connected to Wi-Fi or the router.",
+    lanOffHint: "Right now the program opens only on this computer. Turn this on to open it from a phone — no restart needed. While it's on, any device on your Wi-Fi can open the page.",
+    lanViaPhone: "You opened the program from a phone: turning access off will stop this page from working.",
+    lanErr: "Couldn't turn it on: {e}",
     updAvail: "New version {v} is available (you have {cur}).", updNotes: "What's new", updInstall: "Update", updBusy: "Downloading…",
     updDone: "Updated to version {v}. To start using it, close the program's black window and run it again.",
     updErr: "Couldn't update: {e}", updSkipTip: "Don't remind me about this version",
@@ -984,6 +1211,14 @@ const I18N = {
     srvGold: "正在加载金币手续费…", srvHours: "正在加载 GGG 每小时汇总…", srvErr: "加载出错",
     srvDoneNinja: "完成：{a} 种货币，{b} 个交易对", srvDoneGgg: "完成：{n} 小时的汇总",
     tabFlips: "往返倒卖", tabJournal: "交易记录",
+    lanScan: "用手机相机扫描此码即可打开程序：", lanTitle: "手机访问", lanOnShort: "已开启", lanToggle: "允许在此 Wi-Fi 网络中用手机打开程序",
+    lanSwitching: "正在切换…", lanOpen: "或手动输入地址（手机需连接同一 Wi-Fi）：",
+    lanMany: "有多个地址——需要来自 Wi-Fi 路由器的那个，通常是 192.168.x.x。",
+    lanHint: "打不开？在 Windows 防火墙中允许 Python（首次开启时会弹出询问），把 Wi-Fi 设为“专用网络”，并关闭 VPN 或在其中允许本地网络。",
+    lanNoIp: "未找到这台电脑在家庭网络中的地址——请检查电脑是否已连接 Wi-Fi 或路由器。",
+    lanOffHint: "目前只能在这台电脑上打开程序。开启后即可用手机打开——无需重启。开启期间，你的 Wi-Fi 中任何设备都能打开该页面。",
+    lanViaPhone: "你是用手机打开的程序：关闭访问后此页面将无法使用。",
+    lanErr: "开启失败：{e}",
     updAvail: "有新版本 {v}（当前为 {cur}）。", updNotes: "更新内容", updInstall: "更新", updBusy: "正在下载…",
     updDone: "已更新到 {v} 版本。关闭程序的黑色窗口并重新运行即可使用。",
     updErr: "更新失败：{e}", updSkipTip: "不再提醒此版本",
@@ -1088,7 +1323,7 @@ $("#theme").onclick = () => {
 };
 $("#lang").onchange = () => {
   lang = $("#lang").value; ui.lang = lang; saveUi();
-  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate();
+  hideTip(); applyStatic(); renderCycles(); renderFlips(); renderRates(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan();
 };
 
 // ---------- подсказки ----------
@@ -2964,6 +3199,7 @@ async function init() {
   }
   loadJournal();
   loadUpdate();
+  loadLan();
   loadTg();
   const m = await loadMarket();
   if (isGGG() || !m || Date.now() / 1000 - m.fetchedAt > 30 * 60) refresh();
