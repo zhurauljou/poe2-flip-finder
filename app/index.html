@@ -1506,6 +1506,17 @@
   @media (max-width: 800px) {
     .ggg.ggg #flipSearch { max-width: none; }
   }
+  /* «Исключить»: чипы крупнее — удобно нажимать пальцем */
+  .ggg.ggg .xchips { gap: 8px; margin-top: 8px; }
+  .ggg.ggg .xchip { min-height: 36px; padding: 0 14px; font: 500 15px var(--body); display: inline-flex; align-items: center; }
+  .ggg.ggg .xitem .cur { min-height: 36px; }
+  .ggg.ggg .xitem button { width: 36px; height: 36px; font-size: 18px; }
+  @media (max-width: 800px) {
+    .ggg.ggg .xchips { gap: 8px; }
+    .ggg.ggg .xchip { min-height: 44px; padding: 0 16px; font-size: 16px; flex: 1 1 auto; justify-content: center; }
+    .ggg.ggg .xitem .cur { min-height: 44px; }
+    .ggg.ggg .xitem button { width: 44px; height: 44px; }
+  }
 
   /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
   .ggg[data-theme=light] { --bg: #faf7f2; --panel: #f8f5ee; --panel2: #f6f2e9; --line: #e2d4c0; --line2: #f0eadc; --hover: #f4efe4; --text: #615029; --muted: #9b8a68; --gold: #85651d; --good: #2d8528; --bad: #a02817; --warn: #a5781f; --btn: #f1eadc; --btn-hover: #ece3d0; --btn-line: #e6d6bc; --btn-text: #70581a; --shadow: 0 10px 30px rgba(0, 0, 0, 0.20); --sc: "Cormorant SC", "Alegreya Sans SC", Georgia, serif; --body: "Alegreya Sans", "Segoe UI", "Microsoft YaHei", sans-serif; --cur: #7e7054; --mod: #1f1f6b; --tipbg: rgba(250, 247, 242, 0.96); --tipline: #d1c4aa; --sep: linear-gradient(90deg, transparent, #c3b290 18%, #c3b290 82%, transparent); --frame: inset 0 0 0 3px var(--panel), inset 0 0 0 4px #ece3d2; scrollbar-color: #e2d4c0 #faf7f2; }
@@ -2173,6 +2184,16 @@
   .ggg.ggg[data-theme=light] #flipSearch:focus { border-color: #b29c70; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.80); outline: none; }
   @media (max-width: 800px) {
     .ggg.ggg[data-theme=light] #flipSearch { max-width: none; }
+  }
+  .ggg.ggg[data-theme=light] .xchips { gap: 8px; margin-top: 8px; }
+  .ggg.ggg[data-theme=light] .xchip { min-height: 36px; padding: 0 14px; font: 500 15px var(--body); display: inline-flex; align-items: center; }
+  .ggg.ggg[data-theme=light] .xitem .cur { min-height: 36px; }
+  .ggg.ggg[data-theme=light] .xitem button { width: 36px; height: 36px; font-size: 18px; }
+  @media (max-width: 800px) {
+    .ggg.ggg[data-theme=light] .xchips { gap: 8px; }
+    .ggg.ggg[data-theme=light] .xchip { min-height: 44px; padding: 0 16px; font-size: 16px; flex: 1 1 auto; justify-content: center; }
+    .ggg.ggg[data-theme=light] .xitem .cur { min-height: 44px; }
+    .ggg.ggg[data-theme=light] .xitem button { width: 44px; height: 44px; }
   }
 
   /* ---------- светлая тема: ручные правки ---------- */
