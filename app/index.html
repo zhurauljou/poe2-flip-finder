@@ -312,6 +312,14 @@
   .qrbox .qr { border-radius: 8px; width: min(200px, 60vw); height: auto; }
   .lanin .small { font-size: 12px; line-height: 1.5; }
   @media (max-width: 800px) { #lanPanel { right: 12px; left: 12px; width: auto; } }
+  /* ---- версия и «Проверить обновления» внизу панели фильтров ---- */
+  .verline { margin-top: 14px; font-size: 12px; color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .linkbtn { display: inline; width: auto; margin: 0; padding: 0; background: none; border: 0; color: var(--gold);
+             font-weight: 500; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .linkbtn:hover { background: none; color: var(--text); }
+  .linkbtn:disabled { color: var(--muted); text-decoration: none; }
+  #updCheckMsg { margin-top: 4px; }
+  #updCheckMsg:empty { display: none; }
   /* ---- полоска обновления ---- */
   #updBar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 20px; border-bottom: 1px solid var(--btn-line);
             background: color-mix(in srgb, var(--gold) 10%, var(--bg)); font-size: 13.5px; }
@@ -552,6 +560,8 @@
     </div>
     <button id="refresh" data-i18n="refresh"></button>
     <div class="bar" id="bar"><div></div></div>
+    <div class="verline"><span id="verText"></span><button type="button" id="updCheck" class="linkbtn" data-i18n="updCheck"></button>
+      <div id="updCheckMsg"></div></div>
     <div class="mfoot"><button id="filtersDone" type="button"></button></div>
   </aside>
   <section>
@@ -802,7 +812,37 @@ async function loadUpdate() {
   } catch (e) { upd = null; }
   renderUpdate();
 }
+// «Проверить обновления»: спросить GitHub сейчас, не дожидаясь проверки раз в 6 часов.
+async function checkUpdateNow() {
+  const msg = $("#updCheckMsg"), btn = $("#updCheck");
+  btn.disabled = true;
+  msg.className = "muted";
+  msg.textContent = t("updChecking");
+  try {
+    const r = await fetch("/api/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ op: "check" }) });
+    if (!r.ok) throw new Error(r.status === 404 || r.status === 501 ? t("tgOldServer") : "HTTP " + r.status);
+    upd = await r.json();
+    if (upd.error) throw new Error(upd.error);
+    if (upd.available) {
+      delete ui.updSkip;  // если раньше нажали «не напоминать» — проверка вручную снова покажет полоску
+      saveUi();
+      msg.className = "good";
+      msg.textContent = t("updFound", { v: upd.latest });
+    } else {
+      msg.className = "muted";
+      msg.textContent = upd.installed ? t("updDone", { v: upd.installed }) : t("updLatest");
+    }
+  } catch (e) {
+    msg.className = "bad";
+    msg.textContent = t("updCheckErr", { e: e.message });
+  }
+  btn.disabled = false;
+  renderUpdate();
+}
+$("#updCheck").onclick = checkUpdateNow;
+
 function renderUpdate() {
+  $("#verText").textContent = upd?.current ? t("verLabel", { v: upd.current }) + " · " : "";
   const bar = $("#updBar");
   if (!upd) { bar.hidden = true; return; }
   let html = "";
@@ -951,6 +991,9 @@ const I18N = {
     updAvail: "Доступна новая версия {v} (у тебя {cur}).", updNotes: "Что нового", updInstall: "Обновить", updBusy: "Скачиваю…",
     updDone: "Обновлено до версии {v}. Чтобы она заработала, закрой чёрное окно программы и запусти её снова.",
     updErr: "Не удалось обновить: {e}", updSkipTip: "Не напоминать об этой версии",
+    verLabel: "Версия {v}", updCheck: "Проверить обновления", updChecking: "Проверяю…",
+    updLatest: "У тебя последняя версия.", updFound: "Есть новая версия {v} — кнопка «Обновить» вверху страницы.",
+    updCheckErr: "Не удалось проверить: {e}",
     viewTable: "Таблицей", viewCards: "Карточками",
     exclude: "Исключить", exNone: "Скрытых валют нет — скрыть валюту можно в панели шагов.", exHidden: "Скрыто:", exShow: "Снова показывать",
     exCatOff: "Скрыть пути через эту категорию", exCatOn: "Снова показывать эту категорию",
@@ -1089,6 +1132,9 @@ const I18N = {
     updAvail: "New version {v} is available (you have {cur}).", updNotes: "What's new", updInstall: "Update", updBusy: "Downloading…",
     updDone: "Updated to version {v}. To start using it, close the program's black window and run it again.",
     updErr: "Couldn't update: {e}", updSkipTip: "Don't remind me about this version",
+    verLabel: "Version {v}", updCheck: "Check for updates", updChecking: "Checking…",
+    updLatest: "You have the latest version.", updFound: "Version {v} is available — the “Update” button is at the top of the page.",
+    updCheckErr: "Couldn't check: {e}",
     viewTable: "Table", viewCards: "Cards",
     exclude: "Exclude", exNone: "No hidden currencies — you can hide one in the steps panel.", exHidden: "Hidden:", exShow: "Show again",
     exCatOff: "Hide paths through this category", exCatOn: "Show this category again",
@@ -1227,6 +1273,9 @@ const I18N = {
     updAvail: "有新版本 {v}（当前为 {cur}）。", updNotes: "更新内容", updInstall: "更新", updBusy: "正在下载…",
     updDone: "已更新到 {v} 版本。关闭程序的黑色窗口并重新运行即可使用。",
     updErr: "更新失败：{e}", updSkipTip: "不再提醒此版本",
+    verLabel: "版本 {v}", updCheck: "检查更新", updChecking: "正在检查…",
+    updLatest: "已是最新版本。", updFound: "有新版本 {v}——页面顶部有“更新”按钮。",
+    updCheckErr: "检查失败：{e}",
     viewTable: "表格", viewCards: "卡片",
     exclude: "排除", exNone: "没有隐藏的货币——可在步骤面板中隐藏货币。", exHidden: "已隐藏：", exShow: "重新显示",
     exCatOff: "隐藏经过此类别的路径", exCatOn: "重新显示此类别",
