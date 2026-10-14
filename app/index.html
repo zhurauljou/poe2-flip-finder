@@ -1560,6 +1560,18 @@
   .ggg .fadv-body { overflow: hidden; }
   .ggg .fadv > summary::after { transition: transform .25s ease; }
   .ggg .fadv.closing > summary::after { transform: rotate(45deg) translate(-2px, -2px); }
+  /* «Наверх» — круглая кнопка в правом нижнем углу; при открытой панели шагов сдвигается левее неё */
+  #toTop { position: fixed; right: 24px; bottom: 24px; z-index: 45; width: 48px; height: 48px; margin: 0; padding: 0; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; border: 1px solid #6f5d3a; color: #e6d39a;
+    background: linear-gradient(#2e281b, #1b170f 55%, #130f0a); box-shadow: inset 0 0 0 2px #100d08, 0 6px 18px rgba(0, 0, 0, .6);
+    animation: tin .2s ease-out; }
+  #toTop[hidden] { display: none; }
+  #toTop:hover { border-color: #b8975a; color: #fff0c0; background: linear-gradient(#3d3524, #241e13 55%, #18140c); }
+  #toTop svg { width: 22px; height: 22px; }
+  @media (min-width: 1100px) { body.drawer-open #toTop { right: calc(var(--drawer-w, 480px) + 24px); } }
+  @media (max-width: 800px) { #toTop { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
+    .filters-open #toTop, .drawer-open #toTop, .alva-open #toTop { display: none; } }
+  .alva-open #toTop, .modal-open #toTop { display: none; }
 </style>
 </head>
 <body>
@@ -1700,6 +1712,7 @@
   <div id="dBody"></div>
 </div>
 <div id="alva" role="dialog" aria-modal="true" hidden></div>
+<button type="button" id="toTop" data-i18n-title="toTop" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
 <div id="toasts" aria-live="polite"></div>
 <div id="tooltip" role="tooltip" hidden></div>
 <script>
@@ -2140,7 +2153,7 @@ const I18N = {
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
     tgGggOnly: "Telegram работает с источником GGG.", tgOldServer: "Перезапусти программу (закрой окно и запусти снова) — Telegram появился в новой версии сервера.", toastOpen: "Открыть шаги", toastMore: "и ещё {n}", notifBody: "{path} · держится {s}", hAuto: "GGG — проверка каждые 5 минут (скачивается только недостающий час), poe.ninja — каждые 30 минут.",
-    refresh: "Обновить данные", fReset: "Сбросить фильтры", capSuggest: "Увеличить капитал до {c} {cur} · найдётся {n}", menu: "Меню", pre_safe: "Надёжно", pre_fast: "Быстро", pre_max: "Выгодно", fResetS: "Сбросить", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
+    refresh: "Обновить данные", fReset: "Сбросить фильтры", capSuggest: "Увеличить капитал до {c} {cur} · найдётся {n}", menu: "Меню", pre_safe: "Надёжно", pre_fast: "Быстро", pre_max: "Выгодно", fResetS: "Сбросить", toTop: "Наверх", pre_safeT: "Держатся от 3 ч, ликвидность от 300 div, строгая осторожность", pre_fastT: "Цикл до часа, ликвидность от 200 div, сортировка по прибыли в час", pre_maxT: "До 5 обменов, сортировка по прибыли", exSearchPh: "Скрыть валюту: начни вводить название", fAdv: "Дополнительно", notifyTitle: "Уведомления",
     tabCycles: "Циклы флипа", 
     noData: "Нет данных. Нажми «Обновить данные».",
     whatCycles: "циклов", whatPaths: "путей",
@@ -2287,7 +2300,7 @@ const I18N = {
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
     tgGggOnly: "Telegram works with the GGG source.", tgOldServer: "Restart the program (close the window and run it again) — Telegram needs the new server version.", toastOpen: "Open steps", toastMore: "and {n} more", notifBody: "{path} · holds {s}", hAuto: "GGG — checked every 5 minutes (only the missing hour is downloaded); poe.ninja — every 30 minutes.",
-    refresh: "Refresh data", fReset: "Reset filters", capSuggest: "Raise capital to {c} {cur} · {n} found", menu: "Menu", pre_safe: "Safe", pre_fast: "Fast", pre_max: "Profit", fResetS: "Reset", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
+    refresh: "Refresh data", fReset: "Reset filters", capSuggest: "Raise capital to {c} {cur} · {n} found", menu: "Menu", pre_safe: "Safe", pre_fast: "Fast", pre_max: "Profit", fResetS: "Reset", toTop: "Back to top", pre_safeT: "Holds 3+ h, liquidity 300+ div, strict caution", pre_fastT: "Cycle under an hour, liquidity 200+ div, sorted by profit per hour", pre_maxT: "Up to 5 trades, sorted by profit", exSearchPh: "Hide a currency: start typing its name", fAdv: "Advanced", notifyTitle: "Notifications",
     tabCycles: "Flip cycles", 
     noData: "No data. Press “Refresh data”.",
     whatCycles: "cycles", whatPaths: "paths",
@@ -2434,7 +2447,7 @@ const I18N = {
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
     tgGggOnly: "Telegram 仅适用于 GGG 数据源。", tgOldServer: "请重启程序（关闭窗口后重新运行）——Telegram 需要新版服务器。", toastOpen: "查看步骤", toastMore: "还有 {n} 条", notifBody: "{path} · 持续 {s}", hAuto: "GGG — 每 5 分钟检查一次（只下载缺少的那一小时），poe.ninja — 每 30 分钟一次。",
-    refresh: "刷新数据", fReset: "重置筛选", capSuggest: "将本金提高到 {c} {cur} · 可找到 {n} 个", menu: "菜单", pre_safe: "稳健", pre_fast: "快速", pre_max: "高利润", fResetS: "重置", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
+    refresh: "刷新数据", fReset: "重置筛选", capSuggest: "将本金提高到 {c} {cur} · 可找到 {n} 个", menu: "菜单", pre_safe: "稳健", pre_fast: "快速", pre_max: "高利润", fResetS: "重置", toTop: "回到顶部", pre_safeT: "持续 3 小时以上，流动性 300 div 以上，严格谨慎", pre_fastT: "循环一小时内，流动性 200 div 以上，按每小时利润排序", pre_maxT: "最多 5 次兑换，按利润排序", exSearchPh: "隐藏货币：输入名称", fAdv: "更多选项", notifyTitle: "通知",
     tabCycles: "套利循环", 
     noData: "没有数据。请点击“刷新数据”。",
     whatCycles: "循环", whatPaths: "路径",
@@ -2581,7 +2594,7 @@ const I18N = {
     tgStatus: "Сервер перевіряє кожні 5 хв · остання перевірка: {chk} · відповідних шляхів: {n} · останнє сповіщення: {sent}",
     tgTokenOk: "Бота @{bot} знайдено. Тепер напиши йому повідомлення.", tgLinked: "Підключено — у Telegram прийшло підтвердження.",
     tgGggOnly: "Telegram працює з джерелом GGG.", tgOldServer: "Перезапусти програму (закрий вікно й запусти знову) — Telegram з'явився в новій версії сервера.", toastOpen: "Відкрити кроки", toastMore: "і ще {n}", notifBody: "{path} · тримається {s}", hAuto: "GGG — перевірка кожні 5 хвилин (завантажується лише відсутня година), poe.ninja — кожні 30 хвилин.",
-    refresh: "Оновити дані", fReset: "Скинути фільтри", capSuggest: "Збільшити капітал до {c} {cur} · знайдеться {n}", menu: "Меню", pre_safe: "Надійно", pre_fast: "Швидко", pre_max: "Вигідно", fResetS: "Скинути", pre_safeT: "Тримаються від 3 год, ліквідність від 300 div, сувора обережність", pre_fastT: "Цикл до години, ліквідність від 200 div, сортування за прибутком за годину", pre_maxT: "До 5 обмінів, сортування за прибутком", exSearchPh: "Приховати валюту: почни вводити назву", fAdv: "Додатково", notifyTitle: "Сповіщення",
+    refresh: "Оновити дані", fReset: "Скинути фільтри", capSuggest: "Збільшити капітал до {c} {cur} · знайдеться {n}", menu: "Меню", pre_safe: "Надійно", pre_fast: "Швидко", pre_max: "Вигідно", fResetS: "Скинути", toTop: "Нагору", pre_safeT: "Тримаються від 3 год, ліквідність від 300 div, сувора обережність", pre_fastT: "Цикл до години, ліквідність від 200 div, сортування за прибутком за годину", pre_maxT: "До 5 обмінів, сортування за прибутком", exSearchPh: "Приховати валюту: почни вводити назву", fAdv: "Додатково", notifyTitle: "Сповіщення",
     tabCycles: "Цикли фліпу", 
     noData: "Немає даних. Натисни «Оновити дані».",
     whatCycles: "циклів", whatPaths: "шляхів",
@@ -2728,7 +2741,7 @@ const I18N = {
     tgStatus: "Сервер правярае кожныя 5 хв · апошняя праверка: {chk} · прыдатных шляхоў: {n} · апошняе апавяшчэнне: {sent}",
     tgTokenOk: "Бот @{bot} знойдзены. Цяпер напішы яму паведамленне.", tgLinked: "Падключана — у Telegram прыйшло пацвярджэнне.",
     tgGggOnly: "Telegram працуе з крыніцай GGG.", tgOldServer: "Перазапусці праграму (зачыні акно і запусці зноў) — Telegram з'явіўся ў новай версіі сервера.", toastOpen: "Адкрыць крокі", toastMore: "і яшчэ {n}", notifBody: "{path} · трымаецца {s}", hAuto: "GGG — праверка кожныя 5 хвілін (спампоўваецца толькі адсутная гадзіна), poe.ninja — кожныя 30 хвілін.",
-    refresh: "Абнавіць даныя", fReset: "Скінуць фільтры", capSuggest: "Павялічыць капітал да {c} {cur} · знойдзецца {n}", menu: "Меню", pre_safe: "Надзейна", pre_fast: "Хутка", pre_max: "Выгадна", fResetS: "Скінуць", pre_safeT: "Трымаюцца ад 3 гадз, ліквіднасць ад 300 div, строгая асцярожнасць", pre_fastT: "Цыкл да гадзіны, ліквіднасць ад 200 div, сартаванне па прыбытку ў гадзіну", pre_maxT: "Да 5 абменаў, сартаванне па прыбытку", exSearchPh: "Схаваць валюту: пачні ўводзіць назву", fAdv: "Дадаткова", notifyTitle: "Апавяшчэнні",
+    refresh: "Абнавіць даныя", fReset: "Скінуць фільтры", capSuggest: "Павялічыць капітал да {c} {cur} · знойдзецца {n}", menu: "Меню", pre_safe: "Надзейна", pre_fast: "Хутка", pre_max: "Выгадна", fResetS: "Скінуць", toTop: "Уверх", pre_safeT: "Трымаюцца ад 3 гадз, ліквіднасць ад 300 div, строгая асцярожнасць", pre_fastT: "Цыкл да гадзіны, ліквіднасць ад 200 div, сартаванне па прыбытку ў гадзіну", pre_maxT: "Да 5 абменаў, сартаванне па прыбытку", exSearchPh: "Схаваць валюту: пачні ўводзіць назву", fAdv: "Дадаткова", notifyTitle: "Апавяшчэнні",
     tabCycles: "Цыклы фліпу", 
     noData: "Няма даных. Націсні «Абнавіць даныя».",
     whatCycles: "цыклаў", whatPaths: "шляхоў",
@@ -4966,6 +4979,12 @@ let exChoices = [], exSel = 0;
                         { duration: Math.min(320, 160 + Math.abs(to - from) / 4), easing: "cubic-bezier(.25, .8, .3, 1)" });
     anim.onfinish = () => { anim = null; if (!opening) { d.open = false; d.classList.remove("closing"); } };
   });
+}
+// «Наверх» — появляется, когда список прокручен вниз.
+{
+  const b = $("#toTop");
+  addEventListener("scroll", () => { b.hidden = scrollY < 700; }, { passive: true });
+  b.onclick = () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 init();
 updateFilterMarks();
