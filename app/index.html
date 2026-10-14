@@ -1572,6 +1572,9 @@
   @media (max-width: 800px) { #toTop { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
     .filters-open #toTop, .drawer-open #toTop, .alva-open #toTop { display: none; } }
   .alva-open #toTop, .modal-open #toTop { display: none; }
+  /* под списком — запас места, чтобы «Наверх» не ложился на «Показать ещё» и последние строки */
+  main > section { padding-bottom: 96px; }
+  #toTop { bottom: 28px; }
 </style>
 </head>
 <body>
