@@ -33,7 +33,7 @@ To check manually — “Check for updates” at the bottom of the filters panel
 - **Pairs** — a reference of all pairs with your start currency: rate, liquidity, orders, 24 h trend, with search.
 - **Presets** — “Safe / Fast / Profit” in one click; changed filters are marked and can be reset.
 - **From a phone**: the 📱 button — turn on home Wi-Fi access and scan the QR code.
-- Light/dark theme, Русский / English / 中文.
+- Light/dark theme, Русский / English / 中文 / Українська / Беларуская.
 
 ## Data and privacy
 
