@@ -12,7 +12,6 @@
   // Тему и ширину панели ставим до отрисовки, чтобы не мигало.
   try {
     const ui = JSON.parse(localStorage.getItem("poe2flip_ui")) || {};
-    if (ui.theme) document.documentElement.dataset.theme = ui.theme;
     if (ui.asideW) document.documentElement.style.setProperty("--aside-w", ui.asideW + "px");
     if (ui.drawerW) document.documentElement.style.setProperty("--drawer-w", ui.drawerW + "px");
     if (ui.filtersHidden) document.documentElement.classList.add("filters-hidden");
@@ -29,14 +28,7 @@
     --shadow: 0 6px 24px rgba(0, 0, 0, .5);
     --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%239a8c78' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
-  [data-theme=light] {
-    color-scheme: light;
-    --bg: #f7f3ec; --panel: #fffcf6; --panel2: #f1e9dc; --line: #dccfba; --line2: #ebe2d3; --hover: #f4ede1;
-    --text: #2b2218; --muted: #7a6a55; --gold: #9a6514; --good: #2c8a3a; --bad: #c0392b; --warn: #a66d0a;
-    --btn: #f3e2c2; --btn-hover: #ecd4a6; --btn-line: #c9a46a; --btn-text: #5a3c0e;
-    --shadow: 0 6px 24px rgba(60, 40, 10, .18);
-    --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237a6a55' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  }
+
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif; }
   header { padding: 10px 20px; border-bottom: 1px solid var(--line); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
@@ -506,7 +498,7 @@
      Стиль GGG: бронза, плашки с острыми концами, подсказки как у предметов в игре.
      Шрифты (OFL): Cinzel, Cormorant SC, Alegreya Sans, Alegreya Sans SC — латиница и кириллица, вшиты в страницу,
      чтобы приложение работало без интернета и ничего не запрашивало у сторонних сайтов.
-     Класс .ggg стоит на <html> всегда; ниже сначала тёмная тема, затем светлая ([data-theme=light]).
+     Класс .ggg стоит на <html> всегда; тема одна — тёмная.
      Двойной .ggg.ggg — более сильный слой правил поверх базового .ggg (так сложилась настройка вида, порядок важен).
      ====================================================================================== */
   @font-face { font-family: "Alegreya Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(data:font/woff2;base64,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) format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
@@ -1499,46 +1491,9 @@
     .ggg.ggg body > header #status { margin-top: -6px; }
   }
 
-  /* ---------- светлая тема: «пергамент» — те же правила, цвета вывернуты (фон светлый, текст тёмный, золото темнее) ---------- */
-  .ggg[data-theme=light] { --g1: #faf7f2; --g2: #f8f5ee; --g3: #f6f2e9; --g4: #e2d4c0; --g5: #f0eadc; --g6: #f4efe4; --g7: #615029; --g8: #9b8a68; --g9: #85651d; --g10: #2d8528; --g11: #a02817; --g12: #a5781f; --g13: #f1eadc; --g14: #ece3d0; --g15: #e6d6bc; --g16: #70581a; --g17: rgba(0, 0, 0, 0.20); --g18: #7e7054; --g19: #1f1f6b; --g20: rgba(250, 247, 242, 0.96); --g21: #d1c4aa; --g22: #c3b290; --g23: #ece3d2; --g24: #eee6d6; --g25: #faf7f2; --g26: #e6dac2; --g27: #cbaa71; --g28: rgba(255, 255, 255, 0.80); --g29: rgba(255, 255, 255, 0.10); --g30: #ede4d3; --g31: #f5f1e8; --g32: rgba(255, 255, 255, 0.10); --g33: #e8ddc8; --g34: #f3ede0; --g35: #ba944f; --g36: #8a7600; --g37: #73664d; --g38: rgba(11, 9, 7, 0.30); --g39: rgba(42, 33, 22, 0.30); --g40: rgba(255, 255, 255, 0.24); --g41: rgba(0, 0, 0, 0.30); --g42: rgba(255, 255, 255, 0.28); --g43: #faf7f2; --g44: #8a6500; --g45: #c5b594; --g46: #f7f4ed; --g47: #807255; --g48: #f2ebde; --g49: #716036; --g50: #ebe2cf; --g51: #baa67f; --g52: #928262; --g53: #f8f4ed; --g54: #f1ebde; --g55: rgba(186, 148, 79, 0.06); --g56: rgba(186, 148, 79, 0.17); --g57: rgba(186, 148, 79, 0.03); --g58: rgba(255, 255, 255, 0.80); --g59: rgba(255, 255, 255, 0.40); --g60: rgba(0, 0, 0, 0.18); --g61: #b29c70; --g62: #b58e36; --g63: rgba(255, 255, 255, 0.24); --g64: #eae0cc; --g65: #f5f0e6; --g66: #f9f6f0; --g67: #cbbc9f; --g68: #998867; --g69: #5f502b; --g70: rgba(0, 0, 0, 0.21); --g71: rgba(255, 255, 255, 0.18); --g72: #000000; --g73: #423b2c; --g74: #f5f0e7; --g75: #f4efe4; --g76: #f8f4ed; --g77: #f5f0e7; --g78: #f3ede2; --g79: #efe7d8; --g80: #d6cab2; --g81: #eae0cc; --g82: #ede4d3; --g83: #584e3a; --g84: #8a7b5c; --g85: #715825; --g86: #b49f74; --g87: rgba(248, 245, 238, 0.96); --g88: #d8cdb6; --g89: #e6dac2; --g90: #ebe1cd; --g91: #f3eee3; --g92: #f7f3ec; --g93: #cdbea1; --g94: rgba(12, 13, 15, 0.30); --g95: rgba(47, 42, 34, 0.30); --g96: rgba(0, 0, 0, 0.15); --g97: rgba(255, 255, 255, 0.14); --g98: #f1ebde; --g99: #f5f0e5; --g100: rgba(11, 16, 23, 0.30); --g101: rgba(38, 42, 48, 0.30); --g102: #827457; --g103: #eadfca; --g104: #f4efe4; --g105: rgba(107, 90, 58, 0.30); --g106: #f9f6f1; --g107: #e3d5ba; --g108: rgba(255, 255, 255, 0.20); --g109: rgba(247, 243, 235, 0.92); --g110: #f3ede1; --g111: #958463; --g112: #ece3d1; --g113: rgba(113, 88, 37, 0.12); --g114: rgba(113, 88, 37, 0.02); --g115: rgba(255, 255, 255, 0.80); --g116: #e8dcc5; --g117: rgba(255, 255, 255, 0.80); --g118: rgba(165, 30, 0, 0.35); --g119: #e45f58; --g120: #f7aeab; --g121: #ece3d1; --g122: #f7f3eb; --g123: #ece3d1; --g124: #f5f0e5; --g125: #f8f5ee; --g126: #f2ebde; --g127: #f6f2ea; --g128: #a58447; --g129: #e7dbc4; --g130: #bcaa80; --g131: #bba780; --g132: #dfd5c3; --g133: #e5d8bf; --g134: #615641; --g135: #f5f0e5; --g136: #f8f5ef; --g137: #f7f3ec; --g138: rgba(255, 255, 255, 0.05); --g139: #958463; --g140: #e0d6c2; --g141: #e0d4c2; --g142: #5e502c; --g143: #dfd6c3; --g144: #e4d7be; --g145: #efe8d9; --g146: #f4efe5; --g147: rgba(18, 15, 9, 0.30); --g148: rgba(255, 255, 255, 0.28); --g149: rgba(255, 255, 255, 0.08); --g150: #6e5a1b; --g151: #d7cbb4; --g152: #ece3d1; --g153: #f2ece0; --g154: #ad9159; --g155: #8a6900; --g156: #a98236; --g157: #cec0a4; --g158: #6d5a27; --g159: #eae0cb; --g160: #f3ede1; --g161: #f7f3ea; --g162: rgba(16, 13, 8, 0.30); --g163: rgba(255, 255, 255, 0.18); --g164: rgba(0, 0, 0, 0.14); --g165: #e3d5ba; --g166: #efe7d8; --g167: #f5f0e5; --g168: #e2d6c0; --g169: #ede5d4; --g170: #f3eee3; --g171: #cec0a3; --g172: #5f502b; --g173: rgba(255, 255, 255, 0.03); --g174: #bca983; --g175: rgba(255, 255, 255, 0.80); --g176: #faf7f2; --g177: rgba(0, 0, 0, 0.22); --g178: #e9dec9; --g179: #efe7d7; --g180: #756127; --g181: #c5b493; --g182: #f0e9db; --g183: #faf7f2; --g184: rgba(10, 9, 7, 0.30); --g185: rgba(255, 255, 255, 0.24); --g186: #6c6048; --g187: #5b4f30; --g188: rgba(165, 120, 31, 0.08); --g189: #807255; --g190: rgba(187, 165, 117, 0.1); --g191: rgba(112, 88, 26, 0.07); --g192: rgba(112, 88, 26, 0.09); --g193: rgba(112, 88, 26, 0.05); --g194: #e3d5b9; --g195: #d4c8b0; --g196: #6e581c; --g197: #5d5030; --g198: #faf7f2; --g199: rgba(169, 130, 54, 0.38); --g200: #f1eadd; --g201: #f5f0e7; --g202: #f7f3eb; --g203: #e4d7bc; --g204: #ede4d2; --g205: #f2ebde; --g206: #f4efe4; --g207: #1f1f6b; --g208: #856319; --g209: #b19b6f; --g210: #9a8968; --g211: rgba(160, 40, 23, 0.45); --g212: rgba(160, 40, 23, 0.1); --g213: rgba(112, 88, 26, 0.06); --g214: rgba(31, 31, 107, 0.45); --g215: #1f1f6b; --g216: #5b4e2e; --g217: rgba(255, 255, 255, 0.48); --g218: #f5f0e7; --g219: #e3d5b9; --g220: #ede4d2; }
-  .ggg[data-theme=light] aside::before { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='14' viewBox='0 0 200 14'%3E%3Cpath d='M10 7H86M114 7H190' stroke='%23e2d4c0'/%3E%3Cpath d='M100 1l6 6-6 6-6-6z' fill='%23ba944f'/%3E%3Cpath d='M89 7l3-3 3 3-3 3zM105 7l3-3 3 3-3 3z' fill='%23e6d6bc'/%3E%3C/svg%3E") center / 200px 14px no-repeat; }
-  .ggg.ggg[data-theme=light] .tabs button.on::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='7' viewBox='0 0 22 7'%3E%3Cpath d='M0 3.5h7M15 3.5h7' stroke='%23715825'/%3E%3Cpath d='M11 0l3.5 3.5L11 7 7.5 3.5z' fill='%23715825'/%3E%3C/svg%3E") no-repeat; }
-  .ggg[data-theme=light] .arrow { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2210%22 viewBox=%220 0 24 10%22%3E%3Cpath d=%22M0 5H24%22 stroke=%22%23c5b594%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M4.5 1.5L8 5L4.5 8.5L1 5Z%22 fill=%22%23bba070%22/%3E%3Cpath d=%22M19.5 1.5L23 5L19.5 8.5L16 5Z%22 fill=%22%23bba070%22/%3E%3C/svg%3E") center / 24px 10px no-repeat; }
-  .ggg.ggg[data-theme=light] :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport)::after { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237e620b%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23a98236%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e7d7bb%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%280 0%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") left top / 14px 14px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237e620b%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23a98236%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e7d7bb%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%2814 0%29 scale%28-1 1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") right top / 14px 14px no-repeat,
-                url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237e620b%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23a98236%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e7d7bb%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%280 14%29 scale%281 -1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") left bottom / 14px 14px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237e620b%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23a98236%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e7d7bb%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%2814 14%29 scale%28-1 -1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") right bottom / 14px 14px no-repeat; }
-  .ggg.ggg[data-theme=light] .arrow { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2228%22 height=%2210%22 viewBox=%220 0 28 10%22%3E%3Cpath d=%22M4 5H24%22 stroke=%22%23c5b594%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M4 1.3L7.7 5L4 8.7L.3 5Z%22 fill=%22%23bba070%22/%3E%3Cpath d=%22M24 1.3L27.7 5L24 8.7L20.3 5Z%22 fill=%22%23bba070%22/%3E%3C/svg%3E") center / 28px 10px no-repeat; }
-  .ggg.ggg[data-theme=light] select { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 10px center / 13px 8px, linear-gradient(#f7f4ed, #faf7f2); }
-  .ggg.ggg[data-theme=light] select:hover { background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%23856e36%22/%3E%3C/svg%3E"), linear-gradient(#f5f0e5, #faf7f2); }
-  .ggg.ggg[data-theme=light] input[type=checkbox]:checked { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2222%22 height=%2222%22 viewBox=%220 0 22 22%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237e620b%22/%3E%3Cstop offset=%221%22 stop-color=%22%23c19d57%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M5.5 11.5l3.8 3.8L16.8 7%22 fill=%22none%22 stroke=%22%23faf7f2%22 stroke-width=%223.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%22.6%22/%3E%3Cpath d=%22M5.5 11.5l3.8 3.8L16.8 7%22 fill=%22none%22 stroke=%22url%28%23g%29%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") center / 22px 22px no-repeat, radial-gradient(circle at 50% 40%, #ece3d0, #f9f6f1 70%); }
-  .ggg.ggg[data-theme=light] .cur, .ggg.ggg[data-theme=light] .dhead .cur, .ggg[data-theme=light].view-cards .rt td.wide:first-child .cur { border-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23bba780%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23dfd5c3%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e5d8bf%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f5f0e5%22/%3E%3Cstop offset=%221%22 stop-color=%22%23f8f5ee%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E") 1 11 fill / 1px 11px stretch; }
-  .ggg.ggg[data-theme=light] .cur, .ggg.ggg[data-theme=light] .dhead .cur, .ggg[data-theme=light].view-cards .rt td.wide:first-child .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23d2c5ab%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23e3d6bb%22/%3E%3Cstop offset=%221%22 stop-color=%22%23ebe1ce%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f5f0e7%22/%3E%3Cstop offset=%221%22 stop-color=%22%23f8f5ee%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); }
-  .ggg.ggg[data-theme=light] :is(tr.cyc:hover, tr.cyc.sel) .cur, .ggg.ggg[data-theme=light] .dhead .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23bca982%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23d0c3a9%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e4d7bc%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f4efe4%22/%3E%3Cstop offset=%221%22 stop-color=%22%23f8f4ed%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); }
-  .ggg.ggg[data-theme=light] .path > .arrow, .ggg.ggg[data-theme=light] .arrow { background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2228%22 height=%2210%22 viewBox=%220 0 28 10%22%3E%3Cpath d=%22M4 5H24%22 stroke=%22%23d4c8b0%22 stroke-width=%221.1%22/%3E%3Cpath d=%22M4 1.6L7.4 5L4 8.4L.6 5Z%22 fill=%22%23c5b493%22/%3E%3Cpath d=%22M24 1.6L27.4 5L24 8.4L20.6 5Z%22 fill=%22%23c5b493%22/%3E%3C/svg%3E"); }
-  .ggg.ggg[data-theme=light] .drow { border-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2236%22 viewBox=%220 0 40 36%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23d2c5ab%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23e3d6bb%22/%3E%3Cstop offset=%221%22 stop-color=%22%23ebe1ce%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f5f0e7%22/%3E%3Cstop offset=%221%22 stop-color=%22%23f8f5ee%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M11.5 .5H28.5L39.5 18L28.5 35.5H11.5L.5 18Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E") 1 12 fill / 1px 12px stretch; }
-  .ggg[data-theme=light] .dstep.now .drow { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2236%22 viewBox=%220 0 40 36%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23bca982%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23d0c3a9%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e4d7bc%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f4efe4%22/%3E%3Cstop offset=%221%22 stop-color=%22%23f8f4ed%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M11.5 .5H28.5L39.5 18L28.5 35.5H11.5L.5 18Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); }
-  .ggg.ggg[data-theme=light] #drawer .dhead { --shade: 248, 245, 238; }
-  @media (min-width: 801px) {
-    .ggg.ggg[data-theme=light] body > header { --shade: 248, 245, 238; }
-  }
-  @media (max-width: 800px) {
-    .ggg.ggg[data-theme=light] .toolbar { --shade: 248, 245, 238; }
-  }
-  @media (max-width: 800px) {
-    .ggg.ggg[data-theme=light] .mhead { --shade: 248, 245, 238; }
-  }
-  .ggg.ggg[data-theme=light] .hleague, .ggg.ggg[data-theme=light] .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
-  .ggg.ggg[data-theme=light] .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%239e8e6e%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(112, 88, 26, 0.06); }
-  .ggg.ggg[data-theme=light] :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx)::before { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23faf7f2%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23faf7f2%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; }
-  .ggg.ggg[data-theme=light] #flipSearch { background: #f9f6f1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a8968' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 11px center / 18px 18px; }
-  .ggg.ggg[data-theme=light] #exSearch { background: #f9f6f1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239a8968' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 10px center / 17px 17px; }
-
-  /* ---------- светлая тема: ручные правки ---------- */
-  .ggg.ggg[data-theme=light] body { background: radial-gradient(ellipse 1500px 600px at 50% -200px, #fffaf0, transparent 70%) no-repeat, #efe6d3; }
   /* без тёмных теневых полос: под шапкой и справа от фильтров */
-  .ggg.ggg[data-theme=light] header { box-shadow: none; }
-  .ggg.ggg[data-theme=light] aside { box-shadow: none; border-right-color: #d8ccb4; }
+
   /* валюта внутри плашки шага — без своей рамки (светлое правило рамок валют не должно её возвращать) */
-  .ggg.ggg[data-theme=light] .drow .cur { border-image: none; }
 
   /* полоска «Доступна новая версия»: тона Divine Orb (приглушённая состаренная бронза), крупный текст,
      «Что нового» — ссылкой, закрыть — крестиком у правого края */
@@ -1564,6 +1519,29 @@
   @media (max-width: 800px) { .ggg .jsum { margin-top: 8px; } }
   /* наборы: длинные слова (укр./бел.) помещаются в кнопку */
   .ggg .presets button { padding: 0 3px; letter-spacing: 0; }
+  /* стартовая и конечная валюта — крупные иконки без подписей (название — в подсказке) */
+  .ggg :is(#baseSeg, #targetSeg) button span { display: none; }
+  .ggg :is(#baseSeg, #targetSeg) button img { width: 30px; height: 30px; }
+  .ggg :is(#baseSeg, #targetSeg) button { min-height: 44px; }
+  /* наборы: слова помещаются целиком */
+  .ggg .presets button { font-size: 13px; padding: 0 2px; }
+  /* «Дополнительно»: заметная строка с рамкой, счётчик — золотым кружком */
+  .ggg .fadv { border-top: 0; margin-top: 10px; }
+  .ggg .fadv > summary { padding: 0 12px; border: 1px solid var(--g171); background: rgba(241, 228, 194, .03); color: #d8c592; }
+  .ggg .fadv > summary:hover { border-color: #6f5d3a; background: rgba(241, 228, 194, .06); }
+  .ggg .fadv[open] > summary { margin-bottom: 12px; }
+  .ggg .fadv > summary .fcount { margin-left: 2px; }
+  /* подсказка «Скрыть валюту» */
+  .ggg .exwrap { position: relative; }
+  .ggg .exlist { position: absolute; left: 0; right: 0; top: calc(100% + 2px); z-index: 20; display: grid; padding: 4px 0;
+    background: #050505; border: 1px solid #4d4a40; box-shadow: 0 0 0 1px #000, 0 14px 30px rgba(0, 0, 0, .75); }
+  .ggg .exlist[hidden] { display: none; }
+  .ggg .exlist button { display: flex; align-items: center; width: 100%; min-height: 40px; margin: 0; padding: 0 10px; border: 0; border-radius: 0;
+    background: none; box-shadow: none; text-align: left; }
+  .ggg .exlist button:hover, .ggg .exlist button.on { background: linear-gradient(90deg, #2e291e, #221e16); }
+  .ggg .exlist .cur { pointer-events: none; }
+  .ggg .exlist .exnone { padding: 8px 12px; color: #8c8c8c; font-size: 14px; text-transform: none; letter-spacing: 0; }
+  .ggg .fadv > summary #fadvN.fcount { color: #1a1408; font: 700 13px/1 var(--body); }
 </style>
 </head>
 <body>
@@ -1579,7 +1557,6 @@
     <button id="notifyBtn" type="button" data-i18n-title="notifyTitle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
     <button id="refresh" type="button" data-i18n-title="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></svg></button>
     <button id="lanBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18.5h2"/></svg></button>
-    <button id="theme" type="button"></button>
     <button id="menuBtn" type="button" data-i18n-title="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
 </header>
@@ -1641,9 +1618,9 @@
     <div class="lbl xsec"><span class="lh"><span data-i18n="exclude"></span><span class="tip" data-tip="hExclude"></span></span>
       <div id="exCats" class="xchips"></div>
       <div id="exItems" class="xchips"></div>
-      <input id="exSearch" type="search" list="exList" autocomplete="off" data-i18n-ph="exSearchPh"><datalist id="exList"></datalist>
+      <div class="exwrap"><input id="exSearch" type="search" autocomplete="off" data-i18n-ph="exSearchPh" role="combobox" aria-expanded="false" aria-controls="exList"><div id="exList" class="exlist" role="listbox" hidden></div></div>
     </div>
-    <details class="fadv" id="fAdv"><summary><span data-i18n="fAdv"></span><span id="fadvN"></span></summary>
+    <details class="fadv" id="fAdv"><summary><span data-i18n="fAdv"></span><span id="fadvN" class="fcount" hidden></span></summary>
     <div class="row">
       <label><span data-i18n="source"></span><select id="source">
         <option value="ggg" selected data-i18n="srcGgg"></option>
@@ -2100,8 +2077,7 @@ document.addEventListener("keydown", e => {
 // ---------- переводы ----------
 const I18N = {
   ru: {
-    loading: "Загрузка…", langTitle: "Язык", toLight: "Светлая тема", toDark: "Тёмная тема",
-    league: "Лига", source: "Источник", srcGgg: "GGG, по часам", window: "Окно курса",
+    loading: "Загрузка…", langTitle: "Язык", league: "Лига", source: "Источник", srcGgg: "GGG, по часам", window: "Окно курса",
     w1: "1 час", w3: "3 часа", w6: "6 часов", w24: "24 часа",
     hWindow: "Курсы — средние по реальным сделкам за выбранное окно (официальные почасовые сводки GGG; новый час появляется примерно в :05), а не живой стакан.<br>Короткое окно свежее, но шумнее на редких парах. Перед обменом сверяй курс в игре у Альвы.",
     base: "Стартовая", target: "Конечная", sameAsStart: "= стартовая",
@@ -2248,8 +2224,7 @@ const I18N = {
     dLoss: "С такими значениями путь не выгоднее прямого обмена.",
   },
   en: {
-    loading: "Loading…", langTitle: "Language", toLight: "Light theme", toDark: "Dark theme",
-    league: "League", source: "Source", srcGgg: "GGG, hourly", window: "Rate window",
+    loading: "Loading…", langTitle: "Language", league: "League", source: "Source", srcGgg: "GGG, hourly", window: "Rate window",
     w1: "1 hour", w3: "3 hours", w6: "6 hours", w24: "24 hours",
     hWindow: "Rates are averages of real trades over the chosen window (official GGG hourly digests; a new hour appears around :05), not the live order book.<br>A short window is fresher but noisier on rare pairs. Check the rate with Alva in game before trading.",
     base: "Start", target: "End", sameAsStart: "= start",
@@ -2396,8 +2371,7 @@ const I18N = {
     dLoss: "With these values the path is no better than a direct trade.",
   },
   zh: {
-    loading: "加载中…", langTitle: "语言", toLight: "浅色主题", toDark: "深色主题",
-    league: "赛季", source: "数据源", srcGgg: "GGG（按小时）", window: "汇率窗口",
+    loading: "加载中…", langTitle: "语言", league: "赛季", source: "数据源", srcGgg: "GGG（按小时）", window: "汇率窗口",
     w1: "1 小时", w3: "3 小时", w6: "6 小时", w24: "24 小时",
     hWindow: "汇率为所选时间窗口内真实成交的平均值（GGG 官方每小时汇总，新的一小时约在 :05 出现），而非实时挂单。<br>窗口越短越新，但冷门交易对的波动越大。兑换前请在游戏中向阿尔瓦核对汇率。",
     base: "起始货币", target: "目标货币", sameAsStart: "= 起始货币",
@@ -2544,8 +2518,7 @@ const I18N = {
     dLoss: "按这些数值，该路径并不比直接兑换更划算。",
   },
   uk: {
-    loading: "Завантаження…", langTitle: "Мова", toLight: "Світла тема", toDark: "Темна тема",
-    league: "Ліга", source: "Джерело", srcGgg: "GGG, щогодини", window: "Вікно курсу",
+    loading: "Завантаження…", langTitle: "Мова", league: "Ліга", source: "Джерело", srcGgg: "GGG, щогодини", window: "Вікно курсу",
     w1: "1 година", w3: "3 години", w6: "6 годин", w24: "24 години",
     hWindow: "Курси — середні за реальними угодами за вибране вікно (офіційні погодинні зведення GGG; нова година з'являється приблизно о :05), а не живий стакан.<br>Коротке вікно свіжіше, але шумніше на рідкісних парах. Перед обміном звіряй курс у грі в Альви.",
     base: "Стартова", target: "Кінцева", sameAsStart: "= стартова",
@@ -2692,8 +2665,7 @@ const I18N = {
     dLoss: "З такими значеннями шлях не вигідніший за прямий обмін.",
   },
   be: {
-    loading: "Загрузка…", langTitle: "Мова", toLight: "Светлая тэма", toDark: "Цёмная тэма",
-    league: "Ліга", source: "Крыніца", srcGgg: "GGG, па гадзінах", window: "Акно курсу",
+    loading: "Загрузка…", langTitle: "Мова", league: "Ліга", source: "Крыніца", srcGgg: "GGG, па гадзінах", window: "Акно курсу",
     w1: "1 гадзіна", w3: "3 гадзіны", w6: "6 гадзін", w24: "24 гадзіны",
     hWindow: "Курсы — сярэднія па рэальных здзелках за выбранае акно (афіцыйныя пагадзінныя зводкі GGG; новая гадзіна з'яўляецца прыкладна ў :05), а не жывыя заяўкі.<br>Кароткае акно свяжэйшае, але шумнейшае на рэдкіх парах. Перад абменам звярай курс у гульні ў Альвы.",
     base: "Стартавая", target: "Канчатковая", sameAsStart: "= стартавая",
@@ -2880,25 +2852,10 @@ function applyStatic() {
   $("#lang").title = t("langTitle");
   $("#league").title = t("league");
   $("#league").setAttribute("aria-label", t("league"));
-  themeIcon();
   renderSegs();
   $("#status").textContent = statusFn();
 }
 
-// ---------- тема ----------
-const SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`;
-const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>`;
-function themeIcon() {
-  const dark = document.documentElement.dataset.theme !== "light";
-  $("#theme").innerHTML = dark ? SUN : MOON;
-  $("#theme").title = t(dark ? "toLight" : "toDark");
-  $("#theme").setAttribute("aria-label", $("#theme").title);
-}
-$("#theme").onclick = () => {
-  ui.theme = document.documentElement.dataset.theme === "light" ? "dark" : "light";
-  document.documentElement.dataset.theme = ui.theme;
-  saveUi(); themeIcon();
-};
 $("#lang").onchange = () => {
   lang = $("#lang").value; ui.lang = lang; saveUi();
   hideTip(); applyStatic(); renderCycles(); renderFlips(); renderJournal(); updateFilterUi(); notifyUi(); renderExclude(); applyView(); updateFavBtn(); renderTg(); renderUpdate(); renderLan(); renderPlayers(); renderPresets();
@@ -3924,8 +3881,8 @@ function setCur(sel, v) {
 $("#baseSeg").onclick = e => {
   const b = e.target.closest("button");
   if (!b) return;
-  // Новая стартовая совпала с конечной — это уже цикл.
-  if ($("#target").value === b.dataset.id) $("#target").value = "";
+  // Новая стартовая совпала с конечной — меняем их местами, галочка «Конечная = стартовая» не трогается.
+  if ($("#target").value === b.dataset.id) $("#target").value = $("#base").value;
   setCur("#base", b.dataset.id);
 };
 $("#targetSeg").onclick = e => {
@@ -4136,7 +4093,7 @@ function setExcluded(kind, id, on) {
   const set = kind === "cat" ? exCats() : exItems();
   if (on) set.add(id); else set.delete(id);
   ui[kind === "cat" ? "exCats" : "exItems"] = [...set];
-  saveUi();
+  saveUi(); updateFilterMarks();
   renderExclude();
   renderCycles(); renderFlips(); scheduleNotifyBaseline();
 }
@@ -4157,8 +4114,7 @@ function renderExclude() {
   $("#exCats").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("cat", b.dataset.cat, !b.classList.contains("off")));
   $("#exItems").querySelectorAll("button").forEach(b => b.onclick = () => setExcluded("item", b.dataset.item, false));
   const ids = new Set(); for (const p of market.pairs) ids.add(p.from), ids.add(p.to);
-  $("#exList").innerHTML = [...ids].filter(id => !market.core.includes(id) && !exItems().has(id)).map(id => name(id)).sort()
-    .map(n => `<option value="${esc(n)}"></option>`).join("");
+  exChoices = [...ids].filter(id => !market.core.includes(id) && !exItems().has(id)).sort((a, b) => name(a).localeCompare(name(b)));
 }
 
 // ---------- избранные пути ----------
@@ -4854,15 +4810,19 @@ function updateFilterMarks() {
     el.closest(".lbl, label")?.classList.toggle("fchg", ch);
     if (ch) { n++; if (el.closest(".fadv")) nAdv++; }
   }
+  const ex = exCats().size + exItems().size > 0;  // скрытые механики и валюты — тоже изменённый фильтр
+  document.querySelector(".xsec").classList.toggle("fchg", ex);
+  if (ex) n++;
   $("#fcount").textContent = n; $("#fcount").hidden = !n;
   $("#fReset").hidden = !n;
-  $("#fadvN").textContent = nAdv ? ` · ${nAdv}` : "";
+  $("#fadvN").textContent = nAdv || ""; $("#fadvN").hidden = !nAdv;
   $("#notifyBtn").classList.toggle("on", $("#notifyOn").checked);
   renderPresets();
 }
 $("#fReset").onclick = () => {
   const reload = ["source", "window"].some(k => $("#" + k).value !== FILTER_DEF[k]);
   for (const k of FILTER_KEYS) { const el = $("#" + k); if (el.type === "checkbox") el.checked = FILTER_DEF[k]; else el.value = FILTER_DEF[k]; }
+  ui.exCats = []; ui.exItems = []; saveUi(); renderExclude(); scheduleTgSync();
   renderSegs(); save(); listN.cycles = listN.flips = PAGE;
   if (reload) loadMarket(); else { renderCycles(); renderFlips(); }
 };
@@ -4887,40 +4847,50 @@ function renderPresets() {
     `<button type="button" data-preset="${k}" class="${a === k ? "on" : ""}" title="${esc(t("pre_" + k + "T"))}">${t("pre_" + k)}</button>`).join("");
   $("#presets").querySelectorAll("button").forEach(b => b.onclick = () => applyPreset(b.dataset.preset));
 }
-// «Исключить»: валюта по названию — список подсказок из валют текущего рынка.
-$("#exSearch").addEventListener("change", e => {
-  const q = e.target.value.trim().toLowerCase();
-  if (!q || !market) return;
-  const id = Object.keys(market.items).find(id => name(id).toLowerCase() === q)
-          || Object.keys(market.items).find(id => name(id).toLowerCase().includes(q));
-  if (id && !market.core.includes(id)) setExcluded("item", id, true);
-  e.target.value = "";
-});
+// «Исключить»: валюта по названию — своя выпадающая подсказка (до 8 совпадений), стрелки и Enter работают.
+let exChoices = [], exSel = 0;
+{
+  const inp = $("#exSearch"), box = $("#exList");
+  const close = () => { box.hidden = true; inp.setAttribute("aria-expanded", "false"); };
+  const pick = id => { setExcluded("item", id, true); inp.value = ""; close(); };
+  const draw = () => {
+    const q = inp.value.trim().toLowerCase();
+    const list = q ? exChoices.filter(id => name(id).toLowerCase().includes(q)).slice(0, 8) : [];
+    exSel = Math.min(exSel, Math.max(0, list.length - 1));
+    box.innerHTML = list.map((id, k) => `<button type="button" role="option" data-id="${esc(id)}" class="${k === exSel ? "on" : ""}">${chip(id)}</button>`).join("")
+      || (q ? `<div class="exnone">${esc(t("flipsNoMatch", { q }))}</div>` : "");
+    box.hidden = !box.innerHTML; inp.setAttribute("aria-expanded", String(!box.hidden));
+    box.querySelectorAll("[data-id]").forEach(b => b.onmousedown = e => { e.preventDefault(); pick(b.dataset.id); });
+  };
+  inp.addEventListener("input", () => { exSel = 0; draw(); });
+  inp.addEventListener("keydown", e => {
+    const items = box.querySelectorAll("[data-id]");
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); exSel = (exSel + (e.key === "ArrowDown" ? 1 : -1) + items.length) % Math.max(1, items.length); draw(); }
+    else if (e.key === "Enter" && items[exSel]) { e.preventDefault(); pick(items[exSel].dataset.id); }
+    else if (e.key === "Escape") close();
+  });
+  inp.addEventListener("blur", () => setTimeout(close, 120));
+}
 
 // Меню на телефоне: пункты вызывают те же кнопки, что в шапке на компьютере.
 {
   const p = $("#menuPanel"), b = $("#menuBtn");
   const row = (act, icon, label, extra = "") => `<button type="button" class="mrow" data-act="${act}">${icon}<span>${label}</span>${extra}</button>`;
   const render = () => {
-    const dark = document.documentElement.dataset.theme !== "light";
     p.innerHTML = `<div class="mlangs" role="group">${[["ru", "RU"], ["en", "EN"], ["zh", "中文"], ["uk", "УКР"], ["be", "БЕЛ"]].map(([v, l]) =>
         `<button type="button" data-lang="${v}" class="${lang === v ? "on" : ""}">${l}</button>`).join("")}</div>` +
       row("notify", $("#notifyBtn").innerHTML, t("notifyTitle"), $("#notifyOn").checked ? `<i class="mon"></i>` : "") +
-      row("lan", $("#lanBtn").innerHTML, t("lanTitle"), lan?.enabled ? `<i class="mon"></i>` : "") +
-      row("theme", $("#theme").innerHTML, t(dark ? "toLight" : "toDark"));
+      row("lan", $("#lanBtn").innerHTML, t("lanTitle"), lan?.enabled ? `<i class="mon"></i>` : "");
     p.querySelectorAll("[data-lang]").forEach(x => x.onclick = () => {
       const s = $("#lang"); s.value = x.dataset.lang; s.dispatchEvent(new Event("change")); render();
     });
     p.querySelectorAll("[data-act]").forEach(x => x.onclick = e => {
       e.stopPropagation();
       p.hidden = true;
-      if (x.dataset.act === "theme") $("#theme").click();
-      else {
-        $(x.dataset.act === "notify" ? "#notifyBtn" : "#lanBtn").click();
-        // кнопки в шапке скрыты — ставим панель под кнопкой меню
-        const top = Math.round(b.getBoundingClientRect().bottom + 6) + "px";
-        $("#notifyPanel").style.top = top; $("#lanPanel").style.top = top;
-      }
+      $(x.dataset.act === "notify" ? "#notifyBtn" : "#lanBtn").click();
+      // кнопки в шапке скрыты — ставим панель под кнопкой меню
+      const top = Math.round(b.getBoundingClientRect().bottom + 6) + "px";
+      $("#notifyPanel").style.top = top; $("#lanPanel").style.top = top;
     });
   };
   b.onclick = e => {
