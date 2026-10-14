@@ -1966,9 +1966,8 @@ function closeModal() {
 }
 
 // ---------- «Что нового» ----------
-// Описание релиза на трёх языках (блоки начинаются с флагов) — показываем блок на языке интерфейса.
+// Описание релиза по языкам (блоки начинаются с флагов) — показываем блок на языке интерфейса, иначе английский.
 const NOTE_FLAGS = { ru: "🇷🇺", en: "🇬🇧", zh: "🇨🇳", uk: "🇺🇦", be: "🇧🇾" };
-const NOTE_FALLBACK = { be: "ru" };
 function notesForLang(notes) {
   const text = String(notes || "").replace(/\r\n/g, "\n");
   const flags = Object.values(NOTE_FLAGS);
@@ -1980,7 +1979,7 @@ function notesForLang(notes) {
     if (f) { cur = f; parts[f] = line.trim().slice(f.length).trim() + "\n"; }
     else if (cur) parts[cur] += line + "\n";
   }
-  return (parts[NOTE_FLAGS[lang]] || parts[NOTE_FLAGS[NOTE_FALLBACK[lang]]] || parts[NOTE_FLAGS.en] || text).trim();
+  return (parts[NOTE_FLAGS[lang]] || parts[NOTE_FLAGS.en] || text).trim();
 }
 // Простейшая разметка описания: строки «- …» — список, остальное — абзацы, **жирный**.
 function mdLite(text) {
@@ -2850,7 +2849,7 @@ let lang = I18N[ui.lang] ? ui.lang
   : /^(ru|kk)/i.test(navigator.language) ? "ru" : "en";
 
 function t(key, vars) {
-  const s = I18N[lang][key] ?? I18N.ru[key] ?? key;
+  const s = I18N[lang][key] ?? I18N.en[key] ?? key;  // нет перевода — по-английски
   return vars ? s.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m) : s;
 }
 const locale = () => LOCALES[lang];

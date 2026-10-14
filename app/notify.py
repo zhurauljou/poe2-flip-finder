@@ -280,11 +280,11 @@ TEXTS = {
 
 
 def T(lang):
-    return TEXTS.get(lang) or TEXTS["ru"]
+    return TEXTS.get(lang) or TEXTS["en"]  # нет такого языка — по-английски
 
 
 def _owner_lang(cfg):
-    return ((cfg.get("settings") or {}).get("lang") or "ru")
+    return ((cfg.get("settings") or {}).get("lang") or "en")
 
 
 def _tg_lang(code):
@@ -568,7 +568,7 @@ def check_all(data_dir, get_market, link_base, default_league):
             subs = load_subs(data_dir); subs.pop(owner, None); save_subs(data_dir, subs)
     for cid, sub in subs.items():
         if sub.get("active"):
-            jobs.append((cid, int(cid), sub_settings(sub, cfg, default_league), sub.get("lang", "ru"), None))
+            jobs.append((cid, int(cid), sub_settings(sub, cfg, default_league), sub.get("lang", "en"), None))
     searched, gone, errors, total = {}, [], [], 0
     for who, chat, st, lang, link in jobs:
         market = get_market(st.get("league"), int(_num(st.get("window"), 3)))
@@ -789,7 +789,7 @@ def on_update(data_dir, u, ctx):
             send(chat, T(lang)["welcome"], reply_kb(lang))
             send(chat, *_menu(sub, st, lang, ctx["leagues"]()))
             return
-        lang = sub.get("lang", "ru")
+        lang = sub.get("lang", "en")
         L = T(lang)
         st = sub_settings(sub, cfg, ctx["default_league"]())
         changed = False
