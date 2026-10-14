@@ -1551,6 +1551,11 @@
   #filters .presets { grid-template-columns: repeat(3, auto); gap: 5px; }
   #filters .presets button { font-size: 14px; padding: 0 5px; }
   @container (max-width: 280px) { #filters .presets { gap: 4px; } #filters .presets button { font-size: 12.5px; padding: 0 3px; } }
+  /* «Больше вариантов» — всегда одна строка постоянной высоты (лишнее прокручивается вбок): панель фильтров не прыгает */
+  #filters .cap-best, #filters .cap-best:empty { display: flex; flex-wrap: nowrap; height: 30px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  #filters .cap-best::-webkit-scrollbar { display: none; }
+  #filters .cap-best > * { flex: none; }
+  #filters .cap-prev { min-height: 20px; }
 </style>
 </head>
 <body>
@@ -3980,14 +3985,13 @@ let capPrevTimer = null;
 function scheduleCapPreview() {
   clearTimeout(capPrevTimer);
   capScanToken++;
-  $("#capBest").innerHTML = "";
+  // Старые варианты остаются, пока не посчитаны новые: если очистить сразу, панель фильтров на миг укорачивается и прокрутка дёргается.
   capPrevTimer = setTimeout(capPreview, 120);
 }
 function capPreview() {
   const box = $("#capPrev"), tab = activeTab();
   const token = ++capScanToken;
-  $("#capBest").innerHTML = "";
-  if (!market || tab === "rates" || tab === "journal") { box.innerHTML = ""; return; }
+  if (!market || tab === "rates" || tab === "journal") { box.innerHTML = ""; $("#capBest").innerHTML = ""; return; }
   const cap = +$("#capital").value || 1;
   const countAt = tab === "flips" ? c => flipCandidates(c).length : (() => {
     const paths = findPaths();
