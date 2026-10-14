@@ -1556,6 +1556,10 @@
   #filters .cap-best::-webkit-scrollbar { display: none; }
   #filters .cap-best > * { flex: none; }
   #filters .cap-prev { min-height: 20px; }
+  /* «Дополнительно»: содержимое в обёртке, у которой анимируется высота */
+  .ggg .fadv-body { overflow: hidden; }
+  .ggg .fadv > summary::after { transition: transform .25s ease; }
+  .ggg .fadv.closing > summary::after { transform: rotate(45deg) translate(-2px, -2px); }
 </style>
 </head>
 <body>
@@ -4941,6 +4945,27 @@ let exChoices = [], exSel = 0;
   document.addEventListener("click", e => { if (!p.hidden && !p.contains(e.target) && !b.contains(e.target)) p.hidden = true; });
   document.addEventListener("keydown", e => { if (e.key === "Escape") p.hidden = true; });
   $("#notifyOn").addEventListener("change", updateFilterMarks);
+}
+// «Дополнительно» раскрывается и сворачивается плавно: анимируем высоту обёртки содержимого.
+{
+  const d = $("#fAdv"), sum = d.querySelector("summary"), body = document.createElement("div");
+  body.className = "fadv-body";
+  while (sum.nextSibling) body.appendChild(sum.nextSibling);
+  d.appendChild(body);
+  let anim = null;
+  sum.addEventListener("click", e => {
+    e.preventDefault();
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { d.open = !d.open; return; }
+    const opening = !d.open || d.classList.contains("closing");
+    const from = d.open ? body.getBoundingClientRect().height : 0;  // у закрытого браузер отдаёт прежнюю высоту
+    anim?.cancel();
+    if (opening) { d.classList.remove("closing"); d.open = true; }
+    const to = opening ? body.scrollHeight : 0;
+    if (!opening) d.classList.add("closing");
+    anim = body.animate([{ height: from + "px", opacity: opening ? 0.2 : 1 }, { height: to + "px", opacity: opening ? 1 : 0 }],
+                        { duration: Math.min(320, 160 + Math.abs(to - from) / 4), easing: "cubic-bezier(.25, .8, .3, 1)" });
+    anim.onfinish = () => { anim = null; if (!opening) { d.open = false; d.classList.remove("closing"); } };
+  });
 }
 init();
 updateFilterMarks();
