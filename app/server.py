@@ -56,7 +56,7 @@ PORT = int(os.environ.get("POE2FLIP_PORT", "8765"))
 # Переключается кнопкой 📱 на странице без перезапуска; выбор запоминается в настройках (app.json).
 LOCAL, LAN = "127.0.0.1", "0.0.0.0"
 
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 API = "https://poe.ninja/poe2/api"
 UA = "poe2-flip-finder/%s (personal desktop tool)" % VERSION
 
