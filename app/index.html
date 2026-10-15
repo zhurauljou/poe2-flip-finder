@@ -40,13 +40,14 @@
   .hctl select, .hctl button { width: auto; margin: 0; }
   .hctl button { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 32px; padding: 0;
                  background: var(--panel2); border-color: var(--line); color: var(--text); }
-  .hctl button:hover { background: var(--hover); }
+  @media (hover: hover) { .hctl button:hover { background: var(--hover); } }
   .hctl svg { width: 17px; height: 17px; }
   main { display: grid; grid-template-columns: var(--aside-w, 290px) minmax(0, 1fr); min-height: calc(100vh - 53px); }
   aside { position: relative; border-right: 1px solid var(--line); padding: 16px; background: var(--panel); }
   #resizer { position: absolute; top: 0; right: -5px; width: 10px; height: 100%; cursor: col-resize; z-index: 5; touch-action: none; }
   #resizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; transition: background .15s; }
-  #resizer:hover::after, body.resizing #resizer::after { background: var(--gold); }
+  body.resizing #resizer::after { background: var(--gold); }
+  @media (hover: hover) { #resizer:hover::after { background: var(--gold); } }
   body.resizing { cursor: col-resize; user-select: none; }
   section { padding: 16px 20px; overflow: auto; min-width: 0; }
   label, .lbl { display: block; margin: 0 0 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
@@ -63,7 +64,7 @@
     .row { flex-direction: column; align-items: stretch; gap: 0; }
   }
   button { cursor: pointer; background: var(--btn); border-color: var(--btn-line); color: var(--btn-text); font-weight: 600; }
-  button:hover { background: var(--btn-hover); }
+  @media (hover: hover) { button:hover { background: var(--btn-hover); } }
   button:disabled { opacity: .5; cursor: default; }
   :lang(zh) label { text-transform: none; letter-spacing: 0; }
   .check { display: flex; align-items: center; text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--text); }
@@ -73,7 +74,8 @@
   .tip::before { content: "?"; }
   .lh { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
   .lh .tip { flex: none; margin: 1px 0 0; }
-  .tip:hover, .tip:focus-visible, .tip.on { color: var(--gold); border-color: var(--gold); outline: none; }
+  .tip:focus-visible, .tip.on { color: var(--gold); border-color: var(--gold); outline: none; }
+  @media (hover: hover) { .tip:hover { color: var(--gold); border-color: var(--gold); outline: none; } }
   #tooltip { position: fixed; z-index: 100; max-width: min(320px, calc(100vw - 16px)); padding: 9px 11px; background: var(--panel2);
              border: 1px solid var(--btn-line); border-radius: 7px; box-shadow: var(--shadow); color: var(--text); font-size: 12.5px; line-height: 1.5; }
   .bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 8px; display: none; }
@@ -85,7 +87,7 @@
   table { width: 100%; border-collapse: collapse; }
   th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--line); cursor: pointer; white-space: nowrap; }
   td { padding: 8px; border-bottom: 1px solid var(--line2); vertical-align: top; }
-  tr.cyc:hover { background: var(--hover); cursor: pointer; }
+  @media (hover: hover) { tr.cyc:hover { background: var(--hover); cursor: pointer; } }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .good { color: var(--good); font-weight: 600; }
   .muted { color: var(--muted); }
@@ -109,11 +111,12 @@
             display: flex; flex-direction: column; background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow); }
   #dresizer { position: absolute; top: 0; left: -5px; width: 10px; height: 100%; cursor: col-resize; z-index: 5; touch-action: none; }
   #dresizer::after { content: ""; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: transparent; transition: background .15s; }
-  #dresizer:hover::after, body.resizing #dresizer::after { background: var(--gold); }
+  body.resizing #dresizer::after { background: var(--gold); }
+  @media (hover: hover) { #dresizer:hover::after { background: var(--gold); } }
   .dhead { display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-bottom: 1px solid var(--line); }
   .dhead .path { flex: 1; }
   .dhead button { flex: none; width: 32px; height: 32px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 18px; line-height: 1; }
-  .dhead button:hover { background: var(--hover); color: var(--text); }
+  @media (hover: hover) { .dhead button:hover { background: var(--hover); color: var(--text); } }
   #dBody { flex: 1; overflow: auto; padding: 14px 16px 20px; }
   .dsum { padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); container-type: inline-size; }
   .dprofit { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; margin-top: 12px; padding-top: 10px;
@@ -186,7 +189,7 @@
   .stepper input.ov { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; position: relative; z-index: 1; }
   .stepper button { width: 32px; margin: 0; padding: 0; background: var(--panel2); border-color: var(--line); color: var(--text);
                     font-size: 17px; font-weight: 600; line-height: 1; user-select: none; touch-action: manipulation; }
-  .stepper button:hover { background: var(--hover); color: var(--gold); }
+  @media (hover: hover) { .stepper button:hover { background: var(--hover); color: var(--gold); } }
   .stepper button:first-child { border-radius: 6px 0 0 6px; border-right: 0; }
   .stepper button:last-child { border-radius: 0 6px 6px 0; border-left: 0; }
   .seg { display: flex; margin-top: 4px; }
@@ -197,7 +200,7 @@
   .seg button + button { border-left: 0; }
   .seg button:first-child { border-radius: 6px 0 0 6px; }
   .seg button:last-child { border-radius: 0 6px 6px 0; }
-  .seg button:hover:not(:disabled) { background: var(--hover); }
+  @media (hover: hover) { .seg button:hover:not(:disabled) { background: var(--hover); } }
   .seg button.on { background: var(--btn); color: var(--btn-text); box-shadow: inset 0 0 0 1px var(--btn-line); font-weight: 600; }
   .seg button:disabled { opacity: .35; }
   .seg img { width: 20px; height: 20px; flex: none; }
@@ -211,23 +214,23 @@
   .cap-prev { display: flex; justify-content: space-between; gap: 6px; min-height: 18px; margin-top: 4px;
               text-transform: none; letter-spacing: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
   .cap-prev button { width: auto; margin: 0; padding: 0 2px; background: none; border: 0; color: var(--muted); font-weight: 400; }
-  .cap-prev button:hover { background: none; color: var(--text); text-decoration: underline; }
+  @media (hover: hover) { .cap-prev button:hover { background: none; color: var(--text); text-decoration: underline; } }
   .cap-prev .up { color: var(--good); } .cap-prev .down { color: var(--bad); }
   .cap-best { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; margin-top: 6px; text-transform: none; letter-spacing: 0; font-size: 12px; }
   .cap-best:empty { display: none; }
   .cap-best button { width: auto; margin: 0; padding: 2px 8px; border-radius: 12px; background: var(--panel2); border-color: var(--line);
                      color: var(--text); font-weight: 500; font-size: 12px; font-variant-numeric: tabular-nums; }
-  .cap-best button:hover { border-color: var(--btn-line); background: var(--hover); }
+  @media (hover: hover) { .cap-best button:hover { border-color: var(--btn-line); background: var(--hover); } }
   .cap-best button b { color: var(--good); font-weight: 600; }
   #dReset { margin-top: 8px; }
   button.ghost { background: transparent; border-color: var(--line); color: var(--muted); font-weight: 500; }
-  button.ghost:hover { background: var(--hover); color: var(--text); }
+  @media (hover: hover) { button.ghost:hover { background: var(--hover); color: var(--text); } }
   .dsave { margin-top: 14px; }
   .dsave button { margin: 0; padding: 9px; }
   #dSaveHint { margin-top: 6px; font-size: 12.5px; min-height: 1em; }
   /* ---- режим «у Альвы» ---- */
   .alva-btn { margin: 0 0 12px; padding: 9px; background: var(--btn); }
-  #alva { position: fixed; inset: 0; z-index: 70; overflow: auto; background: var(--bg);
+  #alva { position: fixed; inset: 0; z-index: 70; overflow: hidden auto; background: var(--bg);
           padding: calc(14px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom)); }
   .alva-open { overflow: hidden; }
   /* minmax(0, 1fr): иначе длинная строка курса растягивает колонку шире экрана телефона */
@@ -235,8 +238,9 @@
   .alva-in > * { min-width: 0; }
   .arv, .abe, .alva-in .ak { overflow-wrap: anywhere; }
   .ahead { display: flex; align-items: center; gap: 12px; }
-  .adots { display: flex; gap: 6px; }
-  .adots span { width: 12px; height: 12px; border-radius: 6px; background: var(--line); }
+  .adots { display: flex; align-items: center; gap: 6px; }
+  .adots span { width: 12px; height: 12px; border-radius: 6px; background: var(--line); transition: width .2s, background-color .2s; }
+  .adots .now { width: 26px; }
   .adots .done { background: var(--good); } .adots .now { background: var(--gold); }
   .ahead .muted { margin-left: auto; font-size: 14px; }
   .ax { flex: none; }
@@ -258,9 +262,6 @@
   .ahint { font-size: 13px; }
   .anav { display: flex; gap: 10px; }
   .anav button { margin: 0; padding: 15px; font-size: 18px; }
-  .anav .aback { width: auto; flex: none; }
-  .asum { padding: 18px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); display: grid; gap: 6px; }
-  .aprofit { font-size: 40px; font-weight: 700; }
   .aclose { margin: 0; }
   @media (max-width: 600px) {
     .arow { grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; }
@@ -272,24 +273,24 @@
   .xchips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; text-transform: none; letter-spacing: 0; }
   .xchip { width: auto; margin: 0; padding: 3px 9px; border-radius: 12px; background: var(--panel2); border-color: var(--line);
            color: var(--text); font-weight: 500; font-size: 12px; }
-  .xchip:hover { border-color: var(--btn-line); background: var(--hover); }
+  @media (hover: hover) { .xchip:hover { border-color: var(--btn-line); background: var(--hover); } }
   .xchip.off { color: var(--muted); text-decoration: line-through; opacity: .6; background: transparent; }
   .xchip.on { background: var(--btn); color: var(--btn-text); border-color: var(--btn-line); }
   .xlbl { font-size: 12px; align-self: center; margin-right: 2px; }
   .xitem { display: inline-flex; align-items: center; gap: 2px; }
   .xitem button { width: 20px; height: 20px; margin: 0; padding: 0; border-radius: 10px; background: transparent; border-color: var(--line);
                   color: var(--muted); font-size: 13px; line-height: 1; }
-  .xitem button:hover { color: var(--text); background: var(--hover); }
+  @media (hover: hover) { .xitem button:hover { color: var(--text); background: var(--hover); } }
   .fav { width: 24px; height: 24px; margin: 0 2px 0 0; padding: 0; flex: none; background: transparent; border: 0; color: var(--muted);
          font-size: 16px; line-height: 1; font-weight: 400; }
-  .fav:hover { background: transparent; color: var(--gold); }
+  @media (hover: hover) { .fav:hover { background: transparent; color: var(--gold); } }
   .fav.on { color: var(--gold); }
   .dhead .fav { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 17px; }
   .dhide { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 10px; font-size: 12.5px; }
   /* ---- онлайн в Steam ---- */
   .hplayers { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px;
               color: var(--muted); font-size: 12.5px; text-decoration: none; white-space: nowrap; background: var(--panel); }
-  .hplayers:hover { border-color: var(--btn-line); color: var(--text); }
+  @media (hover: hover) { .hplayers:hover { border-color: var(--btn-line); color: var(--text); } }
   .hplayers[hidden] { display: none; }
   .hplayers .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); align-self: center; box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 22%, transparent); }
   .hplayers b { color: var(--text); font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -313,7 +314,7 @@
   .verline { margin-top: 14px; font-size: 12px; color: var(--muted); text-transform: none; letter-spacing: 0; }
   .linkbtn { display: inline; width: auto; margin: 0; padding: 0; background: none; border: 0; color: var(--gold);
              font-weight: 500; font-size: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-  .linkbtn:hover { background: none; color: var(--text); }
+  @media (hover: hover) { .linkbtn:hover { background: none; color: var(--text); } }
   .linkbtn:disabled { color: var(--muted); text-decoration: none; }
   #updCheckMsg { margin-top: 4px; }
   #updCheckMsg:empty { display: none; }
@@ -335,8 +336,8 @@
   .mdl-btn { width: auto; margin: 0; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--btn-line); background: var(--btn);
              color: var(--btn-text); font-weight: 600; font-size: 13.5px; text-decoration: none; display: inline-flex; align-items: center; }
   .mdl-btn.ghost { background: transparent; border-color: var(--line); color: var(--text); font-weight: 500; }
-  .mdl-btn:hover { background: var(--btn-hover); }
-  .mdl-btn.ghost:hover { background: var(--hover); }
+  @media (hover: hover) { .mdl-btn:hover { background: var(--btn-hover); } }
+  @media (hover: hover) { .mdl-btn.ghost:hover { background: var(--hover); } }
   .clrel { padding: 10px 0; }
   .clrel + .clrel { border-top: 1px solid var(--line2); }
   .clhd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
@@ -347,7 +348,7 @@
   /* ---- Telegram: общий бот ---- */
   .tgbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border-radius: 6px;
            background: var(--btn); border: 1px solid var(--btn-line); color: var(--btn-text); font-weight: 600; text-decoration: none; }
-  .tgbtn:hover { background: var(--btn-hover); }
+  @media (hover: hover) { .tgbtn:hover { background: var(--btn-hover); } }
   .tgqr .qr { width: 132px; }
   @media (max-width: 800px) { .tgqr { display: none; } }
   /* ---- полоска обновления ---- */
@@ -396,16 +397,16 @@
   .jh { margin: 18px 0 8px; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .jhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .jhead button { width: auto; margin: 10px 0 0; padding: 5px 12px; font-size: 12.5px; }
-  tr.jrow:hover { cursor: default; }
+  @media (hover: hover) { tr.jrow:hover { cursor: default; } }
   .jdel { width: 28px; height: 28px; margin: 0; padding: 0; background: transparent; border-color: var(--line); color: var(--muted); font-size: 16px; line-height: 1; }
-  .jdel:hover { color: var(--bad); border-color: var(--bad); background: transparent; }
+  @media (hover: hover) { .jdel:hover { color: var(--bad); border-color: var(--bad); background: transparent; } }
   @media (min-width: 1100px) { body.drawer-open main { margin-right: var(--drawer-w, 480px); } }
   /* ---- панель инструментов: кнопка фильтров + вкладки ---- */
   .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .toolbar .tabs { margin: 0; }
   #filtersBtn { display: inline-flex; align-items: center; gap: 7px; width: auto; margin: 0; padding: 6px 12px;
                 background: transparent; border-color: var(--line); color: var(--text); font-weight: 500; min-width: 0; }
-  #filtersBtn:hover { background: var(--hover); }
+  @media (hover: hover) { #filtersBtn:hover { background: var(--hover); } }
   #filtersBtn svg { width: 16px; height: 16px; flex: none; color: var(--gold); }
   #fsum { display: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; font-size: 12.5px; }
   .filters-hidden #fsum { display: inline; }
@@ -420,7 +421,7 @@
   .view-cards .rt thead { display: none; }
   .view-cards .rt tr.cyc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: start; gap: 10px 12px; padding: 12px;
                            background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-  .view-cards .rt tr.cyc:hover { background: var(--panel); border-color: var(--btn-line); }
+  @media (hover: hover) { .view-cards .rt tr.cyc:hover { background: var(--panel); border-color: var(--btn-line); } }
   .view-cards .rt tr.cyc.sel { border-color: var(--btn-line); box-shadow: inset 3px 0 var(--gold); }
   .view-cards .rt td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; font-size: 14px; }
   .view-cards .rt td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; color: var(--muted);
@@ -436,7 +437,7 @@
   .favtoggle { margin: 0 0 0 auto; width: auto; min-width: 34px; height: 32px; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px;
                background: transparent; border-color: var(--line); color: var(--muted); font-size: 17px; font-weight: 400; line-height: 1; }
   .favtoggle small { font-size: 12px; }
-  .favtoggle:hover { background: var(--hover); color: var(--gold); }
+  @media (hover: hover) { .favtoggle:hover { background: var(--hover); color: var(--gold); } }
   .favtoggle.on { background: var(--panel2); color: var(--gold); border-color: var(--btn-line); }
   .vtoggle button { width: 34px; height: 32px; margin: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center;
                     background: transparent; border-color: var(--line); color: var(--muted); border-radius: 0; }
@@ -521,7 +522,7 @@
   :where(.ggg) input, :where(.ggg) select { background-color: var(--g25); border-color: var(--g26); color: var(--g16); }
   :where(.ggg) input:focus, :where(.ggg) select:focus { outline: none; border-color: var(--g27); box-shadow: 0 0 0 1px var(--g28), 0 0 12px var(--g29); }
   :where(.ggg) button { background: linear-gradient(var(--g30), var(--g31)); box-shadow: inset 0 1px 0 var(--g32); }
-  :where(.ggg) button:hover { background: linear-gradient(var(--g33), var(--g34)); border-color: var(--g35); color: var(--g36); }
+  @media (hover: hover) { :where(.ggg) button:hover { background: linear-gradient(var(--g33), var(--g34)); border-color: var(--g35); color: var(--g36); } }
   :where(.ggg) label, :where(.ggg) .lbl { font: 600 14px/1.25 var(--sc); text-transform: none; color: var(--g37); }
   :where(.ggg) label input, :where(.ggg) .lbl input { font-family: var(--body); }
   .ggg .check { font: 14.5px/1.35 var(--body); color: var(--text); }
@@ -536,14 +537,14 @@
   .ggg .hplayers .sep { color: var(--g45); opacity: 1; }
   .ggg .hleague { font: 700 17px var(--sc); letter-spacing: .4px; color: var(--g44); }
   .ggg .hctl button { background: linear-gradient(var(--g30), var(--g31)); border-color: var(--g15); color: var(--g7); width: 36px; height: 34px; }
-  .ggg .hctl button:hover { border-color: var(--g35); color: var(--g36); }
+  @media (hover: hover) { .ggg .hctl button:hover { border-color: var(--g35); color: var(--g36); } }
   /* панель фильтров — бронзовая рамка, сверху орнамент */
   .ggg aside { background: linear-gradient(var(--g46), var(--g1) 320px); border-right: 1px solid var(--line); box-shadow: inset -3px 0 0 var(--g38), inset -4px 0 0 var(--g39); padding-top: 10px; }
   .ggg aside::before { content: ""; display: block; height: 14px; margin: 0 0 14px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='14' viewBox='0 0 200 14'%3E%3Cpath d='M10 7H86M114 7H190' stroke='%234a3a22'/%3E%3Cpath d='M100 1l6 6-6 6-6-6z' fill='%23b08a45'/%3E%3Cpath d='M89 7l3-3 3 3-3 3zM105 7l3-3 3 3-3 3z' fill='%236b5228'/%3E%3C/svg%3E") center / 200px 14px no-repeat; }
   .ggg .seg button { background: var(--g1); border-color: var(--g26); color: var(--g47); box-shadow: none; }
   .ggg .seg button:first-child { border-radius: 2px 0 0 2px; }
   .ggg .seg button:last-child { border-radius: 0 2px 2px 0; }
-  .ggg .seg button:hover:not(:disabled) { background: var(--g3); color: var(--g16); }
+  @media (hover: hover) { .ggg .seg button:hover:not(:disabled) { background: var(--g3); color: var(--g16); } }
   .ggg .seg button.on { background: linear-gradient(var(--g33), var(--g48)); color: var(--g44); box-shadow: inset 0 0 0 1px var(--g28); }
   .ggg .stepper button { background: var(--g3); border-color: var(--g26); color: var(--g49); box-shadow: none; }
   .ggg .stepper button:first-child { border-radius: 2px 0 0 2px; }
@@ -556,7 +557,7 @@
   /* вкладки — как навигация на сайте игры, через ромбы */
   .ggg .tabs { gap: 0; align-items: center; }
   .ggg .tabs button { position: relative; background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; box-shadow: none; padding: 6px 16px 7px; font: 700 18px var(--sc); letter-spacing: .8px; color: var(--g52); }
-  .ggg .tabs button:hover { background: transparent; color: var(--g16); }
+  @media (hover: hover) { .ggg .tabs button:hover { background: transparent; color: var(--g16); } }
   .ggg .tabs button.on { background: transparent; color: var(--g44); border-bottom-color: var(--g35); text-shadow: 0 0 12px var(--g42); }
   .ggg .tabs button + button::before { content: ""; position: absolute; left: -3px; top: 50%; width: 5px; height: 5px; margin-top: -3px; background: var(--g4); transform: rotate(45deg); }
   .ggg #filtersBtn { font: 700 16px var(--sc); letter-spacing: .5px; background: transparent; border-color: var(--g26); box-shadow: none; }
@@ -569,9 +570,9 @@
   /* таблица — в бронзовой рамке */
   .ggg table.rt { background: var(--panel); outline: 1px solid var(--line); box-shadow: var(--frame), var(--shadow); }
   .ggg .rt th { font: 600 14px var(--sc); letter-spacing: .3px; color: var(--g52); border-bottom-color: var(--line); background: var(--g53); }
-  .ggg .rt th:hover { color: var(--g16); }
+  @media (hover: hover) { .ggg .rt th:hover { color: var(--g16); } }
   .ggg .rt td { border-bottom-color: var(--g54); }
-  .ggg tr.cyc:hover { background: var(--g55); }
+  @media (hover: hover) { .ggg tr.cyc:hover { background: var(--g55); } }
   .ggg tr.cyc.sel { background: linear-gradient(90deg, var(--g56), var(--g57)); box-shadow: inset 3px 0 var(--g58); }
   .ggg .rt td.good { font-weight: 700; color: var(--good); }
   .ggg .rt td.c-score { color: var(--g44); font-weight: 700; }
@@ -583,7 +584,7 @@
   .ggg.view-cards .rt { background: none; outline: 0; box-shadow: none; }
   .ggg.view-cards .rt tbody { gap: 16px; }
   .ggg.view-cards .rt tr.cyc { padding: 0 14px 14px; background: var(--tipbg); border: 1px solid var(--tipline); border-radius: 0; box-shadow: 0 0 0 1px var(--g41), 0 12px 30px var(--g60); gap: 10px 12px; }
-  .ggg.view-cards .rt tr.cyc:hover { background: var(--tipbg); border-color: var(--g61); }
+  @media (hover: hover) { .ggg.view-cards .rt tr.cyc:hover { background: var(--tipbg); border-color: var(--g61); } }
   .ggg.view-cards .rt tr.cyc.sel { border-color: var(--g62); box-shadow: 0 0 0 1px var(--g41), 0 0 22px var(--g63); }
   .ggg.view-cards .rt td.wide:first-child { position: relative; margin: 0 -14px; padding: 9px 30px; background: linear-gradient(var(--g64), var(--g65) 60%, var(--g66)); border-bottom: 1px solid var(--g67); }
   .ggg.view-cards .rt td.wide:first-child::before, .ggg.view-cards .rt td.wide:first-child::after { content: ""; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border: 1px solid var(--g61); background: var(--g65); transform: rotate(45deg); }
@@ -598,7 +599,7 @@
   .ggg .dhead .cur { border-color: transparent; }
   .ggg .dhead button { border-radius: 2px; border-color: var(--g67); background: transparent; box-shadow: none; }
   .ggg .alva-btn { border-color: #b0402a; }
-  .ggg .alva-btn:hover { border-color: #e0603a; }
+  @media (hover: hover) { .ggg .alva-btn:hover { border-color: #e0603a; } }
   .ggg .dsum, .ggg .dstep { background: var(--tipbg); border: 1px solid var(--tipline); border-radius: 0; box-shadow: 0 0 0 1px var(--g41); }
   .ggg .dstep.now { border-color: var(--g62); box-shadow: 0 0 0 1px var(--g41), 0 0 16px var(--g71); }
   .ggg .dnum { border-color: var(--g27); color: var(--g44); font: 700 13px Cinzel, var(--sc); }
@@ -624,7 +625,7 @@
   .ggg #lanPanel { border-radius: 0; box-shadow: var(--frame), var(--shadow); }
   /* режим «у Альвы» */
   .ggg #alva { background: radial-gradient(ellipse 900px 400px at 50% -100px, var(--g24), transparent 70%) no-repeat, var(--g1); }
-  .ggg .arate, .ggg .asum { background: var(--tipbg); border: 1px solid var(--tipline); border-radius: 0; }
+  .ggg .arate { background: var(--tipbg); border: 1px solid var(--tipline); border-radius: 0; }
   .ggg .anav button { font: 700 19px var(--sc); letter-spacing: .6px; }
   @media (max-width: 800px) {
     .ggg header { padding: 8px 12px; }
@@ -649,7 +650,7 @@
   .ggg.ggg input, .ggg.ggg select { background-color: var(--g106); border-color: var(--g107); color: var(--cream); }
   /* меню — бронза, активный пункт кремовый с ромбиком снизу */
   .ggg.ggg .tabs button { color: var(--bronze); font-weight: 700; }
-  .ggg.ggg .tabs button:hover { color: var(--cream); }
+  @media (hover: hover) { .ggg.ggg .tabs button:hover { color: var(--cream); } }
   .ggg.ggg .tabs button.on { color: var(--cream); border-bottom-color: transparent; text-shadow: 0 0 14px var(--g108); }
   .ggg.ggg .tabs button.on::after { content: ""; position: absolute; left: 50%; bottom: -1px; width: 22px; height: 7px; margin-left: -11px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='7' viewBox='0 0 22 7'%3E%3Cpath d='M0 3.5h7M15 3.5h7' stroke='%23dac18e'/%3E%3Cpath d='M11 0l3.5 3.5L11 7 7.5 3.5z' fill='%23dac18e'/%3E%3C/svg%3E") no-repeat; }
   /* таблица и карточки — тёмные, кремовые акценты */
@@ -761,8 +762,8 @@
       linear-gradient(90deg, #8a6a32, #c9a256 50%, #8a6a32) center calc(100% - 2px) / calc(100% - 78px) 2px no-repeat,
       linear-gradient(#5a4320, #5a4320) center 7px / calc(100% - 78px) 1px no-repeat,
       linear-gradient(#5a4320, #5a4320) center calc(100% - 7px) / calc(100% - 78px) 1px no-repeat; }
-  .ggg .alva-btn:hover, .ggg.ggg .alva-btn:hover { background: none; color: #fff0c8; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .9)) drop-shadow(0 0 14px rgba(230, 60, 30, .45)); }
-  .ggg.ggg .alva-btn:hover::before { filter: brightness(1.18) saturate(1.1); }
+  @media (hover: hover) { .ggg .alva-btn:hover, .ggg.ggg .alva-btn:hover { background: none; color: #fff0c8; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .9)) drop-shadow(0 0 14px rgba(230, 60, 30, .45)); } }
+  @media (hover: hover) { .ggg.ggg .alva-btn:hover::before { filter: brightness(1.18) saturate(1.1); } }
   .ggg.ggg .alva-btn:active::before { filter: brightness(.9); }
   .ggg .alva-btn:focus-visible { outline: none; }
   .ggg.ggg .alva-btn:focus-visible::before { filter: brightness(1.25); }
@@ -770,7 +771,8 @@
   .ggg .cur, .ggg.ggg .cur { white-space: nowrap; }
   .ggg .cur img { box-sizing: content-box; flex: none; }
   .ggg .arrow { display: inline-block; flex: none; font-size: 0; color: transparent; }
-  .ggg tr.cyc:hover .cur img, .ggg tr.cyc.sel .cur img { border-color: var(--g130); }
+  .ggg tr.cyc.sel .cur img { border-color: var(--g130); }
+  @media (hover: hover) { .ggg tr.cyc:hover .cur img { border-color: var(--g130); } }
   /* в шапке панели шагов и в карточках — капитель, иконки чуть крупнее */
   /* в шагах «Отдай / получи» — тоже ячейки */
   .ggg .dflow .cur { font-size: 15.5px; }
@@ -787,7 +789,8 @@
   /* плашки валют — спокойнее: приглушённая бронзовая рамка, ярче только при наведении */
   .ggg .cur, .ggg.ggg .cur, .ggg .dhead .cur, .ggg.view-cards .rt td.wide:first-child .cur { background: linear-gradient(var(--g131), var(--g132) 50%, var(--g133)); color: var(--g134); }
   .ggg .cur::before { background: linear-gradient(var(--g135), var(--g136) 60%, var(--g137)); box-shadow: inset 0 1px 0 var(--g138); }
-  .ggg tr.cyc:hover .cur, .ggg tr.cyc.sel .cur, .ggg .dhead .cur { background: linear-gradient(var(--g139), var(--g140) 50%, var(--g141)); color: var(--g142); }
+  .ggg tr.cyc.sel .cur, .ggg .dhead .cur { background: linear-gradient(var(--g139), var(--g140) 50%, var(--g141)); color: var(--g142); }
+  @media (hover: hover) { .ggg tr.cyc:hover .cur { background: linear-gradient(var(--g139), var(--g140) 50%, var(--g141)); color: var(--g142); } }
   /* связка между валютами: линия от острия до острия, ромбики на обоих концах */
   .ggg .path { column-gap: 0; }
   .ggg .arrow { width: 24px; height: 10px; margin: 0 -1px; opacity: .85; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2210%22 viewBox=%220 0 24 10%22%3E%3Cpath d=%22M0 5H24%22 stroke=%22%236b5a3a%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M4.5 1.5L8 5L4.5 8.5L1 5Z%22 fill=%22%238f7444%22/%3E%3Cpath d=%22M19.5 1.5L23 5L19.5 8.5L16 5Z%22 fill=%22%238f7444%22/%3E%3C/svg%3E") center / 24px 10px no-repeat; position: relative; z-index: 1; }
@@ -802,7 +805,7 @@
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone)::before { content: ""; position: absolute; inset: 0; z-index: -2; clip-path: polygon(calc(var(--k) * 18) calc(var(--k) * 3), calc(100% - var(--k) * 18) calc(var(--k) * 3), calc(100% - var(--k) * 4) 50%,
                        calc(100% - var(--k) * 18) calc(100% - var(--k) * 3), calc(var(--k) * 18) calc(100% - var(--k) * 3), calc(var(--k) * 4) 50%); }
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone)::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; --cw: calc(var(--k) * 40); }
-  .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover { background: none; }
+  @media (hover: hover) { .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover { background: none; } }
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):active::before { filter: brightness(.88); }
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):disabled { opacity: .45; filter: grayscale(.6); }
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):focus-visible { outline: none; }
@@ -811,13 +814,13 @@
   .ggg.ggg :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport) { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 0 20px; border: 1px solid var(--g143); border-radius: 2px; text-decoration: none; background: linear-gradient(var(--g144), var(--g145) 50%, var(--g146)); box-shadow: inset 0 0 0 2px var(--g147), inset 0 0 0 3px var(--g148), inset 0 1px 0 var(--g149), 0 2px 4px var(--g96); color: var(--g150); font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); filter: none; }
   .ggg.ggg :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport)::after { position: absolute; inset: 2px; pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%280 0%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") left top / 14px 14px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%2814 0%29 scale%28-1 1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") right top / 14px 14px no-repeat,
                 url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%280 14%29 scale%281 -1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") left bottom / 14px 14px no-repeat, url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 14 14%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate%2814 14%29 scale%28-1 -1%29%22%3E%3Cpath d=%22M1.5 13V6.5C1.5 3.7 3.7 1.5 6.5 1.5H13%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%221.3%22/%3E%3Cpath d=%22M4.6 10c0-3 2.4-5.4 5.4-5.4%22 stroke=%22url%28%23g%29%22 fill=%22none%22 stroke-width=%22.9%22/%3E%3Ccircle cx=%224.4%22 cy=%224.4%22 r=%221.5%22 fill=%22url%28%23g%29%22/%3E%3C/g%3E%3C/svg%3E") right bottom / 14px 14px no-repeat; }
-  .ggg.ggg :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport):hover { background: linear-gradient(var(--g151), var(--g152) 50%, var(--g153)); border-color: var(--g154); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport):hover { background: linear-gradient(var(--g151), var(--g152) 50%, var(--g153)); border-color: var(--g154); color: var(--g155); } }
   .ggg.ggg :is(#filtersBtn, #dSave, #dReset, .ghost, #tgSave, .topen, .mdl-btn.ghost, .tgbtn, .jhead button, #jExport):disabled { opacity: .5; }
   .ggg.ggg #filtersBtn { justify-content: flex-start; }
   .ggg.ggg #filtersBtn svg { color: var(--g156); }
   /* иконки */
   .ggg.ggg :is(.hctl button, #dClose, #dFav, .mdl-x, .lanx, .toast .tx, .ax, #filtersClose, .favtoggle, .vtoggle button, .jdel, #updSkip) { border: 1px solid var(--g157); border-radius: 2px; color: var(--g158); text-shadow: none; filter: none; background: linear-gradient(var(--g159), var(--g160) 55%, var(--g161)); box-shadow: inset 0 0 0 2px var(--g162), inset 0 0 0 3px var(--g163), 0 2px 4px var(--g164); }
-  .ggg.ggg :is(.hctl button, #dClose, #dFav, .mdl-x, .lanx, .toast .tx, .ax, #filtersClose, .favtoggle, .vtoggle button, .jdel, #updSkip):hover { background: linear-gradient(var(--g165), var(--g166) 55%, var(--g167)); border-color: var(--g154); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg :is(.hctl button, #dClose, #dFav, .mdl-x, .lanx, .toast .tx, .ax, #filtersClose, .favtoggle, .vtoggle button, .jdel, #updSkip):hover { background: linear-gradient(var(--g165), var(--g166) 55%, var(--g167)); border-color: var(--g154); color: var(--g155); } }
   .ggg.ggg :is(.favtoggle.on, .vtoggle button.on, #dFav.on, #lanBtn.on) { background: linear-gradient(var(--g168), var(--g169) 55%, var(--g170)); border-color: var(--g128); color: var(--g44); }
   .ggg.ggg .vtoggle button + button { border-left: 0; }
   /* связка валют: центры ромбиков ровно на остриях плашек */
@@ -826,7 +829,7 @@
      Чёрный ящик в тонкой рамке, заполненный треугольник справа; раскрытый список — чёрный, наведённый пункт — тёмная олива.
      Раскрытый список стилизуется только там, где браузер умеет appearance: base-select (Chrome 135+); иначе — обычный. */
   .ggg.ggg select { border: 1px solid var(--g171); border-radius: 0; color: var(--g172); background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 10px center / 13px 8px, linear-gradient(#0e0d0c, #060606); box-shadow: inset 0 0 0 1px var(--g41), inset 0 1px 0 var(--g173); padding-right: 32px; }
-  .ggg.ggg select:hover { border-color: var(--g174); background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%23c9b27a%22/%3E%3C/svg%3E"), linear-gradient(#141210, #080807); }
+  @media (hover: hover) { .ggg.ggg select:hover { border-color: var(--g174); background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%23c9b27a%22/%3E%3C/svg%3E"), linear-gradient(#141210, #080807); } }
   .ggg.ggg select:focus { border-color: var(--g61); box-shadow: inset 0 0 0 1px var(--g41), 0 0 0 1px var(--g175); }
   @supports (appearance: base-select) {
     .ggg.ggg select, .ggg.ggg ::picker(select) { appearance: base-select; }
@@ -835,13 +838,14 @@
     .ggg.ggg ::picker(select) { margin-top: 2px; padding: 3px 0; border: 1px solid var(--g171); border-radius: 0; background: var(--g176); color: var(--g172); box-shadow: 0 0 0 1px var(--g41), 0 14px 30px var(--g177); max-height: min(420px, 60vh); }
     .ggg.ggg option { padding: 5px 12px; min-height: 0; font: inherit; color: var(--g172); background: transparent; border: 0; }
     .ggg.ggg option::checkmark { display: none; }
-    .ggg.ggg option:hover, .ggg.ggg option:focus-visible { background: linear-gradient(90deg, var(--g178), var(--g179)); color: var(--g180); outline: none; }
+    .ggg.ggg option:focus-visible { background: linear-gradient(90deg, var(--g178), var(--g179)); color: var(--g180); outline: none; }
+  @media (hover: hover) { .ggg.ggg option:hover { background: linear-gradient(90deg, var(--g178), var(--g179)); color: var(--g180); outline: none; } }
     .ggg.ggg option:checked { color: var(--g44); }
     .ggg.ggg option:disabled { color: var(--g181); }
   }
   /* чекбоксы — круглые, с золотой галочкой */
   .ggg.ggg input[type=checkbox] { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 0 9px 0 0; padding: 0; border-radius: 50%; border: 1px solid var(--g45); background: radial-gradient(circle at 50% 40%, var(--g182), var(--g183) 70%); box-shadow: inset 0 0 0 2px var(--g184), inset 0 0 0 3px var(--g185), 0 1px 2px var(--g60); cursor: pointer; }
-  .ggg.ggg input[type=checkbox]:hover { border-color: var(--g154); }
+  @media (hover: hover) { .ggg.ggg input[type=checkbox]:hover { border-color: var(--g154); } }
   .ggg.ggg input[type=checkbox]:checked { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2222%22 height=%2222%22 viewBox=%220 0 22 22%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%221%22 stop-color=%22%23a8843e%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M5.5 11.5l3.8 3.8L16.8 7%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%223.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 opacity=%22.6%22/%3E%3Cpath d=%22M5.5 11.5l3.8 3.8L16.8 7%22 fill=%22none%22 stroke=%22url%28%23g%29%22 stroke-width=%222.2%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") center / 22px 22px no-repeat, radial-gradient(circle at 50% 40%, #2a2418, #0c0a08 70%); border-color: var(--g128); }
   .ggg.ggg input[type=checkbox]:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--g175); }
   /* ===================== Быстрее и чище =====================
@@ -852,7 +856,8 @@
   /* Плашки валют: одна картинка-рамка вместо обрезки и псевдослоя на каждой (их в таблице больше тысячи). */
   .ggg.ggg .cur, .ggg.ggg .dhead .cur, .ggg.view-cards .rt td.wide:first-child .cur { clip-path: none; isolation: auto; position: static; box-sizing: border-box; height: 32px; min-height: 0; padding: 0 6px 0 2px; border-style: solid; border-width: 1px 11px; border-color: transparent; border-radius: 0; border-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237d6a46%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%2354462c%22/%3E%3Cstop offset=%221%22 stop-color=%22%233a3020%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2315130f%22/%3E%3Cstop offset=%221%22 stop-color=%22%230e0c0a%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E") 1 11 fill / 1px 11px stretch; background: none; }
   .ggg.ggg .cur::before { content: none; }
-  .ggg.ggg :is(tr.cyc:hover, tr.cyc.sel) .cur, .ggg.ggg .dhead .cur { background: none; }
+  .ggg.ggg .dhead .cur { background: none; }
+  @media (hover: hover) { .ggg.ggg :is(tr.cyc:hover, tr.cyc.sel) .cur { background: none; } }
   .ggg.ggg .cur img { filter: none; }
   .ggg.ggg .arrow { position: static; margin: 0 -4px; }
   .ggg.ggg .path { position: relative; }
@@ -865,7 +870,8 @@
   .ggg.ggg #dWarn .dnote { margin: 0; }
   /* рамки валют: тусклая бронза, чуть ярче только у выбранной строки и под курсором */
   .ggg.ggg .cur, .ggg.ggg .dhead .cur, .ggg.view-cards .rt td.wide:first-child .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%234f4532%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%233a3226%22/%3E%3Cstop offset=%221%22 stop-color=%22%232a241b%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23121110%22/%3E%3Cstop offset=%221%22 stop-color=%22%230d0c0b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); color: var(--g186); }
-  .ggg.ggg :is(tr.cyc:hover, tr.cyc.sel) .cur, .ggg.ggg .dhead .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237a6846%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%2356492f%22/%3E%3Cstop offset=%221%22 stop-color=%22%233c3222%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23161410%22/%3E%3Cstop offset=%221%22 stop-color=%22%230e0d0b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); color: var(--g187); }
+  .ggg.ggg .dhead .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237a6846%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%2356492f%22/%3E%3Cstop offset=%221%22 stop-color=%22%233c3222%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23161410%22/%3E%3Cstop offset=%221%22 stop-color=%22%230e0d0b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); color: var(--g187); }
+  @media (hover: hover) { .ggg.ggg :is(tr.cyc:hover, tr.cyc.sel) .cur { border-image-source: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2232%22 viewBox=%220 0 40 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237a6846%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%2356492f%22/%3E%3Cstop offset=%221%22 stop-color=%22%233c3222%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23161410%22/%3E%3Cstop offset=%221%22 stop-color=%22%230e0d0b%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M10.5 .5H29.5L39.5 16L29.5 31.5H10.5L.5 16Z%22 fill=%22url%28%23b%29%22 stroke=%22url%28%23f%29%22 stroke-width=%221%22/%3E%3C/svg%3E"); color: var(--g187); } }
   .ggg.ggg .path > .arrow, .ggg.ggg .arrow { background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2228%22 height=%2210%22 viewBox=%220 0 28 10%22%3E%3Cpath d=%22M4 5H24%22 stroke=%22%234a4030%22 stroke-width=%221.1%22/%3E%3Cpath d=%22M4 1.6L7.4 5L4 8.4L.6 5Z%22 fill=%22%236a5a3c%22/%3E%3Cpath d=%22M24 1.6L27.4 5L24 8.4L20.6 5Z%22 fill=%22%236a5a3c%22/%3E%3C/svg%3E"); opacity: 1; }
   /* предупреждения — без рамки, только тёплый фон */
   .ggg.ggg .dnote { border: 0; background: var(--g188); padding: 10px 12px; }
@@ -887,11 +893,11 @@
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone)::before { background: radial-gradient(ellipse 34% 62% at 50% 112%, rgba(236, 92, 52, .5), rgba(170, 38, 24, .22) 50%, transparent 78%),
       linear-gradient(rgba(255, 210, 170, .07), transparent 28%),
       linear-gradient(#1c0403, #330706 45%, #430a07 78%, #350806 100%); transition: filter .2s, background .2s; }
-  .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover::before { background: radial-gradient(ellipse 44% 75% at 50% 112%, rgba(248, 112, 64, .6), rgba(180, 44, 26, .28) 50%, transparent 80%),
+  @media (hover: hover) { .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover::before { background: radial-gradient(ellipse 44% 75% at 50% 112%, rgba(248, 112, 64, .6), rgba(180, 44, 26, .28) 50%, transparent 80%),
       linear-gradient(rgba(255, 210, 170, .09), transparent 28%),
-      linear-gradient(#200504, #3a0807 45%, #4c0c08 78%, #3b0907 100%); filter: none; }
+      linear-gradient(#200504, #3a0807 45%, #4c0c08 78%, #3b0907 100%); filter: none; } }
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone) { color: #e9cf96; text-shadow: 0 1px 0 #1a0302, 0 2px 4px rgba(0, 0, 0, .8); }
-  .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover { color: #f8e4b4; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); }
+  @media (hover: hover) { .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover { color: #f8e4b4; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); } }
   /* главные кнопки — без завитков по углам */
   .ggg.ggg :is(.alva-btn, #refresh, #clUpdate, .anext, .asave, #updGo, #filtersDone)::after { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2212%22 viewBox=%220 0 30 12%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M15 0.5L19 6L15 11.5L11 6Z%22 fill=%22url%28%23g%29%22 stroke=%22%235a4320%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M4 6.5c3 0 5-1 7-.5M26 6.5c-3 0-5-1-7-.5%22 fill=%22none%22 stroke=%22url%28%23g%29%22 stroke-width=%221.2%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center calc(var(--k) * -5) / calc(var(--k) * 30) calc(var(--k) * 12) no-repeat,
       url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2212%22 viewBox=%220 0 30 12%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23f8e6b0%22/%3E%3Cstop offset=%22.45%22 stop-color=%22%23c9a256%22/%3E%3Cstop offset=%221%22 stop-color=%22%236e5426%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M15 0.5L19 6L15 11.5L11 6Z%22 fill=%22url%28%23g%29%22 stroke=%22%235a4320%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M4 6.5c3 0 5-1 7-.5M26 6.5c-3 0-5-1-7-.5%22 fill=%22none%22 stroke=%22url%28%23g%29%22 stroke-width=%221.2%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center calc(100% + var(--k) * 5) / calc(var(--k) * 30) calc(var(--k) * 12) no-repeat,
@@ -906,36 +912,39 @@
   .ggg.ggg #dBody > * { flex: none; }
   .ggg.ggg #dBody > .dsum { order: -1; }
   .ggg.ggg .dhead { border-bottom: 0; padding-bottom: 6px; }
-  .ggg.ggg .dsum { margin: 0 -16px 16px; padding: 10px 16px 16px; border: 0; border-radius: 0; box-shadow: none; border-bottom: 1px solid; }
+  .ggg.ggg .dsum { margin: 0 -16px 16px; padding: 10px 16px 8px; border: 0; border-radius: 0; box-shadow: none; }
   .ggg.ggg .dsum .frow.first { padding-bottom: 4px; }
-  .ggg.ggg #dWarn:not(:empty) { margin-bottom: 14px; }
+  /* сводка по макету Figma: показатели — 3 ровные колонки, предупреждения — внутри сводки без разделителя, отступы 16 */
+  .ggg.ggg .dsum .dmeta { margin-top: 16px; padding-top: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .ggg.ggg .dsum #dWarn:not(:empty) { margin-top: 16px; }
+  .dtrend .tl { color: var(--muted); margin-right: .45em; }
   .ggg.ggg #dBody > .alva-btn { margin-bottom: 12px; }
   /* «Не показывать: валюта ×» — призрачные кнопки: без фона, рамка проявляется при наведении */
   .ggg.ggg .dhide { color: var(--muted); }
   .ggg.ggg .dhide .xchip { background: transparent; border: 1px solid transparent; border-radius: 2px; box-shadow: none; padding: 4px 8px; color: var(--g189); font: 500 15px var(--body); }
-  .ggg.ggg .dhide .xchip:hover { background: var(--g190); border-color: var(--g157); color: var(--g16); }
+  @media (hover: hover) { .ggg.ggg .dhide .xchip:hover { background: var(--g190); border-color: var(--g157); color: var(--g16); } }
   /* «Не показывать» — призрачная кнопка по центру, список валют под ней (если их несколько) */
   .ggg.ggg .dhide { flex-direction: column; gap: 8px; margin: 0 0 14px; }
   .ggg.ggg .dhide-btn { margin: 0; border-radius: 2px; box-shadow: none; }
-  .ggg.ggg .dhide-btn:hover { border-color: var(--g143); }
+  @media (hover: hover) { .ggg.ggg .dhide-btn:hover { border-color: var(--g143); } }
   .ggg.ggg .dhide-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
   .ggg.ggg .dhide-menu[hidden] { display: none; }
   /* «Не показывать» — настоящая призрачная: без рамки, при наведении лёгкая заливка */
   .ggg.ggg .dhide-btn { border: 0; }
-  .ggg.ggg .dhide-btn:hover { border: 0; }
+  @media (hover: hover) { .ggg.ggg .dhide-btn:hover { border: 0; } }
   .ggg.ggg .dhide-menu .xchip { border: 0; background: transparent; }
-  .ggg.ggg .dhide-menu .xchip:hover { border: 0; background: var(--g191); }
+  @media (hover: hover) { .ggg.ggg .dhide-menu .xchip:hover { border: 0; background: var(--g191); } }
   /* призрачная кнопка — той же высоты, что второстепенные */
   .ggg.ggg .dhide-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 20px; font-size: 16px; }
   /* текст призрачной кнопки — как у второстепенных */
   .ggg.ggg .dhide-btn { color: var(--g150); font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); }
-  .ggg.ggg .dhide-btn:hover { color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg .dhide-btn:hover { color: var(--g155); } }
   /* «Не показывать»: на всю ширину; при наведении — лёгкая заливка силуэтом главной кнопки (острые концы) */
   .ggg.ggg .dhide { align-items: stretch; }
   .ggg.ggg .dhide-btn { position: relative; isolation: isolate; width: 100%; background: transparent; }
   .ggg.ggg .dhide-btn::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .15s; clip-path: polygon(13px 2px, calc(100% - 13px) 2px, calc(100% - 3px) 50%, calc(100% - 13px) calc(100% - 2px), 13px calc(100% - 2px), 3px 50%); background: linear-gradient(var(--g192), var(--g193)); }
-  .ggg.ggg .dhide-btn:hover { background: transparent; }
-  .ggg.ggg .dhide-btn:hover::before { opacity: 1; }
+  @media (hover: hover) { .ggg.ggg .dhide-btn:hover { background: transparent; } }
+  @media (hover: hover) { .ggg.ggg .dhide-btn:hover::before { opacity: 1; } }
   /* панель шагов выезжает справа: быстро, но плавно */
   @keyframes drawerIn { from { transform: translateX(36px); opacity: 0; } to { transform: none; opacity: 1; } }
   .ggg.ggg #drawer:not([hidden]) { animation: drawerIn .2s cubic-bezier(.2, .8, .25, 1); }
@@ -945,7 +954,6 @@
   /* разделители внутри панели — тише */
   .ggg.ggg { --sep: linear-gradient(90deg, transparent, var(--g194) 18%, var(--g194) 82%, transparent); }
   .ggg.ggg .dprofit, .ggg.ggg .dmeta, .ggg.ggg .frow { border-image: var(--sep) 1; }
-  .ggg.ggg .dsum { border-image: linear-gradient(90deg, transparent, var(--g195) 15%, var(--g195) 85%, transparent) 1; }
   /* шаги: суммы — колонкой постоянной ширины, плашки во всех шагах на одной вертикали; номер — по центру строк */
   .ggg.ggg .dflow b { text-align: right; }
   .ggg.ggg .dhd { align-items: center; }
@@ -1022,7 +1030,7 @@
   /* «Обновить данные» — второстепенная (главная в фильтрах на телефоне одна — «Показать результаты») */
   .ggg.ggg #refresh { --h: auto; display: flex; width: 100%; height: auto; min-height: 42px; padding: 0 20px; border: 1px solid var(--g143); border-radius: 2px; filter: none; background: linear-gradient(var(--g144), var(--g145) 50%, var(--g146)); box-shadow: inset 0 0 0 2px var(--g147), inset 0 0 0 3px var(--g148), inset 0 1px 0 var(--g149), 0 2px 4px var(--g96); color: var(--g150); font: 700 17px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); }
   .ggg.ggg #refresh::before, .ggg.ggg #refresh::after { content: none; }
-  .ggg.ggg #refresh:hover { background: linear-gradient(var(--g151), var(--g152) 50%, var(--g153)); border-color: var(--g154); color: var(--g155); filter: none; }
+  @media (hover: hover) { .ggg.ggg #refresh:hover { background: linear-gradient(var(--g151), var(--g152) 50%, var(--g153)); border-color: var(--g154); color: var(--g155); filter: none; } }
   /* поле с адресом/кодом и «Копировать» — одной высоты */
   .ggg.ggg .tgcode { align-items: stretch; gap: 8px; }
   .ggg.ggg .tgcode code { display: flex; align-items: center; min-height: 40px; padding: 0 10px; border-radius: 2px; background: var(--g106); border: 1px solid var(--g107); }
@@ -1089,8 +1097,9 @@
   .ggg.ggg.view-cards .rt td[data-label]::before { font-size: 14px; }
   .ggg.ggg.view-cards .rt td.wide:first-child .path { position: static; }
   /* карточки цельные: один лёгкий градиент сверху вниз, шапка без отдельного фона и линии; выбранная — толще рамка и чуть светлее, без тени */
-  .ggg.ggg.view-cards .rt tr.cyc, .ggg.ggg.view-cards .rt tr.cyc:hover { background: linear-gradient(var(--g200), var(--g201) 55%, var(--g202)); border: 1px solid var(--g203); border-radius: 4px; box-shadow: none; }
-  .ggg.ggg.view-cards .rt tr.cyc:hover { border-color: var(--g93); }
+  .ggg.ggg.view-cards .rt tr.cyc { background: linear-gradient(var(--g200), var(--g201) 55%, var(--g202)); border: 1px solid var(--g203); border-radius: 4px; box-shadow: none; }
+  @media (hover: hover) { .ggg.ggg.view-cards .rt tr.cyc:hover { background: linear-gradient(var(--g200), var(--g201) 55%, var(--g202)); border: 1px solid var(--g203); border-radius: 4px; box-shadow: none; } }
+  @media (hover: hover) { .ggg.ggg.view-cards .rt tr.cyc:hover { border-color: var(--g93); } }
   .ggg.ggg.view-cards .rt tr.cyc.sel { background: linear-gradient(var(--g204), var(--g205) 55%, var(--g206)); border: 2px solid var(--g128); box-shadow: none; padding: 0 15px 13px; }
   .ggg.ggg.view-cards .rt tr.cyc.sel td.wide:first-child { margin: 0 -15px; }
   .ggg.ggg.view-cards .rt td.wide:first-child { background: none; border-bottom: 0; padding-bottom: 4px; }
@@ -1163,13 +1172,12 @@
   .ggg.ggg .agot .stepper input::placeholder { color: var(--g196); opacity: .45; }
   .ggg.ggg .agot .stepper input:focus { box-shadow: none; border: 0; outline: none; background: var(--g193); }
   .ggg.ggg .agot .stepper button { flex: none; font-size: 28px; line-height: 1; }
-  .ggg.ggg .agot .stepper button:hover { border-color: var(--g154); }
+  @media (hover: hover) { .ggg.ggg .agot .stepper button:hover { border-color: var(--g154); } }
   /* навигация — прижата к низу экрана */
   .ggg.ggg .alva-in > .anav { margin-top: auto; position: sticky; bottom: 0; padding-top: 12px; }
   .ggg.ggg .alva-in > .anav ~ * { flex: none; }
   .ggg.ggg .alva-in > .anav { display: flex; }
   .ggg.ggg .alva-in > .anav :is(.anext, .asave) { min-width: 0; padding: 0 44px; }
-  .ggg.ggg .alva-in > .anav .aback { flex: none; padding: 0 14px; }
   /* «у Альвы» как подсказка предмета: подписи капителью вплотную к значениям, курс — без рамки, синим как модификаторы, разделители-градиенты */
   .ggg.ggg .alva-in .ak { font: 700 15px/1.2 "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-transform: none; color: var(--g84); }
   .ggg.ggg .arate { background: none; border: 0; border-radius: 0; padding: 14px 4px; gap: 4px; border-top: 1px solid; border-bottom: 1px solid; border-image: linear-gradient(90deg, transparent, var(--g22) 18%, var(--g22) 82%, transparent) 1; }
@@ -1180,32 +1188,41 @@
   .ggg.ggg .agot { gap: 4px; }
   .ggg.ggg .alva-in .ahint { color: var(--g209); font-size: 14px; }
   /* «у Альвы»: одна главная кнопка, «Назад» — призрачная под ней; − / + — просто крупные знаки; подсказка — сразу под подписью */
-  .ggg.ggg .alva-in > .anav .aback { order: 2; position: relative; isolation: isolate; width: 100%; min-height: 44px; border: 0; background: transparent; box-shadow: none; color: var(--g150); font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); }
-  .ggg.ggg .alva-in > .anav .aback::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .15s; clip-path: polygon(13px 2px, calc(100% - 13px) 2px, calc(100% - 3px) 50%, calc(100% - 13px) calc(100% - 2px), 13px calc(100% - 2px), 3px 50%); background: linear-gradient(var(--g192), var(--g193)); }
-  .ggg.ggg .alva-in > .anav .aback::after { content: none; }
-  .ggg.ggg .alva-in > .anav .aback:hover { background: transparent; color: var(--g155); }
-  .ggg.ggg .alva-in > .anav .aback:hover::before { opacity: 1; }
   .ggg.ggg .agot .stepper button, .ggg.ggg .agot .stepper button:first-child, .ggg.ggg .agot .stepper button:last-child { width: 64px; height: 64px; border: 0; border-radius: 50%; background: transparent; box-shadow: none; color: var(--g208); font: 400 46px/1 var(--body); text-shadow: 0 1px 0 var(--g41); }
-  .ggg.ggg .agot .stepper button:hover { background: var(--g191); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg .agot .stepper button:hover { background: var(--g191); color: var(--g155); } }
   .ggg.ggg .agot { display: flex; flex-direction: column; align-items: center; }
   .ggg.ggg .agot .ahint { order: 1; margin-top: -2px; }
   .ggg.ggg .agot .stepper { order: 2; }
-  .ggg.ggg #alva .anav .aback { border: 0; background: transparent; box-shadow: none; }
-  .ggg.ggg #alva .anav .aback:hover { border: 0; background: transparent; }
-  .ggg.ggg #alva .anav .aback::after { content: none; }
-  .ggg.ggg #alva .chev { width: .42em; height: .72em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .ggg.ggg #alva .anav button { gap: 10px; }
   .ggg.ggg .arow { gap: 0; }
   .ggg.ggg .arow .ak { margin-bottom: -4px; }
   .ggg.ggg .arow .abig { margin-top: 8px; }
   /* «у Альвы»: «Назад» и главная — в одну полосу; «Назад» призрачная слева, главная занимает остальное */
   .ggg.ggg .alva-in > .anav { flex-direction: row; align-items: center; gap: 4px; }
   .ggg.ggg .alva-in > .anav :is(.anext, .asave) { flex: 1 1 auto; width: auto; order: 2; }
-  .ggg.ggg #alva .anav .aback { order: 1; flex: none; width: auto; min-height: 52px; padding: 0 14px 0 8px; }
+  /* «у Альвы»: «Назад» — текстом в шапке слева, как крестик справа; точки по центру; главная кнопка без стрелки на всю ширину;
+     на итоге «В журнал» и под ней призрачная «Закрыть» */
+  .ggg.ggg .ahead { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; }
+  .ggg.ggg .ahead .adots { justify-self: center; }
+  .ggg.ggg .ahead .aright { justify-self: end; display: flex; align-items: center; gap: 12px; }
+  .ggg.ggg .ahead .aright .muted { margin: 0; }
+  .ggg.ggg #alva .ahead .aback { justify-self: start; display: inline-flex; align-items: center; width: auto; height: 40px; margin: 0 0 0 -8px; padding: 0 8px; border: 0; border-radius: 2px;
+    background: none; box-shadow: none; color: var(--g189); font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); }
+  @media (hover: hover) { .ggg.ggg #alva .ahead .aback:hover { color: var(--g155); background: var(--g191); } }
+  .ggg.ggg .alva-in > .anav { flex-direction: column; align-items: stretch; gap: 10px; }
+  /* «≈» у расчётных сумм — мельче и тише самой цифры */
+  .approx { font-size: .62em; font-weight: 400; opacity: .5; margin-right: .08em; vertical-align: .12em; }
+  .ggg.ggg .asum .av.good { color: var(--g10); } .ggg.ggg .asum .av.bad { color: var(--g11); }
+  .ggg.ggg .asum .apct { margin-top: 10px; font: 700 22px/1.2 var(--body); font-variant-numeric: tabular-nums; }
+  .ggg.ggg .alva-in > .anav :is(.anext, .asave) { width: 100%; flex: none; }
+  .ggg.ggg .alva-in > .anav .asneed { text-align: center; font-size: 14px; }
+  .ggg.ggg #alva .anav .aclose { order: 3; width: 100%; min-height: 44px; margin: 0; border: 0; background: transparent; box-shadow: none; color: var(--g150);
+    font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; text-shadow: 0 1px 0 var(--g41); }
+  @media (hover: hover) { .ggg.ggg #alva .anav .aclose:hover { color: var(--g155); background: var(--g191); } }
+  .ggg.ggg #alva .anav .aclose::before, .ggg.ggg #alva .anav .aclose::after { content: none; }
   /* журнал: удалить сделку — иконка-корзина; приглушена, при наведении — красная */
   .ggg.ggg .jdel { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid transparent; border-radius: 2px; background: transparent; box-shadow: none; color: var(--g210); }
   .ggg.ggg .jdel svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  .ggg.ggg .jdel:hover { color: var(--g11); border-color: var(--g211); background: var(--g212); }
+  @media (hover: hover) { .ggg.ggg .jdel:hover { color: var(--g11); border-color: var(--g211); background: var(--g212); } }
   .ggg.ggg .rt td.c-del { vertical-align: middle; width: 44px; }
   .ggg.ggg.view-cards .rt tr.jrow { position: relative; }
   .ggg.ggg.view-cards .rt td.c-del { position: absolute; top: 8px; right: 8px; width: auto; }
@@ -1221,24 +1238,28 @@
   .ggg.ggg #tab-journal > .jhead .jh { margin-top: 0; }
   /* ===== Верхняя панель полегче: лига — просто текст со стрелкой, онлайн — без контейнера, всё одной высоты (36 px) ===== */
   .ggg.ggg body > header { align-items: center; }
-  .ggg.ggg .hleague, .ggg.ggg .hleague:hover, .ggg.ggg .hleague:focus { height: 36px; width: auto; padding: 0 26px 0 6px; border: 0; border-radius: 2px; box-shadow: none; background-color: transparent; background-position: right 6px center; color: var(--g16); }
-  .ggg.ggg .hleague:hover { background-color: var(--g213); }
+  .ggg.ggg .hleague, .ggg.ggg .hleague:focus { height: 36px; width: auto; padding: 0 26px 0 6px; border: 0; border-radius: 2px; box-shadow: none; background-color: transparent; background-position: right 6px center; color: var(--g16); }
+  @media (hover: hover) { .ggg.ggg .hleague:hover { height: 36px; width: auto; padding: 0 26px 0 6px; border: 0; border-radius: 2px; box-shadow: none; background-color: transparent; background-position: right 6px center; color: var(--g16); } }
+  @media (hover: hover) { .ggg.ggg .hleague:hover { background-color: var(--g213); } }
   .ggg.ggg .hleague:focus-visible { box-shadow: 0 0 0 1px var(--g175); }
-  .ggg.ggg .hplayers, .ggg.ggg .hplayers:hover { height: 36px; padding: 0 4px; border: 0; background: none; border-radius: 0; align-items: center; }
-  .ggg.ggg .hplayers:hover b { color: var(--g72); }
+  .ggg.ggg .hplayers { height: 36px; padding: 0 4px; border: 0; background: none; border-radius: 0; align-items: center; }
+  @media (hover: hover) { .ggg.ggg .hplayers:hover { height: 36px; padding: 0 4px; border: 0; background: none; border-radius: 0; align-items: center; } }
+  @media (hover: hover) { .ggg.ggg .hplayers:hover b { color: var(--g72); } }
   .ggg.ggg .hctl button, .ggg.ggg .hctl select { height: 36px; }
   .ggg.ggg .hctl button { width: 36px; }
   .ggg.ggg .hctl select { margin: 0; }
   @media (max-width: 800px) {
     .ggg.ggg .hctl button, .ggg.ggg .hctl select { height: 36px; }
     .ggg.ggg .hctl button { width: 36px; }
-    .ggg.ggg .hplayers, .ggg.ggg .hplayers:hover { height: 28px; padding: 0 2px; }
-    .ggg.ggg .hleague, .ggg.ggg .hleague:hover { flex-basis: auto; height: 36px; font-size: 18px; padding-left: 2px; }
+    .ggg.ggg .hplayers { height: 28px; padding: 0 2px; }
+  @media (hover: hover) { .ggg.ggg .hplayers:hover { height: 28px; padding: 0 2px; } }
+    .ggg.ggg .hleague { flex-basis: auto; height: 36px; font-size: 18px; padding-left: 2px; }
+  @media (hover: hover) { .ggg.ggg .hleague:hover { flex-basis: auto; height: 36px; font-size: 18px; padding-left: 2px; } }
     .ggg.ggg #status { flex-basis: 100%; text-align: left; margin-top: -4px; }
   }
   /* лига: только стрелка, без фона-поля */
   .ggg.ggg .hleague, .ggg.ggg .hleague:focus { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px; }
-  .ggg.ggg .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(241, 228, 194, .06); }
+  @media (hover: hover) { .ggg.ggg .hleague:hover { background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%229%22 viewBox=%220 0 14 9%22%3E%3Cpath d=%22M0.5 0.5H13.5L7 8.5Z%22 fill=%22%238a8468%22/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px, rgba(241, 228, 194, .06); } }
   /* карточка сделки: путь — наверху рядом с корзиной, «Когда» — внизу */
   .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td:first-child { order: 10; padding-right: 0; }
   .ggg.ggg.view-cards .rt tr.jrow:has(.c-del) > td.wide { order: -1; padding-right: 44px; }
@@ -1258,7 +1279,7 @@
   .ggg.ggg .jsum .mv.bad { color: var(--g11); }
   /* «Обновить данные» — иконка в верхней панели; пока идёт загрузка — крутится */
   .ggg.ggg .hctl #refresh { display: inline-flex; width: 36px; height: 36px; min-height: 0; padding: 0; margin: 0; filter: none; border: 1px solid var(--g157); border-radius: 2px; color: var(--g158); font: inherit; text-shadow: none; background: linear-gradient(var(--g159), var(--g160) 55%, var(--g161)); box-shadow: inset 0 0 0 2px var(--g162), inset 0 0 0 3px var(--g163), 0 2px 4px var(--g164); }
-  .ggg.ggg .hctl #refresh:hover { background: linear-gradient(var(--g165), var(--g166) 55%, var(--g167)); border-color: var(--g154); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg .hctl #refresh:hover { background: linear-gradient(var(--g165), var(--g166) 55%, var(--g167)); border-color: var(--g154); color: var(--g155); } }
   .ggg.ggg .hctl #refresh::before, .ggg.ggg .hctl #refresh::after { content: none; }
   .ggg.ggg .hctl #refresh:disabled { opacity: 1; filter: none; color: var(--g208); cursor: progress; }
   .ggg.ggg .hctl #refresh:disabled svg { animation: spin 1s linear infinite; }
@@ -1279,13 +1300,15 @@
     .ggg.ggg .jsum .mi:nth-child(odd) { border-left: 0; padding-left: 4px; }
   }
   /* карточки журнала (сделки и пары) — без фона, только рамка */
-  .ggg.ggg.view-cards .rt tr.jrow, .ggg.ggg.view-cards .rt tr.jrow:hover { background: none; }
+  .ggg.ggg.view-cards .rt tr.jrow { background: none; }
+  @media (hover: hover) { .ggg.ggg.view-cards .rt tr.jrow:hover { background: none; } }
   /* в виде карточек у таблицы нет своего фона и рамки (раньше проступал тёмный прямоугольник за карточками) */
   .ggg.ggg.view-cards table.rt { background: none; outline: 0; box-shadow: none; }
   /* крестики «закрыть» — просто крупный знак, без рамки и фона; при наведении светлеет */
-  .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx), .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx):hover { border: 0; background: none; box-shadow: none; text-shadow: 0 1px 0 var(--g41); }
+  .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx) { border: 0; background: none; box-shadow: none; text-shadow: 0 1px 0 var(--g41); }
+  @media (hover: hover) { .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx):hover { border: 0; background: none; box-shadow: none; text-shadow: 0 1px 0 var(--g41); } }
   .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx) { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; color: var(--g189); font: 300 34px/1 var(--body); }
-  .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx):hover { color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx):hover { color: var(--g155); } }
   /* сам крестик — нарисован (у шрифта «×» мелкий), цвет берёт от текста кнопки */
   .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx) { font-size: 0; }
   .ggg.ggg :is(#dClose, #filtersClose, .mdl-x, .lanx, .ax, .toast .tx)::before { content: ""; width: 20px; height: 20px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; }
@@ -1330,11 +1353,12 @@
   .ggg.ggg .more-wrap { margin: 14px 0 6px; }
   .ggg.ggg button.more { width: 100%; min-height: 46px; border: 1px solid var(--g116); border-radius: 4px; background: none; box-shadow: none; color: var(--g150); font: 700 16px "Alegreya Sans SC", var(--body); letter-spacing: .4px; }
   .ggg.ggg button.more::after { content: none; }
-  .ggg.ggg button.more:hover { background: var(--g213); border-color: var(--g93); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg button.more:hover { background: var(--g213); border-color: var(--g93); color: var(--g155); } }
   /* переключатель список / плитка и «только избранное» — просто иконки, как крестик; выбранная — светлее */
-  .ggg.ggg :is(.vtoggle button, #favOnlyBtn), .ggg.ggg :is(.vtoggle button, #favOnlyBtn):hover, .ggg.ggg :is(.vtoggle button.on, #favOnlyBtn.on) { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: 0 1px 0 var(--g41); }
+  .ggg.ggg :is(.vtoggle button, #favOnlyBtn), .ggg.ggg :is(.vtoggle button.on, #favOnlyBtn.on) { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: 0 1px 0 var(--g41); }
+  @media (hover: hover) { .ggg.ggg :is(.vtoggle button, #favOnlyBtn):hover { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: 0 1px 0 var(--g41); } }
   .ggg.ggg :is(.vtoggle button, #favOnlyBtn) { width: 36px; height: 36px; color: var(--g51); }
-  .ggg.ggg :is(.vtoggle button, #favOnlyBtn):hover { color: var(--g49); }
+  @media (hover: hover) { .ggg.ggg :is(.vtoggle button, #favOnlyBtn):hover { color: var(--g49); } }
   .ggg.ggg :is(.vtoggle button.on, #favOnlyBtn.on) { color: var(--g16); }
   .ggg.ggg .vtoggle svg { width: 20px; height: 20px; }
   .ggg.ggg #favOnlyBtn { font-size: 21px; }
@@ -1351,17 +1375,19 @@
     .ggg.ggg #favOnlyBtn .star { width: 24px; height: 24px; }
   }
   /* звёзды избранного везде — иконка без рамки: приглушённая, у отмеченных — залитая золотом */
-  .ggg.ggg :is(.fav, #dFav), .ggg.ggg :is(.fav, #dFav):hover, .ggg.ggg.view-cards .rt td.wide:first-child .path > .fav { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: none; }
+  .ggg.ggg :is(.fav, #dFav), .ggg.ggg.view-cards .rt td.wide:first-child .path > .fav { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: none; }
+  @media (hover: hover) { .ggg.ggg :is(.fav, #dFav):hover { border: 0; background: none; box-shadow: none; border-radius: 0; text-shadow: none; } }
   .ggg.ggg :is(.fav, #dFav) { display: inline-flex; align-items: center; justify-content: center; color: var(--g51); }
-  .ggg.ggg :is(.fav, #dFav):hover { color: var(--g49); }
+  @media (hover: hover) { .ggg.ggg :is(.fav, #dFav):hover { color: var(--g49); } }
   .ggg.ggg :is(.fav.on, #dFav.on) { color: var(--g208); }
   .ggg.ggg :is(.fav, #dFav) .star { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
   .ggg.ggg :is(.fav.on, #dFav.on) .star { fill: currentColor; }
   .ggg.ggg #dFav .star, .ggg.ggg.view-cards .rt .path > .fav .star { width: 22px; height: 22px; }
-  .ggg.ggg #drawer #dFav, .ggg.ggg #drawer #dFav.on, .ggg.ggg #drawer #dFav:hover { border: 0; background: none; box-shadow: none; }
+  .ggg.ggg #drawer #dFav, .ggg.ggg #drawer #dFav.on { border: 0; background: none; box-shadow: none; }
+  @media (hover: hover) { .ggg.ggg #drawer #dFav:hover { border: 0; background: none; box-shadow: none; } }
   /* строки «Пар» не кликабельны — без подсветки и курсора-руки */
   .ggg.ggg #flipsBox tr.cyc { cursor: default; }
-  .ggg.ggg #flipsBox tr.cyc:hover { background: none; }
+  @media (hover: hover) { .ggg.ggg #flipsBox tr.cyc:hover { background: none; } }
   /* компьютер: фильтры прокручиваются отдельно от результатов и всегда под рукой */
   @media (min-width: 801px) {
     .ggg.ggg main { align-items: start; }
@@ -1386,7 +1412,7 @@
   /* ===== Фильтры: «Дополнительно», точки «изменено», сброс, счётчик; панель уведомлений ===== */
   .ggg.ggg .fhead { display: flex; justify-content: flex-end; margin: -6px 0 6px; min-height: 0; }
   .ggg.ggg .fhead #fReset { font: 600 14px var(--body); color: var(--g156); }
-  .ggg.ggg .fhead #fReset:hover { color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg .fhead #fReset:hover { color: var(--g155); } }
   /* изменённый фильтр — золотая точка перед подписью */
   .ggg.ggg .fchg > .lh > span:first-child::before, .ggg.ggg .fchg > span[data-i18n]:first-child::before, .ggg.ggg label.check.fchg > span[data-i18n]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 6px 2px 0; border-radius: 50%; background: var(--g208); box-shadow: 0 0 6px var(--g217); vertical-align: middle; }
   /* счётчик изменённых на кнопке «Фильтры» */
@@ -1398,7 +1424,7 @@
   .ggg.ggg .fadv > summary::-webkit-details-marker { display: none; }
   .ggg.ggg .fadv > summary::after { content: ""; width: 7px; height: 7px; margin-left: auto; border: solid currentColor; border-width: 0 1.6px 1.6px 0; transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s; }
   .ggg.ggg .fadv[open] > summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
-  .ggg.ggg .fadv > summary:hover { color: var(--g16); }
+  @media (hover: hover) { .ggg.ggg .fadv > summary:hover { color: var(--g16); } }
   .ggg.ggg #fadvN { color: var(--g208); font-family: var(--body); font-size: 14px; }
   .ggg.ggg .fadv[open] { padding-bottom: 4px; }
   /* колокольчик: включены уведомления — золотой */
@@ -1417,7 +1443,7 @@
   /* готовые наборы — три кнопки в ряд вверху фильтров; выбранный — золотой */
   .ggg.ggg .presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 12px; }
   .ggg.ggg .presets button { min-height: 38px; margin: 0; padding: 0 6px; border: 1px solid var(--g219); border-radius: 2px; background: none; box-shadow: none; color: var(--g37); font: 700 14px/1.15 "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: none; }
-  .ggg.ggg .presets button:hover { background: var(--g213); border-color: var(--g143); color: var(--g16); }
+  @media (hover: hover) { .ggg.ggg .presets button:hover { background: var(--g213); border-color: var(--g143); color: var(--g16); } }
   .ggg.ggg .presets button.on { background: linear-gradient(var(--g33), var(--g48)); border-color: var(--g128); color: var(--g44); }
   .ggg.ggg .fhead { margin-top: -4px; }
   /* поиск валюты для исключения */
@@ -1443,7 +1469,7 @@
   .ggg.ggg #menuPanel .mlangs button.on { background: linear-gradient(var(--g33), var(--g48)); border-color: var(--g128); color: var(--g44); }
   .ggg.ggg #menuPanel .mrow { border: 0; border-radius: 2px; background: none; box-shadow: none; color: var(--g150); font: 700 17px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 var(--g41); }
   .ggg.ggg #menuPanel .mrow + .mrow { border-top: 1px solid var(--g220); border-radius: 0; }
-  .ggg.ggg #menuPanel .mrow:hover { background: var(--g213); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg #menuPanel .mrow:hover { background: var(--g213); color: var(--g155); } }
   .ggg.ggg #menuPanel .mrow svg { color: var(--g156); }
   @media (max-width: 800px) {
     .ggg.ggg .hctl :is(#lang, #notifyBtn, #lanBtn, #theme) { display: none; }
@@ -1458,7 +1484,7 @@
   .ggg.ggg .capsug button.more { width: auto; padding: 0 22px; }
   /* «Сбросить» рядом с «Фильтры» — призрачная кнопка */
   .ggg.ggg .toolbar #fReset { width: auto; min-height: 40px; margin: 0; padding: 0 12px; border: 0; border-radius: 2px; background: none; box-shadow: none; color: var(--g156); font: 700 15px "Alegreya Sans SC", var(--body); letter-spacing: .3px; text-shadow: 0 1px 0 var(--g41); }
-  .ggg.ggg .toolbar #fReset:hover { background: var(--g191); color: var(--g155); }
+  @media (hover: hover) { .ggg.ggg .toolbar #fReset:hover { background: var(--g191); color: var(--g155); } }
   .ggg.ggg .toolbar #fReset[hidden] { display: none; }
   .ggg.ggg .presets button { white-space: nowrap; }
   @media (max-width: 800px) {
@@ -1467,7 +1493,8 @@
     .ggg.ggg .toolbar .favtoggle { grid-column: 3; }
   }
   /* верхняя панель: один шрифт для всего, кроме названия — без капители и разных начертаний рядом */
-  .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:hover, .ggg.ggg body > header .hleague:focus { font: 700 16px var(--body); letter-spacing: 0; text-transform: none; }
+  .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:focus { font: 700 16px var(--body); letter-spacing: 0; text-transform: none; }
+  @media (hover: hover) { .ggg.ggg body > header .hleague:hover { font: 700 16px var(--body); letter-spacing: 0; text-transform: none; } }
   .ggg.ggg body > header .hplayers { font: 500 14px var(--body); }
   .ggg.ggg body > header .hplayers b, .ggg.ggg body > header .hplayers .pk b { font-size: 14px; font-weight: 700; }
   .ggg.ggg body > header #status { font: 500 14px var(--body); }
@@ -1479,14 +1506,16 @@
   .ggg.ggg body > header { column-gap: 22px; }
   .ggg.ggg body > header h1 { font-size: 22px; letter-spacing: 1px; gap: 10px; }
   .ggg.ggg body > header h1 .logo { width: 28px; height: 28px; }
-  .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:hover { font-size: 16px; }
+  .ggg.ggg body > header .hleague { font-size: 16px; }
+  @media (hover: hover) { .ggg.ggg body > header .hleague:hover { font-size: 16px; } }
   .ggg.ggg body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 14px; line-height: 1.3; }
   .ggg.ggg body > header #status { color: var(--g84); }
   @media (max-width: 800px) {
     .ggg.ggg body > header { row-gap: 8px; }
     .ggg.ggg body > header h1 { font-size: 16px; letter-spacing: .5px; gap: 8px; }
     .ggg.ggg body > header h1 .logo { width: 24px; height: 24px; }
-    .ggg.ggg body > header .hleague, .ggg.ggg body > header .hleague:hover { font-size: 16px; }
+    .ggg.ggg body > header .hleague { font-size: 16px; }
+  @media (hover: hover) { .ggg.ggg body > header .hleague:hover { font-size: 16px; } }
     .ggg.ggg body > header :is(.hplayers, .hplayers b, .hplayers .pk b, #status) { font-size: 13px; }
     .ggg.ggg body > header #status { margin-top: -6px; }
   }
@@ -1502,10 +1531,12 @@
     box-shadow: inset 0 1px 0 rgba(255, 240, 215, .3), inset 0 -1px 0 #4c423c, 0 2px 8px rgba(0, 0, 0, .35); }
   .ggg #updBar .updtxt { font: 600 17px var(--body); }
   .ggg #updBar #updNotes { color: #2a211c; font: 700 16px var(--body); text-decoration: underline; text-underline-offset: 3px; }
-  .ggg #updBar #updNotes:hover { color: #000; }
-  .ggg #updBar #updSkip, .ggg #updBar #updSkip:hover { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
+  @media (hover: hover) { .ggg #updBar #updNotes:hover { color: #000; } }
+  .ggg #updBar #updSkip { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
     padding: 0; border: 0; background: none; box-shadow: none; color: #3a3028; font-size: 0; text-shadow: none; }
-  .ggg #updBar #updSkip:hover { color: #000; }
+  @media (hover: hover) { .ggg #updBar #updSkip:hover { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px;
+    padding: 0; border: 0; background: none; box-shadow: none; color: #3a3028; font-size: 0; text-shadow: none; } }
+  @media (hover: hover) { .ggg #updBar #updSkip:hover { color: #000; } }
   .ggg #updBar #updSkip::before { content: ""; display: block; width: 20px; height: 20px; margin: auto; background: currentColor;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22%3E%3Cpath d=%22M4 4l12 12M16 4L4 16%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22/%3E%3C/svg%3E") center / contain no-repeat; }
   .ggg #updBar .bad { color: #7a1408; font-weight: 700; }
@@ -1528,7 +1559,7 @@
   /* «Дополнительно»: заметная строка с рамкой, счётчик — золотым кружком */
   .ggg .fadv { border-top: 0; margin-top: 10px; }
   .ggg .fadv > summary { padding: 0 12px; border: 1px solid var(--g171); background: rgba(241, 228, 194, .03); color: #d8c592; }
-  .ggg .fadv > summary:hover { border-color: #6f5d3a; background: rgba(241, 228, 194, .06); }
+  @media (hover: hover) { .ggg .fadv > summary:hover { border-color: #6f5d3a; background: rgba(241, 228, 194, .06); } }
   .ggg .fadv[open] > summary { margin-bottom: 12px; }
   .ggg .fadv > summary .fcount { margin-left: 2px; }
   /* подсказка «Скрыть валюту» */
@@ -1538,7 +1569,8 @@
   .ggg .exlist[hidden] { display: none; }
   .ggg .exlist button { display: flex; align-items: center; width: 100%; min-height: 40px; margin: 0; padding: 0 10px; border: 0; border-radius: 0;
     background: none; box-shadow: none; text-align: left; }
-  .ggg .exlist button:hover, .ggg .exlist button.on { background: linear-gradient(90deg, #2e291e, #221e16); }
+  .ggg .exlist button.on { background: linear-gradient(90deg, #2e291e, #221e16); }
+  @media (hover: hover) { .ggg .exlist button:hover { background: linear-gradient(90deg, #2e291e, #221e16); } }
   .ggg .exlist .cur { pointer-events: none; }
   .ggg .exlist .exnone { padding: 8px 12px; color: #8c8c8c; font-size: 14px; text-transform: none; letter-spacing: 0; }
   .ggg .fadv > summary #fadvN.fcount { color: #1a1408; font: 700 13px/1 var(--body); }
@@ -1552,9 +1584,11 @@
   #filters .presets button { font-size: 14px; padding: 0 5px; }
   @container (max-width: 280px) { #filters .presets { gap: 4px; } #filters .presets button { font-size: 12.5px; padding: 0 3px; } }
   /* «Больше вариантов» — всегда одна строка постоянной высоты (лишнее прокручивается вбок): панель фильтров не прыгает */
-  #filters .cap-best, #filters .cap-best:empty { display: flex; flex-wrap: nowrap; height: 30px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
-  #filters .cap-best::-webkit-scrollbar { display: none; }
-  #filters .cap-best > * { flex: none; }
+  /* «Больше вариантов»: подпись строкой сверху, суммы — строкой под ней; высота постоянная, чтобы фильтры не дёргались */
+  #filters .cap-best, #filters .cap-best:empty { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; height: 54px; overflow: hidden; }
+  #filters .cb-list { display: flex; flex-wrap: nowrap; gap: 5px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  #filters .cb-list::-webkit-scrollbar { display: none; }
+  #filters .cb-list > * { flex: none; }
   #filters .cap-prev { min-height: 20px; }
   /* «Дополнительно»: содержимое в обёртке, у которой анимируется высота */
   .ggg .fadv-body { overflow: hidden; }
@@ -1566,7 +1600,7 @@
     background: linear-gradient(#2e281b, #1b170f 55%, #130f0a); box-shadow: inset 0 0 0 2px #100d08, 0 6px 18px rgba(0, 0, 0, .6);
     animation: tin .2s ease-out; }
   #toTop[hidden] { display: none; }
-  #toTop:hover { border-color: #b8975a; color: #fff0c0; background: linear-gradient(#3d3524, #241e13 55%, #18140c); }
+  @media (hover: hover) { #toTop:hover { border-color: #b8975a; color: #fff0c0; background: linear-gradient(#3d3524, #241e13 55%, #18140c); } }
   #toTop svg { width: 22px; height: 22px; }
   @media (min-width: 1100px) { body.drawer-open #toTop { right: calc(var(--drawer-w, 480px) + 24px); } }
   @media (max-width: 800px) { #toTop { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
@@ -1575,6 +1609,39 @@
   /* под списком — запас места, чтобы «Наверх» не ложился на «Показать ещё» и последние строки */
   main > section { padding-bottom: 96px; }
   #toTop { bottom: 28px; }
+
+  /* ===== Главные кнопки — точно по макету Figma «Alva mode»: тело с радиальным градиентом, медная рамка 2px,
+     внутренняя линия ярче к центру, дуги и ромбы у концов, выступы сверху и снизу, текст Cormorant SC ===== */
+  @font-face { font-family: "Cormorant SC"; font-style: normal; font-weight: 400; font-display: swap; src: url(data:font/woff2;base64,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) format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+  @font-face { font-family: "Cormorant SC"; font-style: normal; font-weight: 400; font-display: swap; src: url(data:font/woff2;base64,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) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone) { --h: 56px; --k: calc(var(--h) / 62); padding: 0 calc(var(--k) * 48);
+    color: #e3d3b8; font: 400 calc(var(--k) * 24) "Cormorant SC", var(--sc); letter-spacing: -.02em;
+    text-shadow: 0 0 2px rgba(0, 0, 0, .5), 0 1px 0 rgba(0, 0, 0, .35);
+    filter: drop-shadow(0 0 1px #0e192b) drop-shadow(0 0 1px #0e192b) drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); transition: filter .25s, color .25s; }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone) .play { display: none; }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone)::before { inset: 0; clip-path: polygon(calc(var(--k) * 22.0) calc(var(--k) * 5), calc(50% - var(--k) * 13) calc(var(--k) * 5), 50% calc(var(--k) * 0.0), calc(50% + var(--k) * 13) calc(var(--k) * 5), calc(100% - var(--k) * 22.0) calc(var(--k) * 5), calc(100% - var(--k) * 0.0) 50%, calc(100% - var(--k) * 22.0) calc(100% - var(--k) * 5), calc(50% + var(--k) * 13) calc(100% - var(--k) * 5), 50% calc(100% - var(--k) * 0.0), calc(50% - var(--k) * 13) calc(100% - var(--k) * 5), calc(var(--k) * 22.0) calc(100% - var(--k) * 5), calc(var(--k) * 0.0) 50%); background: linear-gradient(#744f3b, #231e12); filter: none; transition: none; }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone)::after { inset: 0; z-index: -1; clip-path: polygon(calc(var(--k) * 23.7) calc(var(--k) * 7), calc(50% - var(--k) * 11) calc(var(--k) * 7), 50% calc(var(--k) * 3.2), calc(50% + var(--k) * 11) calc(var(--k) * 7), calc(100% - var(--k) * 23.7) calc(var(--k) * 7), calc(100% - var(--k) * 2.6) 50%, calc(100% - var(--k) * 23.7) calc(100% - var(--k) * 7), calc(50% + var(--k) * 11) calc(100% - var(--k) * 7), 50% calc(100% - var(--k) * 3.2), calc(50% - var(--k) * 11) calc(100% - var(--k) * 7), calc(var(--k) * 23.7) calc(100% - var(--k) * 7), calc(var(--k) * 2.6) 50%); background:
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2210%22 viewBox=%220 0 26 10%22%3E%3Cpath d=%22M0 10L13 5L26 10Z%22 fill=%22%23311912%22/%3E%3Cpath d=%22M2 10L13 6L24 10Z%22 fill=%22%239c8d72%22/%3E%3C/svg%3E") center 0 / calc(var(--k) * 26) calc(var(--k) * 10) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2210%22 viewBox=%220 0 26 10%22%3E%3Cg transform=%22translate%280 10%29 scale%281 -1%29%22%3E%3Cpath d=%22M0 10L13 5L26 10Z%22 fill=%22%23311912%22/%3E%3Cpath d=%22M2 10L13 6L24 10Z%22 fill=%22%239c8d72%22/%3E%3C/g%3E%3C/svg%3E") center 100% / calc(var(--k) * 26) calc(var(--k) * 10) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2262%22 viewBox=%220 0 40 62%22%3E%3Cdefs%3E%3ClinearGradient id=%22d%22 x1=%221%22 y1=%22.5%22 x2=%220%22 y2=%22.5%22%3E%3Cstop offset=%220%22 stop-color=%22%236e4c39%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a8c70%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M40 8H23.4L3.9 31L23.4 54H40%22 fill=%22none%22 stroke=%22%232a2219%22 stroke-width=%221%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2228%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2233%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Cpath d=%22M18 26L22 31L18 36L14 31Z%22 fill=%22%23634533%22 stroke=%22url%28%23d%29%22 stroke-width=%221%22/%3E%3C/svg%3E") left center / calc(var(--k) * 40) 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2262%22 viewBox=%220 0 40 62%22%3E%3Cg transform=%22translate%2840 0%29 scale%28-1 1%29%22%3E%3Cdefs%3E%3ClinearGradient id=%22d%22 x1=%221%22 y1=%22.5%22 x2=%220%22 y2=%22.5%22%3E%3Cstop offset=%220%22 stop-color=%22%236e4c39%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a8c70%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M40 8H23.4L3.9 31L23.4 54H40%22 fill=%22none%22 stroke=%22%232a2219%22 stroke-width=%221%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2228%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2233%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Cpath d=%22M18 26L22 31L18 36L14 31Z%22 fill=%22%23634533%22 stroke=%22url%28%23d%29%22 stroke-width=%221%22/%3E%3C/g%3E%3C/svg%3E") right center / calc(var(--k) * 40) 100% no-repeat,
+      linear-gradient(90deg, #1b1914 0%, #1b1914 16%, #e3cda5 50%, #1b1914 84%, #1b1914 100%) center calc(var(--k) * 8) / calc(100% - var(--k) * 46) 1px no-repeat,
+      linear-gradient(90deg, #1b1914 0%, #1b1914 16%, #e3cda5 50%, #1b1914 84%, #1b1914 100%) center calc(100% - var(--k) * 8) / calc(100% - var(--k) * 46) 1px no-repeat,
+      radial-gradient(ellipse 30% 58% at 50% 50%, rgba(98, 32, 30, .55), transparent 100%),
+      radial-gradient(ellipse 44% 135% at 50% 11%, #62201e 0%, #420d0c 55%, #170404 100%); }
+  @media (hover: hover) { html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover { color: #f0e3cb; filter: drop-shadow(0 0 1px #0e192b) drop-shadow(0 0 1px #0e192b) drop-shadow(0 0 34px rgba(137, 71, 30, .4)) drop-shadow(0 4px 12px rgba(0, 0, 0, .5)); } }
+  @media (hover: hover) { html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover::before { filter: none; background: linear-gradient(#744f3b, #231e12); } }
+  @media (hover: hover) { html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone):hover::after { background:
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2210%22 viewBox=%220 0 26 10%22%3E%3Cpath d=%22M0 10L13 5L26 10Z%22 fill=%22%23311912%22/%3E%3Cpath d=%22M2 10L13 6L24 10Z%22 fill=%22%239c8d72%22/%3E%3C/svg%3E") center 0 / calc(var(--k) * 26) calc(var(--k) * 10) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2210%22 viewBox=%220 0 26 10%22%3E%3Cg transform=%22translate%280 10%29 scale%281 -1%29%22%3E%3Cpath d=%22M0 10L13 5L26 10Z%22 fill=%22%23311912%22/%3E%3Cpath d=%22M2 10L13 6L24 10Z%22 fill=%22%239c8d72%22/%3E%3C/g%3E%3C/svg%3E") center 100% / calc(var(--k) * 26) calc(var(--k) * 10) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2262%22 viewBox=%220 0 40 62%22%3E%3Cdefs%3E%3ClinearGradient id=%22d%22 x1=%221%22 y1=%22.5%22 x2=%220%22 y2=%22.5%22%3E%3Cstop offset=%220%22 stop-color=%22%236e4c39%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a8c70%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M40 8H23.4L3.9 31L23.4 54H40%22 fill=%22none%22 stroke=%22%232a2219%22 stroke-width=%221%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2228%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2233%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Cpath d=%22M18 26L22 31L18 36L14 31Z%22 fill=%22%23634533%22 stroke=%22url%28%23d%29%22 stroke-width=%221%22/%3E%3C/svg%3E") left center / calc(var(--k) * 40) 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2262%22 viewBox=%220 0 40 62%22%3E%3Cg transform=%22translate%2840 0%29 scale%28-1 1%29%22%3E%3Cdefs%3E%3ClinearGradient id=%22d%22 x1=%221%22 y1=%22.5%22 x2=%220%22 y2=%22.5%22%3E%3Cstop offset=%220%22 stop-color=%22%236e4c39%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a8c70%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M40 8H23.4L3.9 31L23.4 54H40%22 fill=%22none%22 stroke=%22%232a2219%22 stroke-width=%221%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2228%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Ccircle cx=%220%22 cy=%2231%22 r=%2233%22 fill=%22none%22 stroke=%22%23563d2c%22 stroke-opacity=%22.3%22/%3E%3Cpath d=%22M18 26L22 31L18 36L14 31Z%22 fill=%22%23634533%22 stroke=%22url%28%23d%29%22 stroke-width=%221%22/%3E%3C/g%3E%3C/svg%3E") right center / calc(var(--k) * 40) 100% no-repeat,
+      linear-gradient(90deg, #1b1914 0%, #1b1914 16%, #e3cda5 50%, #1b1914 84%, #1b1914 100%) center calc(var(--k) * 8) / calc(100% - var(--k) * 46) 1px no-repeat,
+      linear-gradient(90deg, #1b1914 0%, #1b1914 16%, #e3cda5 50%, #1b1914 84%, #1b1914 100%) center calc(100% - var(--k) * 8) / calc(100% - var(--k) * 46) 1px no-repeat,
+      radial-gradient(ellipse 36% 70% at 50% 50%, rgba(137, 71, 30, .55), transparent 100%),
+      radial-gradient(ellipse 44% 135% at 50% 11%, #8c3c2e 0%, #420d0c 71%, #170404 100%); } }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone):active::after { filter: brightness(.9); }
+  html.ggg.ggg body :is(.alva-btn, #clUpdate, .anext, .asave, #updGo, #filtersDone):focus-visible::after { filter: brightness(1.15); }
 </style>
 </head>
 <body>
@@ -2151,7 +2218,7 @@ const I18N = {
     tgCopy: "Копировать", tgWaiting: "Жду сообщение…", tgOthers: "Для других",
     tgOpen: "Разрешить подписываться другим", tgSubs: "Подписчики — активных: {n}, всего: {total}. Ссылка для них:",
     hTgOthers: "Другие люди пишут твоему боту /start и сами настраивают условия кнопками в Telegram (лига, стартовая валюта, капитал, прибыль от, держится от). Каждый получает свои пути. Ни программа, ни токен им не нужны.<br>Работает, пока программа запущена на этом компьютере. Сними галочку — новые люди не смогут подписаться (старые подписки останутся).",
-    tgCheck: "Проверить", tgDisconnect: "Отключить", tgDisconnectQ: "Отключить Telegram? Токен бота будет удалён из программы.",
+    tgDisconnect: "Отключить", tgDisconnectQ: "Отключить Telegram? Токен бота будет удалён из программы.",
     tgSend: "Присылать в Telegram (@{bot})", tgTest: "Тест", tgTestSent: "Отправлено — проверь Telegram.",
     tgStatus: "Сервер проверяет каждые 5 мин · последняя проверка: {chk} · подходящих путей: {n} · последнее уведомление: {sent}",
     tgTokenOk: "Бот @{bot} найден. Теперь напиши ему сообщение.", tgLinked: "Подключено — в Telegram пришло подтверждение.",
@@ -2169,7 +2236,7 @@ const I18N = {
     thAmtTitle: "Целая стартовая сумма в пределах капитала с максимальной прибылью в штуках",
     thTimeTitle: "Примерное время, чтобы прогнать сумму через все шаги",
     thGoldTitle: "Комиссия биржи в золоте за весь путь и сколько div прибыли дают каждые 100 тыс золота",
-    thPerHourTitle: "Прибыль в час, в {t}", thSeen: "Найден", newBadge: "новый", thStreak: "Держится", streakVal: "{n} ч",
+    thPerHourTitle: "Прибыль в час, в {t}", newBadge: "новый", thStreak: "Держится", streakVal: "{n} ч",
     thStreakTitle: "Сколько последних часов подряд путь давал прибыль не ниже «Прибыль от» (по курсам реальных сделок). Чем дольше, тем надёжнее: по истории за 2 суток через час прибыль сохраняли 49% путей с 0 ч и 92% — с 12+ ч",
     minStreak: "Держится от, ч", anyStreak: "не важно",
     hMinStreak: "Показывать только пути, которые столько последних часов подряд давали прибыль не ниже «Прибыль от» (по курсам реальных сделок каждого часа).<br>По истории за 2 суток прибыль ≥1% через час сохраняли: 0 ч — 49% путей, 1–2 ч — ~67%, 3–5 ч — 76%, 6–11 ч — 83%, 12+ ч — 92%.<br>Только для источника GGG.", thSeenTitle: "Когда путь впервые появился в выдаче на этом устройстве. Если его не было больше суток, отсчёт начинается заново", thVolTitle: "Наименьший суточный объём среди пар пути, в Divine", thScoreTitle: "Прибыль × шанс продержаться ещё час (по «Держится») × log(ликвидность). Проверено на истории: из топ-10 через час прибыль сохраняли 89% путей, у старого рейтинга «прибыль × ликвидность» — 82%", holdChance: "Шанс на час", holdChanceTip: "Как часто путь с таким «Держится» сохранял прибыль ≥1% через час (по истории за 2 суток)",
@@ -2180,15 +2247,15 @@ const I18N = {
     durMin: "мин", durH: "ч", durD: "дн", goldM: "млн", goldK: "тыс",
     give: "Отдай", get: "получи", rate: "курс", vol: "объём", perDay: "div/сут",
     vol7Day: "за сутки", vol7Week: "за неделю в среднем", chgAvg: "к среднему за сутки", chgDay: "за сутки",
-    stock: "в заявках", feeUnknown: "комиссия неизвестна", feeGold: "комиссия ~{g} золота",
+    stock: "в заявках", feeUnknown: "комиссия неизвестна", 
     batch: "Самая выгодная порция: <b>{a}</b> → <b>{b}</b> (+{p}%) — её можно прогонять повторно.",
     warnLowVol: "Низкий объём на одном из шагов — большой капитал может не пройти по этому курсу.",
     warnThin: "На одном из шагов в заявках выставлено меньше, чем тебе нужно купить — сразу всё не возьмёшь.",
     warnSlow: "Медленный путь: пока будешь продавать, курс может уйти. Попробуй уменьшить капитал или разбить на части.",
     warnHigh: "Прибыль больше 15% — скорее всего, это спред или устаревший курс. Обязательно сверь первый шаг в игре.",
     goldTotal: "Золото на комиссии за весь путь: <b>~{g}</b>{unk} — <b>{eff} div</b> прибыли на каждые 100 тыс золота.{capped}",
-    goldUnk: " (без шагов с неизвестной комиссией)", goldCapped: " Сумма уменьшена, чтобы уложиться в бюджет золота.",
-    ratesNoPairs: "Пар нет (объём ниже порога загрузки).", ratesNone: "Ничего не найдено.",
+    goldUnk: " (без шагов с неизвестной комиссией)", 
+    
     error: "Ошибка: {e}", statusLine: "{n} валют · {p} пар · {period}",
     periodGgg: "курс за {a}–{b}", periodNinja: "данные {ago}", noLeagueData: "Для этой лиги данных ещё нет — загружаю…",
     srvCats: "Загружаю списки категорий…", srvPairs: "Загружаю пары обмена…", srvItems: "Загружаю справочник предметов…",
@@ -2220,14 +2287,14 @@ const I18N = {
     exclude: "Исключить", exNone: "Скрытых валют нет — скрыть валюту можно в панели шагов.", exHidden: "Скрыто:", exShow: "Снова показывать",
     exCatOff: "Скрыть пути через эту категорию", exCatOn: "Снова показывать эту категорию",
     hExclude: "Нажми на категорию, чтобы скрыть пути через её валюты (например, Неогранённые камни); нажми ещё раз — вернутся. Отдельную валюту можно скрыть в панели шагов («Не показывать»).<br>Стартовая и конечная валюты и Chaos/Divine/Exalted не исключаются.",
-    hideCur: "Не показывать:", hideCurBtn: "Не показывать", hideCurTip: "Скрыть все пути через эту валюту (вернуть — в «Исключить» в фильтрах)",
+    hideCurBtn: "Не показывать", hideCurTip: "Скрыть все пути через эту валюту (вернуть — в «Исключить» в фильтрах)",
     favOn: "В избранное", favOff: "Убрать из избранного", favOnly: "Только избранные", favOnlyTip: "Только пути со звёздочкой", favOnlyOn: "включено, нажми, чтобы показать все",
     favNone: "Избранных путей в выдаче нет — отметь путь звёздочкой ☆ или выключи «Только избранные».", tabCyclesS: "Циклы", 
     dSave: "Записать сделку в журнал",
-    alvaBtn: "Режим «у Альвы»", alvaBtnTip: "Крупно, по шагу на экран — для телефона или второго монитора рядом с игрой",
+    alvaBtn: "У Альвы", alvaBtnTip: "Крупно, по шагу на экран — для телефона или второго монитора рядом с игрой",
     alvaStep: "Шаг {k} из {n}", alvaDone: "Путь пройден", alvaGet: "Получишь", alvaRate: "Курс по рынку",
-    alvaBe: "Всё ещё выгодно при", alvaBeTip: "Если у Альвы курс хуже этого, весь путь перестаёт быть прибыльным (остальные шаги — как сейчас)",
-    alvaGotHint: "Впиши, сколько реально пришло. Пусто — возьму расчётное.", alvaNext: "Обменял", alvaFinish: "Обменял, к итогу",
+    alvaBe: "Выгодно при", alvaBeTip: "Если у Альвы курс хуже этого, весь путь перестаёт быть прибыльным (остальные шаги — как сейчас)",
+    alvaGotHint: "Пусто — по расчёту", alvaNext: "Обменял", alvaFinish: "К итогу", alvaSave: "В журнал", alvaGot: "Получил", alvaSaveNeed: "Впиши «Получил» во всех шагах",
     alvaBack: "Назад", alvaClose: "Закрыть", dSaveNeed: "Чтобы записать сделку, впиши «Получил фактически» во всех шагах.",
     dSaved: "Записано в журнал ✓", dSaveErr: "Не удалось записать: {e}",
     jEmpty: "Пока нет записанных сделок. Открой путь, пройди его в игре, впиши в шагах «Получил фактически» и нажми «Записать сделку в журнал».",
@@ -2298,7 +2365,7 @@ const I18N = {
     tgCopy: "Copy", tgWaiting: "Waiting for the message…", tgOthers: "For others",
     tgOpen: "Allow others to subscribe", tgSubs: "Subscribers — active: {n}, total: {total}. Link for them:",
     hTgOthers: "Other people send /start to your bot and set their own conditions with buttons right in Telegram (league, start currency, capital, profit from, holds at least). Each gets their own paths. They don't need the program or the token.<br>Works while the program is running on this computer. Uncheck to stop new sign-ups (current subscribers stay).",
-    tgCheck: "Check", tgDisconnect: "Disconnect", tgDisconnectQ: "Disconnect Telegram? The bot token will be removed from the program.",
+    tgDisconnect: "Disconnect", tgDisconnectQ: "Disconnect Telegram? The bot token will be removed from the program.",
     tgSend: "Send to Telegram (@{bot})", tgTest: "Test", tgTestSent: "Sent — check Telegram.",
     tgStatus: "The server checks every 5 min · last check: {chk} · matching paths: {n} · last notification: {sent}",
     tgTokenOk: "Bot @{bot} found. Now send it a message.", tgLinked: "Connected — a confirmation arrived in Telegram.",
@@ -2316,7 +2383,7 @@ const I18N = {
     thAmtTitle: "Whole starting amount within capital that earns the most units",
     thTimeTitle: "Estimated time to run the amount through every step",
     thGoldTitle: "Exchange fee in gold for the whole path, and div of profit per 100k gold",
-    thPerHourTitle: "Profit per hour, in {t}", thSeen: "Found", newBadge: "new", thStreak: "Holds", streakVal: "{n} h",
+    thPerHourTitle: "Profit per hour, in {t}", newBadge: "new", thStreak: "Holds", streakVal: "{n} h",
     thStreakTitle: "How many recent hours in a row the path made at least “Profit from” at real trade rates. Longer is safer: over 2 days of history, 49% of paths at 0 h and 92% at 12+ h were still profitable an hour later",
     minStreak: "Holds at least, h", anyStreak: "any",
     hMinStreak: "Only show paths that made at least “Profit from” for this many recent hours in a row (at each hour's real trade rates).<br>Over 2 days of history, share of paths still making ≥1% an hour later: 0 h — 49%, 1–2 h — ~67%, 3–5 h — 76%, 6–11 h — 83%, 12+ h — 92%.<br>GGG source only.", thSeenTitle: "When the path first showed up in results on this device. If it's been missing for over a day, the clock restarts", thVolTitle: "Lowest daily volume among the path's pairs, in Divine", thScoreTitle: "Profit × chance to last another hour (from Holds) × log(liquidity). Backtested: 89% of top-10 paths were still profitable an hour later, vs 82% with the old “profit × liquidity” score", holdChance: "Hour chance", holdChanceTip: "How often a path with this Holds value still made ≥1% an hour later (2 days of history)",
@@ -2327,15 +2394,15 @@ const I18N = {
     durMin: "min", durH: "h", durD: "d", goldM: "M", goldK: "k",
     give: "Give", get: "get", rate: "rate", vol: "volume", perDay: "div/day",
     vol7Day: "daily", vol7Week: "weekly average", chgAvg: "vs. daily average", chgDay: "24h",
-    stock: "in orders", feeUnknown: "fee unknown", feeGold: "fee ~{g} gold",
+    stock: "in orders", feeUnknown: "fee unknown", 
     batch: "Best batch: <b>{a}</b> → <b>{b}</b> (+{p}%) — you can repeat it.",
     warnLowVol: "Low volume on one of the steps — large capital may not fill at this rate.",
     warnThin: "On one of the steps there is less in orders than you need to buy — you won't get it all at once.",
     warnSlow: "Slow path: the rate may move while you sell. Try lowering capital or splitting it up.",
     warnHigh: "Profit above 15% — most likely a spread or a stale rate. Be sure to verify the first step in game.",
     goldTotal: "Gold spent on fees for the whole path: <b>~{g}</b>{unk} — <b>{eff} div</b> of profit per 100k gold.{capped}",
-    goldUnk: " (excluding steps with unknown fee)", goldCapped: " The amount was reduced to fit the gold budget.",
-    ratesNoPairs: "No pairs (volume below load threshold).", ratesNone: "Nothing found.",
+    goldUnk: " (excluding steps with unknown fee)", 
+    
     error: "Error: {e}", statusLine: "{n} currencies · {p} pairs · {period}",
     periodGgg: "rates for {a}–{b}", periodNinja: "data {ago}", noLeagueData: "No data for this league yet — loading…",
     srvCats: "Loading category lists…", srvPairs: "Loading exchange pairs…", srvItems: "Loading item database…",
@@ -2367,14 +2434,14 @@ const I18N = {
     exclude: "Exclude", exNone: "No hidden currencies — you can hide one in the steps panel.", exHidden: "Hidden:", exShow: "Show again",
     exCatOff: "Hide paths through this category", exCatOn: "Show this category again",
     hExclude: "Click a category to hide paths through its currencies (e.g. Uncut Gems); click again to bring them back. To hide a single currency, use “Don't show” in the steps panel.<br>Start and end currencies and Chaos/Divine/Exalted are never excluded.",
-    hideCur: "Don't show:", hideCurBtn: "Don't show", hideCurTip: "Hide every path through this currency (undo under “Exclude” in filters)",
+    hideCurBtn: "Don't show", hideCurTip: "Hide every path through this currency (undo under “Exclude” in filters)",
     favOn: "Add to favourites", favOff: "Remove from favourites", favOnly: "Favourites only", favOnlyTip: "Show starred paths only", favOnlyOn: "on, click to show all",
     favNone: "No favourite paths in results — star a path ☆ or turn off “Favourites only”.", tabCyclesS: "Cycles", 
     dSave: "Save trade to journal",
-    alvaBtn: "“At Alva” mode", alvaBtnTip: "Big, one step per screen — for a phone or second monitor next to the game",
+    alvaBtn: "At Alva", alvaBtnTip: "Big, one step per screen — for a phone or second monitor next to the game",
     alvaStep: "Step {k} of {n}", alvaDone: "Path done", alvaGet: "You'll get", alvaRate: "Market rate",
-    alvaBe: "Still profitable at", alvaBeTip: "If Alva's rate is worse than this, the whole path stops being profitable (other steps as they are now)",
-    alvaGotHint: "Enter how much you actually got. Empty — I'll use the expected amount.", alvaNext: "Traded", alvaFinish: "Traded, see result",
+    alvaBe: "Profitable at", alvaBeTip: "If Alva's rate is worse than this, the whole path stops being profitable (other steps as they are now)",
+    alvaGotHint: "Empty — expected amount", alvaNext: "Traded", alvaFinish: "To result", alvaSave: "Save to journal", alvaGot: "Received", alvaSaveNeed: "Fill in “Received” on every step",
     alvaBack: "Back", alvaClose: "Close", dSaveNeed: "To save the trade, fill in “Actually received” on every step.",
     dSaved: "Saved to journal ✓", dSaveErr: "Couldn't save: {e}",
     jEmpty: "No trades yet. Open a path, do it in game, fill in “Actually received” on every step and press “Save trade to journal”.",
@@ -2445,7 +2512,7 @@ const I18N = {
     tgCopy: "复制", tgWaiting: "等待消息…", tgOthers: "给其他人",
     tgOpen: "允许其他人订阅", tgSubs: "订阅者——活跃：{n}，共：{total}。发给他们的链接：",
     hTgOthers: "其他人向你的机器人发送 /start，就能直接在 Telegram 里用按钮设置自己的条件（赛季、起始货币、本金、最低利润、至少持续）。每人收到各自的路径，不需要程序和令牌。<br>仅在这台电脑上运行程序时有效。取消勾选后新用户无法订阅（已订阅的保留）。",
-    tgCheck: "检查", tgDisconnect: "断开", tgDisconnectQ: "断开 Telegram？机器人令牌将从程序中删除。",
+    tgDisconnect: "断开", tgDisconnectQ: "断开 Telegram？机器人令牌将从程序中删除。",
     tgSend: "发送到 Telegram（@{bot}）", tgTest: "测试", tgTestSent: "已发送——请查看 Telegram。",
     tgStatus: "服务器每 5 分钟检查一次 · 上次检查：{chk} · 符合条件的路径：{n} · 上次通知：{sent}",
     tgTokenOk: "已找到机器人 @{bot}。现在给它发一条消息。", tgLinked: "已连接——Telegram 中收到了确认消息。",
@@ -2463,7 +2530,7 @@ const I18N = {
     thAmtTitle: "本金范围内按件数利润最高的整数起始金额",
     thTimeTitle: "把金额走完所有步骤的预计时间",
     thGoldTitle: "整条路径的交易所金币手续费，以及每 10 万金币带来的 div 利润",
-    thPerHourTitle: "每小时利润，单位 {t}", thSeen: "发现于", newBadge: "新", thStreak: "持续", streakVal: "{n} 小时",
+    thPerHourTitle: "每小时利润，单位 {t}", newBadge: "新", thStreak: "持续", streakVal: "{n} 小时",
     thStreakTitle: "按真实成交汇率，路径最近连续多少小时利润不低于“最低利润”。越长越可靠：按 2 天历史，0 小时的路径有 49%、12+ 小时的有 92% 在下一小时仍保持利润",
     minStreak: "至少持续（小时）", anyStreak: "不限",
     hMinStreak: "只显示最近连续这么多小时利润不低于“最低利润”的路径（按每小时的真实成交汇率）。<br>按 2 天历史，下一小时仍有 ≥1% 利润的路径比例：0 小时 — 49%，1–2 小时 — ~67%，3–5 小时 — 76%，6–11 小时 — 83%，12+ 小时 — 92%。<br>仅适用于 GGG 数据源。", thSeenTitle: "路径在本设备上首次出现的时间。如果超过一天未出现，则重新计时", thVolTitle: "路径中各交易对的最低日成交量，单位 Divine", thScoreTitle: "利润 × 再持续一小时的概率（按“持续”）× log(流动性)。经历史验证：前 10 名中 89% 的路径在下一小时仍保持利润，旧评分“利润 × 流动性”为 82%", holdChance: "一小时概率", holdChanceTip: "具有此“持续”值的路径在下一小时仍保持 ≥1% 利润的频率（按 2 天历史）",
@@ -2474,15 +2541,15 @@ const I18N = {
     durMin: "分钟", durH: "小时", durD: "天", goldM: "百万", goldK: "千",
     give: "付出", get: "获得", rate: "汇率", vol: "成交量", perDay: "div/天",
     vol7Day: "日均", vol7Week: "周平均", chgAvg: "较日均", chgDay: "24 小时",
-    stock: "挂单", feeUnknown: "手续费未知", feeGold: "手续费 ~{g} 金币",
+    stock: "挂单", feeUnknown: "手续费未知", 
     batch: "最划算的批量：<b>{a}</b> → <b>{b}</b>（+{p}%）——可以重复执行。",
     warnLowVol: "某一步成交量偏低——大额本金可能无法按此汇率成交。",
     warnThin: "某一步的挂单量少于你需要购买的数量——无法一次买齐。",
     warnSlow: "路径较慢：出售期间汇率可能变化。可尝试减少本金或分批进行。",
     warnHigh: "利润超过 15%——很可能是价差或过时汇率。务必在游戏中核对第一步。",
     goldTotal: "整条路径的金币手续费：<b>~{g}</b>{unk}——每 10 万金币带来 <b>{eff} div</b> 利润。{capped}",
-    goldUnk: "（不含手续费未知的步骤）", goldCapped: "数量已缩减以符合金币预算。",
-    ratesNoPairs: "没有交易对（成交量低于加载阈值）。", ratesNone: "未找到。",
+    goldUnk: "（不含手续费未知的步骤）", 
+    
     error: "错误：{e}", statusLine: "{n} 种货币 · {p} 个交易对 · {period}",
     periodGgg: "{a}–{b} 的汇率", periodNinja: "数据更新于{ago}", noLeagueData: "该赛季暂无数据——正在加载…",
     srvCats: "正在加载分类列表…", srvPairs: "正在加载兑换交易对…", srvItems: "正在加载物品数据…",
@@ -2514,14 +2581,14 @@ const I18N = {
     exclude: "排除", exNone: "没有隐藏的货币——可在步骤面板中隐藏货币。", exHidden: "已隐藏：", exShow: "重新显示",
     exCatOff: "隐藏经过此类别的路径", exCatOn: "重新显示此类别",
     hExclude: "点击某个类别可隐藏经过其货币的路径（例如未切割宝石），再次点击即可恢复。单个货币可在步骤面板中隐藏（“不显示”）。<br>起始和目标货币以及 Chaos/Divine/Exalted 不会被排除。",
-    hideCur: "不显示：", hideCurBtn: "不显示", hideCurTip: "隐藏经过此货币的所有路径（可在筛选的“排除”中恢复）",
+    hideCurBtn: "不显示", hideCurTip: "隐藏经过此货币的所有路径（可在筛选的“排除”中恢复）",
     favOn: "加入收藏", favOff: "取消收藏", favOnly: "只看收藏", favOnlyTip: "只显示带星标的路径", favOnlyOn: "已开启，点击显示全部",
     favNone: "结果中没有收藏的路径——用 ☆ 标记路径，或关闭“只看收藏”。", tabCyclesS: "循环", 
     dSave: "将交易记入记录",
-    alvaBtn: "“阿尔瓦”模式", alvaBtnTip: "大字显示，一屏一步——适合手机或游戏旁的副显示器",
+    alvaBtn: "在阿尔瓦处", alvaBtnTip: "大字显示，一屏一步——适合手机或游戏旁的副显示器",
     alvaStep: "第 {k} 步，共 {n} 步", alvaDone: "路径已完成", alvaGet: "将获得", alvaRate: "市场汇率",
     alvaBe: "仍可盈利：", alvaBeTip: "如果阿尔瓦的汇率比这个差，整条路径就不再盈利（其余步骤按当前计算）",
-    alvaGotHint: "填写实际获得的数量。留空则使用预计数量。", alvaNext: "已兑换", alvaFinish: "已兑换，查看结果",
+    alvaGotHint: "留空则按预计数量", alvaNext: "已兑换", alvaFinish: "查看结果", alvaSave: "记入记录", alvaGot: "实际获得", alvaSaveNeed: "请在每一步填写“实际获得”",
     alvaBack: "返回", alvaClose: "关闭", dSaveNeed: "要记录交易，请在每一步填写“实际获得”。",
     dSaved: "已记入记录 ✓", dSaveErr: "记录失败：{e}",
     jEmpty: "还没有记录的交易。打开一条路径，在游戏中完成，在每一步填写“实际获得”，然后点击“将交易记入记录”。",
@@ -2592,7 +2659,7 @@ const I18N = {
     tgCopy: "Копіювати", tgWaiting: "Чекаю повідомлення…", tgOthers: "Для інших",
     tgOpen: "Дозволити підписуватися іншим", tgSubs: "Підписники — активних: {n}, усього: {total}. Посилання для них:",
     hTgOthers: "Інші люди пишуть твоєму боту /start і самі налаштовують умови кнопками в Telegram (ліга, стартова валюта, капітал, прибуток від, тримається від). Кожен отримує свої шляхи. Ні програма, ні токен їм не потрібні.<br>Працює, поки програма запущена на цьому комп'ютері. Зніми галочку — нові люди не зможуть підписатися (старі підписки залишаться).",
-    tgCheck: "Перевірити", tgDisconnect: "Відключити", tgDisconnectQ: "Відключити Telegram? Токен бота буде видалено з програми.",
+    tgDisconnect: "Відключити", tgDisconnectQ: "Відключити Telegram? Токен бота буде видалено з програми.",
     tgSend: "Надсилати в Telegram (@{bot})", tgTest: "Тест", tgTestSent: "Надіслано — перевір Telegram.",
     tgStatus: "Сервер перевіряє кожні 5 хв · остання перевірка: {chk} · відповідних шляхів: {n} · останнє сповіщення: {sent}",
     tgTokenOk: "Бота @{bot} знайдено. Тепер напиши йому повідомлення.", tgLinked: "Підключено — у Telegram прийшло підтвердження.",
@@ -2610,7 +2677,7 @@ const I18N = {
     thAmtTitle: "Ціла стартова сума в межах капіталу з максимальним прибутком у штуках",
     thTimeTitle: "Приблизний час, щоб прогнати суму через усі кроки",
     thGoldTitle: "Комісія біржі в золоті за весь шлях і скільки div прибутку дають кожні 100 тис. золота",
-    thPerHourTitle: "Прибуток за годину, у {t}", thSeen: "Знайдено", newBadge: "новий", thStreak: "Тримається", streakVal: "{n} год",
+    thPerHourTitle: "Прибуток за годину, у {t}", newBadge: "новий", thStreak: "Тримається", streakVal: "{n} год",
     thStreakTitle: "Скільки останніх годин поспіль шлях давав прибуток не нижче «Прибуток від» (за курсами реальних угод). Що довше, то надійніше: за історією за 2 доби через годину прибуток зберігали 49% шляхів із 0 год і 92% — із 12+ год",
     minStreak: "Тримається від, год", anyStreak: "неважливо",
     hMinStreak: "Показувати лише шляхи, які стільки останніх годин поспіль давали прибуток не нижче «Прибуток від» (за курсами реальних угод кожної години).<br>За історією за 2 доби прибуток ≥1% через годину зберігали: 0 год — 49% шляхів, 1–2 год — ~67%, 3–5 год — 76%, 6–11 год — 83%, 12+ год — 92%.<br>Лише для джерела GGG.", thSeenTitle: "Коли шлях уперше з'явився у видачі на цьому пристрої. Якщо його не було понад добу, відлік починається заново", thVolTitle: "Найменший добовий обсяг серед пар шляху, у Divine", thScoreTitle: "Прибуток × шанс протриматися ще годину (за «Тримається») × log(ліквідність). Перевірено на історії: з топ-10 через годину прибуток зберігали 89% шляхів, у старого рейтингу «прибуток × ліквідність» — 82%", holdChance: "Шанс на годину", holdChanceTip: "Як часто шлях із таким «Тримається» зберігав прибуток ≥1% через годину (за історією за 2 доби)",
@@ -2621,15 +2688,15 @@ const I18N = {
     durMin: "хв", durH: "год", durD: "дн", goldM: "млн", goldK: "тис",
     give: "Віддай", get: "отримай", rate: "курс", vol: "обсяг", perDay: "div/добу",
     vol7Day: "за добу", vol7Week: "за тиждень у середньому", chgAvg: "до середнього за добу", chgDay: "за добу",
-    stock: "у заявках", feeUnknown: "комісія невідома", feeGold: "комісія ~{g} золота",
+    stock: "у заявках", feeUnknown: "комісія невідома", 
     batch: "Найвигідніша порція: <b>{a}</b> → <b>{b}</b> (+{p}%) — її можна проганяти повторно.",
     warnLowVol: "Низький обсяг на одному з кроків — великий капітал може не пройти за цим курсом.",
     warnThin: "На одному з кроків у заявках виставлено менше, ніж тобі потрібно купити, — одразу все не візьмеш.",
     warnSlow: "Повільний шлях: поки продаватимеш, курс може піти. Спробуй зменшити капітал або розбити на частини.",
     warnHigh: "Прибуток понад 15% — найімовірніше, це спред або застарілий курс. Обов'язково звір перший крок у грі.",
     goldTotal: "Золото на комісії за весь шлях: <b>~{g}</b>{unk} — <b>{eff} div</b> прибутку на кожні 100 тис золота.{capped}",
-    goldUnk: " (без кроків із невідомою комісією)", goldCapped: " Суму зменшено, щоб укластися в бюджет золота.",
-    ratesNoPairs: "Пар немає (обсяг нижче порогу завантаження).", ratesNone: "Нічого не знайдено.",
+    goldUnk: " (без кроків із невідомою комісією)", 
+    
     error: "Помилка: {e}", statusLine: "{n} валют · {p} пар · {period}",
     periodGgg: "курс за {a}–{b}", periodNinja: "дані {ago}", noLeagueData: "Для цієї ліги даних ще немає — завантажую…",
     srvCats: "Завантажую списки категорій…", srvPairs: "Завантажую пари обміну…", srvItems: "Завантажую довідник предметів…",
@@ -2661,14 +2728,14 @@ const I18N = {
     exclude: "Виключити", exNone: "Прихованих валют немає — приховати валюту можна в панелі кроків.", exHidden: "Приховано:", exShow: "Знову показувати",
     exCatOff: "Приховати шляхи через цю категорію", exCatOn: "Знову показувати цю категорію",
     hExclude: "Натисни на категорію, щоб приховати шляхи через її валюти (наприклад, Неогранені камені); натисни ще раз — повернуться. Окрему валюту можна приховати в панелі кроків («Не показувати»).<br>Стартова й кінцева валюти та Chaos/Divine/Exalted не виключаються.",
-    hideCur: "Не показувати:", hideCurBtn: "Не показувати", hideCurTip: "Приховати всі шляхи через цю валюту (повернути — у «Виключити» у фільтрах)",
+    hideCurBtn: "Не показувати", hideCurTip: "Приховати всі шляхи через цю валюту (повернути — у «Виключити» у фільтрах)",
     favOn: "В обране", favOff: "Прибрати з обраного", favOnly: "Лише обрані", favOnlyTip: "Лише шляхи із зірочкою", favOnlyOn: "увімкнено, натисни, щоб показати всі",
     favNone: "Обраних шляхів у видачі немає — познач шлях зірочкою ☆ або вимкни «Лише обрані».", tabCyclesS: "Цикли", 
     dSave: "Записати угоду в журнал",
-    alvaBtn: "Режим «у Альви»", alvaBtnTip: "Великим шрифтом, по кроку на екран — для телефона або другого монітора поруч із грою",
+    alvaBtn: "У Альви", alvaBtnTip: "Великим шрифтом, по кроку на екран — для телефона або другого монітора поруч із грою",
     alvaStep: "Крок {k} з {n}", alvaDone: "Шлях пройдено", alvaGet: "Отримаєш", alvaRate: "Курс за ринком",
-    alvaBe: "Усе ще вигідно при", alvaBeTip: "Якщо в Альви курс гірший за цей, увесь шлях перестає бути прибутковим (решта кроків — як зараз)",
-    alvaGotHint: "Впиши, скільки реально прийшло. Порожньо — візьму розрахункове.", alvaNext: "Обміняв", alvaFinish: "Обміняв, до підсумку",
+    alvaBe: "Вигідно при", alvaBeTip: "Якщо в Альви курс гірший за цей, увесь шлях перестає бути прибутковим (решта кроків — як зараз)",
+    alvaGotHint: "Порожньо — за розрахунком", alvaNext: "Обміняв", alvaFinish: "До підсумку", alvaSave: "У журнал", alvaGot: "Отримав", alvaSaveNeed: "Впиши «Отримав» в усіх кроках",
     alvaBack: "Назад", alvaClose: "Закрити", dSaveNeed: "Щоб записати угоду, впиши «Отримав фактично» в усіх кроках.",
     dSaved: "Записано в журнал ✓", dSaveErr: "Не вдалося записати: {e}",
     jEmpty: "Поки немає записаних угод. Відкрий шлях, пройди його в грі, впиши в кроках «Отримав фактично» й натисни «Записати угоду в журнал».",
@@ -2739,7 +2806,7 @@ const I18N = {
     tgCopy: "Скапіяваць", tgWaiting: "Чакаю паведамленне…", tgOthers: "Для іншых",
     tgOpen: "Дазволіць падпісвацца іншым", tgSubs: "Падпісчыкі — актыўных: {n}, усяго: {total}. Спасылка для іх:",
     hTgOthers: "Іншыя людзі пішуць твайму боту /start і самі наладжваюць умовы кнопкамі ў Telegram (ліга, стартавая валюта, капітал, прыбытак ад, трымаецца ад). Кожны атрымлівае свае шляхі. Ні праграма, ні токен ім не патрэбныя.<br>Працуе, пакуль праграма запушчана на гэтым камп'ютары. Здымі птушку — новыя людзі не змогуць падпісацца (старыя падпіскі застануцца).",
-    tgCheck: "Праверыць", tgDisconnect: "Адключыць", tgDisconnectQ: "Адключыць Telegram? Токен бота будзе выдалены з праграмы.",
+    tgDisconnect: "Адключыць", tgDisconnectQ: "Адключыць Telegram? Токен бота будзе выдалены з праграмы.",
     tgSend: "Дасылаць у Telegram (@{bot})", tgTest: "Тэст", tgTestSent: "Адпраўлена — правер Telegram.",
     tgStatus: "Сервер правярае кожныя 5 хв · апошняя праверка: {chk} · прыдатных шляхоў: {n} · апошняе апавяшчэнне: {sent}",
     tgTokenOk: "Бот @{bot} знойдзены. Цяпер напішы яму паведамленне.", tgLinked: "Падключана — у Telegram прыйшло пацвярджэнне.",
@@ -2757,7 +2824,7 @@ const I18N = {
     thAmtTitle: "Цэлая стартавая сума ў межах капіталу з максімальным прыбыткам у штуках",
     thTimeTitle: "Прыкладны час, каб прагнаць суму праз усе крокі",
     thGoldTitle: "Камісія біржы ў золаце за ўвесь шлях і колькі div прыбытку даюць кожныя 100 тыс. золата",
-    thPerHourTitle: "Прыбытак за гадзіну, у {t}", thSeen: "Знойдзены", newBadge: "новы", thStreak: "Трымаецца", streakVal: "{n} гадз",
+    thPerHourTitle: "Прыбытак за гадзіну, у {t}", newBadge: "новы", thStreak: "Трымаецца", streakVal: "{n} гадз",
     thStreakTitle: "Колькі апошніх гадзін запар шлях даваў прыбытак не ніжэй за «Прыбытак ад» (па курсах рэальных здзелак). Чым даўжэй, тым надзейней: па гісторыі за 2 сутак праз гадзіну прыбытак захоўвалі 49% шляхоў з 0 гадз і 92% — з 12+ гадз",
     minStreak: "Трымаецца ад, гадз", anyStreak: "не важна",
     hMinStreak: "Паказваць толькі шляхі, якія столькі апошніх гадзін запар давалі прыбытак не ніжэй за «Прыбытак ад» (па курсах рэальных здзелак кожнай гадзіны).<br>Па гісторыі за 2 сутак прыбытак ≥1% праз гадзіну захоўвалі: 0 гадз — 49% шляхоў, 1–2 гадз — ~67%, 3–5 гадз — 76%, 6–11 гадз — 83%, 12+ гадз — 92%.<br>Толькі для крыніцы GGG.", thSeenTitle: "Калі шлях упершыню з'явіўся ў выдачы на гэтай прыладзе. Калі яго не было больш за суткі, адлік пачынаецца нанова", thVolTitle: "Найменшы сутачны аб'ём сярод пар шляху, у Divine", thScoreTitle: "Прыбытак × шанец пратрымацца яшчэ гадзіну (па «Трымаецца») × log(ліквіднасць). Праверана на гісторыі: з топ-10 праз гадзіну прыбытак захоўвалі 89% шляхоў, у старога рэйтынгу «прыбытак × ліквіднасць» — 82%", holdChance: "Шанец на гадзіну", holdChanceTip: "Як часта шлях з такім «Трымаецца» захоўваў прыбытак ≥1% праз гадзіну (па гісторыі за 2 сутак)",
@@ -2768,15 +2835,15 @@ const I18N = {
     durMin: "хв", durH: "гадз", durD: "дз", goldM: "млн", goldK: "тыс",
     give: "Аддай", get: "атрымай", rate: "курс", vol: "аб'ём", perDay: "div/суткі",
     vol7Day: "за суткі", vol7Week: "за тыдзень у сярэднім", chgAvg: "да сярэдняга за суткі", chgDay: "за суткі",
-    stock: "у заяўках", feeUnknown: "камісія невядомая", feeGold: "камісія ~{g} золата",
+    stock: "у заяўках", feeUnknown: "камісія невядомая", 
     batch: "Самая выгадная порцыя: <b>{a}</b> → <b>{b}</b> (+{p}%) — яе можна праганяць паўторна.",
     warnLowVol: "Нізкі аб'ём на адным з крокаў — вялікі капітал можа не прайсці па гэтым курсе.",
     warnThin: "На адным з крокаў у заяўках выстаўлена менш, чым табе трэба купіць — адразу ўсё не возьмеш.",
     warnSlow: "Павольны шлях: пакуль будзеш прадаваць, курс можа сысці. Паспрабуй паменшыць капітал або разбіць на часткі.",
     warnHigh: "Прыбытак больш за 15% — хутчэй за ўсё, гэта спрэд або састарэлы курс. Абавязкова звер першы крок у гульні.",
     goldTotal: "Золата на камісіі за ўвесь шлях: <b>~{g}</b>{unk} — <b>{eff} div</b> прыбытку на кожныя 100 тыс золата.{capped}",
-    goldUnk: " (без крокаў з невядомай камісіяй)", goldCapped: " Сума зменшана, каб укласціся ў бюджэт золата.",
-    ratesNoPairs: "Пар няма (аб'ём ніжэй за парог загрузкі).", ratesNone: "Нічога не знойдзена.",
+    goldUnk: " (без крокаў з невядомай камісіяй)", 
+    
     error: "Памылка: {e}", statusLine: "{n} валют · {p} пар · {period}",
     periodGgg: "курс за {a}–{b}", periodNinja: "даныя {ago}", noLeagueData: "Для гэтай лігі даных яшчэ няма — загружаю…",
     srvCats: "Загружаю спісы катэгорый…", srvPairs: "Загружаю пары абмену…", srvItems: "Загружаю даведнік прадметаў…",
@@ -2808,14 +2875,14 @@ const I18N = {
     exclude: "Выключыць", exNone: "Схаваных валют няма — схаваць валюту можна ў панэлі крокаў.", exHidden: "Схавана:", exShow: "Зноў паказваць",
     exCatOff: "Схаваць шляхі праз гэту катэгорыю", exCatOn: "Зноў паказваць гэту катэгорыю",
     hExclude: "Націсні на катэгорыю, каб схаваць шляхі праз яе валюты (напрыклад, Неаграненыя камяні); націсні яшчэ раз — вернуцца. Асобную валюту можна схаваць у панэлі крокаў («Не паказваць»).<br>Стартавая і канчатковая валюты і Chaos/Divine/Exalted не выключаюцца.",
-    hideCur: "Не паказваць:", hideCurBtn: "Не паказваць", hideCurTip: "Схаваць усе шляхі праз гэтую валюту (вярнуць — у «Выключыць» у фільтрах)",
+    hideCurBtn: "Не паказваць", hideCurTip: "Схаваць усе шляхі праз гэтую валюту (вярнуць — у «Выключыць» у фільтрах)",
     favOn: "У абранае", favOff: "Прыбраць з абранага", favOnly: "Толькі абраныя", favOnlyTip: "Толькі шляхі з зорачкай", favOnlyOn: "уключана, націсні, каб паказаць усе",
     favNone: "Абраных шляхоў у выдачы няма — адзнач шлях зорачкай ☆ або выключы «Толькі абраныя».", tabCyclesS: "Цыклы", 
     dSave: "Запісаць здзелку ў журнал",
-    alvaBtn: "Рэжым «у Альвы»", alvaBtnTip: "Буйна, па кроку на экран — для тэлефона або другога манітора побач з гульнёй",
+    alvaBtn: "У Альвы", alvaBtnTip: "Буйна, па кроку на экран — для тэлефона або другога манітора побач з гульнёй",
     alvaStep: "Крок {k} з {n}", alvaDone: "Шлях пройдзены", alvaGet: "Атрымаеш", alvaRate: "Курс па рынку",
-    alvaBe: "Усё яшчэ выгадна пры", alvaBeTip: "Калі ў Альвы курс горшы за гэты, увесь шлях перастае быць прыбытковым (астатнія крокі — як зараз)",
-    alvaGotHint: "Упішы, колькі рэальна прыйшло. Пуста — вазьму разліковае.", alvaNext: "Абмяняў", alvaFinish: "Абмяняў, да выніку",
+    alvaBe: "Выгадна пры", alvaBeTip: "Калі ў Альвы курс горшы за гэты, увесь шлях перастае быць прыбытковым (астатнія крокі — як зараз)",
+    alvaGotHint: "Пуста — па разліку", alvaNext: "Абмяняў", alvaFinish: "Да выніку", alvaSave: "У журнал", alvaGot: "Атрымаў", alvaSaveNeed: "Упішы «Атрымаў» ва ўсіх кроках",
     alvaBack: "Назад", alvaClose: "Зачыніць", dSaveNeed: "Каб запісаць здзелку, упішы «Атрымаў фактычна» ва ўсіх кроках.",
     dSaved: "Запісана ў журнал ✓", dSaveErr: "Не ўдалося запісаць: {e}",
     jEmpty: "Пакуль няма запісаных здзелак. Адкрый шлях, прайдзі яго ў гульні, упішы ў кроках «Атрымаў фактычна» і націсні «Запісаць здзелку ў журнал».",
@@ -3454,8 +3521,6 @@ function suggestCapital() {
     }
   }, 30);
 }
-// Короткое имя валюты для подписей: «Divine Orb» → «Divine».
-const shortCur = id => name(id).replace(/ Orb$/, "");
 // Целые суммы печатаем без копеек.
 function amt(x) {
   return Number.isInteger(x) ? x.toLocaleString(locale()) : fmt(x);
@@ -3561,7 +3626,7 @@ function pathTrend(c) {
   const cls = Math.abs(fl[1] - fl[0]) < 0.005 ? "flat" : fl[1] > fl[0] ? "up" : "down";
   const title = t("pathTrendTip", { n: hist.length, a: pct1(fl[0]), b: pct1(fl[1]), lo: pct1(Math.min(...v)), hi: pct1(Math.max(...v)) });
   return `<div class="dtrend" title="${esc(title)}">${trendSvg(hist, { w: 120, h: 30, cls, zero: true })}` +
-    `<span class="${cls}">${t("trendH", { n: hist.length })}: ${pct1(fl[0])} → ${pct1(fl[1])}</span></div>`;
+    `<span class="${cls}"><span class="tl">${t("trendH", { n: hist.length })}</span>${pct1(fl[0])} → ${pct1(fl[1])}</span></div>`;
 }
 
 // Курс в поле показываем так же, как в игре: «1 дорогая = N дешёвых».
@@ -3586,7 +3651,7 @@ function buildDrawer() {
     tip ? `<span class="tip" data-tip="${tip}"></span>` : ""}<div class="fc">${caption}</div></div>${input}</div>`;
   const mi = (k, v, cls = "") => `<div class="mi ${cls}"><span class="mk">${k}</span><span class="mv">${v}</span></div>`;
   let html = drawer.gone ? `<div class="dnote warn">${t("dGone")}</div>` : "";
-  html += `<div id="dWarn"></div><button id="dAlva" type="button" class="alva-btn" title="${esc(t("alvaBtnTip"))}"><svg class="play" viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0L10 6L0 12Z"/></svg>${t("alvaBtn")}</button>`;
+  html += `<button id="dAlva" type="button" class="alva-btn" title="${esc(t("alvaBtnTip"))}"><svg class="play" viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0L10 6L0 12Z"/></svg>${t("alvaBtn")}</button>`;
   // Промежуточные валюты пути, которые можно скрыть одним кликом.
   const hideable = [...new Set(c.nodes.slice(1, -1))].filter(id => !market.core.includes(id));
   if (hideable.length) {
@@ -3599,6 +3664,7 @@ function buildDrawer() {
     ${frow(t("dStart"), "hStart", esc(name(base)), num("start", null, o.start, c.inAmt), "first")}
     <div class="dprofit"><span class="mk">${t("thProfit")}</span><span id="dGain"></span><span id="dPct"></span>${pathTrend(c)}</div>
     <div class="dmeta" id="dMeta"></div>
+    <div id="dWarn"></div>
   </div><ol class="dsteps">`;
   c.edges.forEach((e, k) => {
     const from = c.nodes[k], to = e.to, fwd = rateFwd(e);
@@ -3740,7 +3806,6 @@ function calcDrawer() {
   $("#dMeta").innerHTML = mi(t("dOutLbl"), `${amt(out)} ${esc(name(target))}`) +
     (c.streak != null ? mi(t("thStreak"), streakText(c)) : "") +
     (c.edges[0].hist ? mi(t("holdChance"), `<span title="${esc(t("holdChanceTip"))}">~${Math.round(holdChance(c.streak) * 100)}%</span>`) : "") +
-    (c.seen ? mi(t("thSeen"), seenBadge(c.seen)) : "") +
     (base === target ? "" : mi(t("direct"), `${amt(direct)} ${esc(name(target))}`)) + mi(t("thTime"), dur(hours)) +
     (gold > 0 ? mi(t("thGold"), fmtGold(gold)) + mi(`<span class="nocap">${t("perGold")}</span>`, isFinite(eff) ? fmt(eff) : "∞") : "");
 
@@ -3748,7 +3813,7 @@ function calcDrawer() {
   c.edges.forEach((e, k) => {
     const li = $(`#dBody .dstep[data-k="${k}"]`), got = amounts[k + 1];
     li.querySelector("[data-give]").textContent = amt(amounts[k]);
-    li.querySelector("[data-got]").textContent = (Number.isInteger(got) ? "" : "≈") + amt(got);
+    li.querySelector("[data-got]").innerHTML = (Number.isInteger(got) ? "" : `<span class="approx">≈</span>`) + amt(got);
     li.querySelector('input[data-f="rate"]').classList.toggle("ov", o.rate[k] > 0);
     const gotIn = li.querySelector('input[data-f="got"]');
     gotIn.classList.toggle("ov", o.got[k] > 0);
@@ -3838,7 +3903,7 @@ function stepTrend(e, fwd, pairText) {
   const title = t("stepTrendTip", { pair: pairText.replace(/<[^>]+>/g, ""), n: e.hist.length, a: fmt(a), b: fmt(b), p: pct1(b / a - 1),
     verdict: t(cls === "flat" ? "trendFlat" : cls === "up" ? "trendBetter" : "trendWorse") });
   return `<div class="dtrend" title="${esc(title)}">${trendSvg(e.hist.map(v => v > 0 ? v : null), { w: 96, h: 26, cls })}` +
-    `<span class="${cls}">${t("trendH", { n: e.hist.length })} ${pct1(d)}</span></div>`;
+    `<span class="${cls}"><span class="tl">${t("trendH", { n: e.hist.length })}</span>${pct1(d)}</span></div>`;
 }
 
 // ---------- фильтры: скрыть / открыть ----------
@@ -4056,8 +4121,10 @@ function scanBestCaps(cap, now, countAt, token) {
     const best = plateaus.filter(x => x.n > now)
       .sort((a, b) => b.n - a.n || Math.abs(a.c - cap) - Math.abs(b.c - cap)).slice(0, 4)
       .sort((a, b) => a.c - b.c);
-    $("#capBest").innerHTML = best.length ? `<span class="muted">${t("capBest")}</span>` + best.map(x =>
-      `<button type="button" data-cap="${x.c}" title="${esc(t("capPrevTitle", { c: amt(x.c) }) + ": " + x.n)}">${amt(x.c)} ${esc(shortCur($("#base").value))} <b>(+${x.n - now})</b></button>`).join("") : "";
+    // Валюту не повторяем — она стоит у поля капитала; полное название — в подсказке.
+    const cur = name($("#base").value);
+    $("#capBest").innerHTML = best.length ? `<span class="muted">${t("capBest")}</span><span class="cb-list">` + best.map(x =>
+      `<button type="button" data-cap="${x.c}" title="${esc(t("capPrevTitle", { c: amt(x.c) + " " + cur }) + ": " + x.n)}">${amt(x.c)} <b>(+${x.n - now})</b></button>`).join("") + "</span>" : "";
     $("#capBest").querySelectorAll("button").forEach(b => b.onclick = () => setCapital(+b.dataset.cap));
   };
   setTimeout(chunk, 0);
@@ -4083,8 +4150,6 @@ function markSeen(list) {
 // «Найден» — обычный серый текст; «N мин назад» обновляется сам, без перерисовки таблицы.
 // Путь появился в выдаче меньше часа назад — показываем значок «новый».
 const newBadge = c => c.seen && Date.now() / 1000 - c.seen < 3600 ? `<span class="newb" title="${esc(t("thSeenTitle"))}">${t("newBadge")}</span>` : "";
-const seenBadge = ts => `<span class="muted" data-ts="${ts}">${ago(ts)}</span>`;
-setInterval(() => document.querySelectorAll("[data-ts]").forEach(el => el.textContent = ago(+el.dataset.ts)), 30000);
 
 // ---------- вид: таблица / карточки ----------
 function applyView() {
@@ -4433,6 +4498,7 @@ function openAlva() {
   const k = c.edges.findIndex((e, j) => !(o.got[j] > 0));
   alva.k = k < 0 ? c.edges.length : k;  // с первого невыполненного шага
   alva.open = true;
+  alva.shown = alva.k;  // открытие — без анимации перехода
   $("#alva").hidden = false;
   document.body.classList.add("alva-open");
   keepAwake(true);
@@ -4453,20 +4519,23 @@ function renderAlva() {
   const run = drawerRun(start);
   const target = c.nodes[n];
   const big = id => `<span class="abig">${chip(id)}</span>`;
-  const dots = c.edges.map((e, j) => `<span class="${o.got[j] > 0 ? "done" : j === alva.k ? "now" : ""}"></span>`).join("");
-  let html = `<div class="alva-in"><div class="ahead"><div class="adots">${dots}</div>
-    <span class="muted">${alva.k < n ? t("alvaStep", { k: alva.k + 1, n }) : t("alvaDone")}</span>
-    <button type="button" class="ax" title="${esc(t("alvaClose"))}">×</button></div>`;
+  // Текущий шаг виден всегда, даже если в нём уже вписано «Получил» (вернулся назад).
+  const dots = c.edges.map((e, j) => `<span class="${j === alva.k ? "now" : o.got[j] > 0 ? "done" : ""}"></span>`).join("");
+  let html = `<div class="alva-in"><div class="ahead">
+    <button type="button" class="aback"${alva.k > 0 ? "" : ` style="visibility:hidden" tabindex="-1" aria-hidden="true"`}>${t("alvaBack")}</button>
+    <div class="adots">${dots}</div>
+    <div class="aright"><span class="muted">${alva.k < n ? t("alvaStep", { k: alva.k + 1, n }) : t("alvaDone")}</span>
+    <button type="button" class="ax" title="${esc(t("alvaClose"))}">×</button></div></div>`;
   if (alva.k >= n) {
     const pct = run.out / (start * c.bench) - 1, done = c.edges.every((e, j) => o.got[j] > 0);
-    html += `<div class="asum"><div class="ak">${t("thProfit")}</div>
-      <div class="aprofit ${run.gain > 0 ? "good" : "bad"}">${run.gain > 0 ? "+" : ""}${amt(run.gain)} ${esc(name(target))}</div>
-      <div class="${run.gain > 0 ? "good" : "bad"}" style="font-size:20px">${pct1(pct)}</div>
-      <div class="muted">${amt(start)} ${esc(name(c.nodes[0]))} → ${amt(run.out)} ${esc(name(target))}</div></div>
-      <div class="anav"><button type="button" class="aback ghost"><svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1L1 7l6 6"/></svg>${t("alvaBack")}</button>
-        <button type="button" class="asave"${done ? "" : " disabled"}>${t("dSave")}</button></div>
-      ${done ? "" : `<div class="muted">${t("dSaveNeed")}</div>`}
-      <button type="button" class="ghost aclose">${t("alvaClose")}</button></div>`;
+    // Итог — как экраны шагов: подпись, крупная цифра, валюта по центру; путь «отдал → получил» — между разделителями, как курс.
+    const cls = run.gain > 0 ? "good" : "bad";
+    html += `<div class="arow asum"><span class="ak">${t("thProfit")}</span><span class="av ${cls}">${run.gain > 0 ? "+" : ""}${amt(run.gain)}</span>${big(target)}
+        <span class="apct ${cls}">${pct1(pct)}</span></div>
+      <div class="arate"><div class="arv">${amt(start)} ${esc(name(c.nodes[0]))} → <b>${amt(run.out)}</b> ${esc(name(target))}</div></div>
+      <div class="anav"><button type="button" class="asave"${done ? "" : " disabled"}>${t("alvaSave")}</button>
+        ${done ? "" : `<div class="muted asneed">${t("alvaSaveNeed")}</div>`}
+        <button type="button" class="ghost aclose">${t("alvaClose")}</button></div></div>`;
   } else {
     const k = alva.k, e = c.edges[k], from = c.nodes[k], fwd = rateFwd(e);
     const [a, b] = fwd ? [from, e.to] : [e.to, from];
@@ -4480,16 +4549,15 @@ function renderAlva() {
     const be = rBe ? (fwd ? rBe : 1 / rBe) : null;
     const calc = run.calc[k];
     html += `<div class="arow"><span class="ak">${t("give")}</span><span class="av">${amt(run.amounts[k])}</span>${big(from)}</div>
-      <div class="arow"><span class="ak">${t("alvaGet")}</span><span class="av">${Number.isInteger(calc) ? "" : "≈"}${amt(calc)}</span>${big(e.to)}</div>
+      <div class="arow"><span class="ak">${t("alvaGet")}</span><span class="av">${Number.isInteger(calc) ? "" : `<span class="approx">≈</span>`}${amt(calc)}</span>${big(e.to)}</div>
       <div class="arate"><div class="ak">${t("alvaRate")}</div>
         <div class="arv">1 ${esc(name(a))} = <b>${fmt(mr)}</b> ${esc(name(b))}</div>
         ${be ? `<div class="abe" title="${esc(t("alvaBeTip"))}">${t("alvaBe")} <b>${fwd ? "≥" : "≤"} ${fmt(be)}</b></div>` : ""}
       </div>
-      <div class="agot"><div class="ak">${t("dActual")}, ${esc(name(e.to))}</div>
+      <div class="agot"><div class="ak">${t("alvaGot")}, ${esc(name(e.to))}</div>
         <span class="stepper"><button type="button" tabindex="-1" data-d="-1">−</button><input data-f="got" data-k="${k}" type="text" inputmode="decimal" autocomplete="off" min="0" step="any" value="${o.got[k] ?? ""}" placeholder="${$("#round").checked ? calc : +calc.toFixed(4)}"><button type="button" tabindex="-1" data-d="1">+</button></span>
         <div class="muted ahint">${t("alvaGotHint")}</div></div>
-      <div class="anav">${k > 0 ? `<button type="button" class="aback ghost"><svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M7 1L1 7l6 6"/></svg>${t("alvaBack")}</button>` : ""}
-        <button type="button" class="anext">${t(k + 1 < n ? "alvaNext" : "alvaFinish")}<svg class="chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M1 1l6 6-6 6"/></svg></button></div></div>`;
+      <div class="anav"><button type="button" class="anext">${t(k + 1 < n ? "alvaNext" : "alvaFinish")}</button></div></div>`;
   }
   const box = $("#alva");
   box.innerHTML = html;
@@ -4513,6 +4581,20 @@ function renderAlva() {
     });
     box.querySelectorAll(".stepper button").forEach(btn => holdRepeat(btn, () => bump(inp, +btn.dataset.d)));
   }
+  animateAlvaStep(alva.shown, alva.k);
+  alva.shown = alva.k;
+}
+// Переход между шагами: содержимое въезжает с той стороны, куда идём; «таблетка» в точках перетекает на новый шаг.
+function animateAlvaStep(from, to) {
+  if (from == null || from === to || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = $("#alva"), dir = to > from ? 1 : -1;
+  [...box.querySelectorAll(".alva-in > :not(.ahead, .anav)")].forEach((el, i) => el.animate(
+    [{ opacity: 0, transform: `translateX(${dir * 36}px)` }, { opacity: 1, transform: "none" }],
+    { duration: 280, delay: i * 35, easing: "cubic-bezier(.2, .8, .25, 1)", fill: "backwards" }));
+  box.querySelector(".anav")?.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 220, easing: "ease-out" });
+  const dots = box.querySelectorAll(".adots span"), ease = { duration: 260, easing: "cubic-bezier(.2, .8, .25, 1)" };
+  if (dots[to]) dots[to].animate([{ width: "12px" }, { width: "26px" }], ease);
+  if (dots[from] && dots[to]) dots[from].animate([{ width: "26px", backgroundColor: getComputedStyle(dots[to]).backgroundColor }, { width: "12px" }], ease);
 }
 // «Готово»: если «Получил» пустое — считаем, что пришло расчётное количество.
 function alvaNext() {
